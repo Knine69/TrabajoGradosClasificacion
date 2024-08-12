@@ -11,6 +11,8 @@
 
 In order to solve possible issues that may arise, run the following dependencies installation:
 
+Download Ollama and pull model to use locally
+
 ```
     pip torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
     pip install --upgrade pymupdf
