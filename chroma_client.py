@@ -82,7 +82,7 @@ def add_document_embbeds(collection: Collection, document: bytes):
 
 def invoke_query(executor, query, max_attempts=5):
 
-    def black_listed_words(string):
+    def output_handler(string):
         black_list = ["stopped", "limit"]
         output_response = any(word in string['output']
                               for word in black_list)
@@ -96,6 +96,8 @@ def invoke_query(executor, query, max_attempts=5):
                         return step[1]
                 elif isinstance(step[1], int):
                     return step[1]
+
+            raise ValueError("Couldn't process query")
         else:
             return string['output']
 
@@ -104,7 +106,7 @@ def invoke_query(executor, query, max_attempts=5):
             result = executor.invoke({"input": query})
             return {
                 'query_made': query,
-                'output': black_listed_words(result)
+                'output': output_handler(result)
                 }
         except Exception as e:
             print(f"Something failed: {e}")
