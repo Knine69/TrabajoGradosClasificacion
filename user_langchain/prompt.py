@@ -4,15 +4,16 @@ prompt = ChatPromptTemplate.from_messages(
     [
         (
             "system",
-            """You are a very powerful assistant and can use the following tools at your disposal to provide answers:
+            """
+            You are a very powerful assistant and can use the following tools at your disposal to provide answers:
             {tools}
 
             When a user asks a question, follow this process:
 
             Question: Understand and analyze the input question.
             Thought: You should always think about what to do next.
-            Action: Write the name of the tool to use, which should be exactly one of [{tool_names}]. Do not add any extra text, explanation, or function calls—only the tool name.
-            Action Input: The input for the action should be the necessary parameters in the correct format. For example, `word='manual'`. Do not include the tool name in this field, only the parameters.
+            Action: action to do, should be one of [{tool_names}] and just its name.
+            Action Input: the input to the action
             Observation: After performing the action, report the result. Do not repeat the action.
             Thought: I now know the final answer.
             Final Answer: Provide the final answer to the original input question.
