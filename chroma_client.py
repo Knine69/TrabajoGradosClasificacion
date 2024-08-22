@@ -1,26 +1,29 @@
-from transformers import AutoTokenizer
-from langchain.agents import AgentExecutor, create_react_agent
-from langchain_community.llms.ollama import Ollama
-from user_langchain.prompt import prompt
-from chromadb import Documents, EmbeddingFunction, Embeddings
-from chromadb.api.models.Collection import Collection
-from chromadb.api.types import Document
+
 import chromadb
 import torch
-import fitz
-
+from chromadb.api.types import Document
+from transformers import AutoTokenizer, AutoModel
+from user_langchain.prompt import prompt
+from langchain.agents import AgentExecutor, create_react_agent
+from langchain_community.llms.ollama import Ollama
+from chromadb import Documents, EmbeddingFunction, Embeddings
+from chromadb.api.models.Collection import Collection
 from tools.tools import tools
+from pdfminer.high_level import extract_text
 
 
 llm_model = Ollama(model="llama2")
 
 
-class EmbedderFunction(EmbeddingFunction):
-    tokenizer = AutoTokenizer.from_pretrained("bert-base-multilingual-cased")
+tokenizer = AutoTokenizer.from_pretrained("bert-base-multilingual-cased")
+embedding_model = AutoModel.from_pretrained("bert-base-multilingual-cased")
 
+
+class EmbedderFunction(EmbeddingFunction):
     def __init__(self) -> None:
         super().__init__()
-        self.model = llm_model
+        self.tokenizer = tokenizer
+        self.embedding_model = embedding_model
 
     def __call__(self, input: Documents) -> Embeddings:
         embedding_results = []
@@ -33,36 +36,25 @@ class EmbedderFunction(EmbeddingFunction):
                                     max_length=512)
 
             with torch.no_grad():
-                outputs = self.model(**inputs)
+                outputs = self.embedding_model(**inputs)
 
-            hidden_states = outputs.hidden_states
+            last_hidden_state = outputs.last_hidden_state
+            embeddings = torch.mean(last_hidden_state, dim=1).squeeze()
 
-            last_hidden_state = hidden_states[-1]
-
-            embeddings = torch.mean(last_hidden_state, dim=1)
-
-            # Aggregate embeddings by taking the mean
-            embeddings = torch.mean(embeddings, dim=1)
             embedding_results.append(embeddings.numpy().tolist())
 
         return embedding_results
 
 
 def pdf_to_bytes(pdf_path):
-    document = fitz.open(pdf_path)
-    all_text = ""
-
-    for page_num in range(document.page_count):
-        page = document.load_page(page_num)
-        text = page.get_text()
-        all_text += text
+    all_text = extract_text(pdf_path)
 
     text_bytes = all_text.encode('utf-8')
 
     return text_bytes
 
 
-def basic_chroma_query(collection: Collection, document: bytes) -> None:
+def basic_chroma_query(collection: Collection, document: Document) -> None:
     results = collection.query(
         n_results=10,
         query_texts=[document],
@@ -72,7 +64,7 @@ def basic_chroma_query(collection: Collection, document: bytes) -> None:
     print(f"Results are: {results}")
 
 
-def add_document_embbeds(collection: Collection, document: bytes):
+def add_document_embbeds(collection: Collection, document: Document):
     collection.add(
         documents=[document],
         metadatas=[{"sample": "1", "page": "1"}],
@@ -83,11 +75,9 @@ def add_document_embbeds(collection: Collection, document: bytes):
 def invoke_query(executor, query, max_attempts=5):
 
     def output_handler(string):
-        black_list = ["stopped", "limit"]
+        black_list = ["stopped", "limit", 'not a valid tool']
         output_response = any(word in string['output']
                               for word in black_list)
-        # Validate if intermediate steps does not have black listed words
-        # Then return first returned value
 
         if output_response:
             for step in string['intermediate_steps']:
@@ -147,4 +137,4 @@ if __name__ == "__main__":
     add_document_embbeds(collection, sample_doc)
 
     # Query the collection
-    basic_chroma_query(collection)
+    basic_chroma_query(collection, sample_doc)
