@@ -4,7 +4,8 @@ from langchain.tools import tool
 @tool
 def check_word_length(word: str) -> int:
     """Takes a word and checks its length."""
-    return len(word)
+    result = len(word.replace("'", "").replace('"', ''))
+    return result
 
 
 tools = [check_word_length]
