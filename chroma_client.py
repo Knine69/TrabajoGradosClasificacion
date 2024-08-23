@@ -12,7 +12,7 @@ from tools.tools import tools
 from pdfminer.high_level import extract_text
 
 
-llm_model = Ollama(model="llama2")
+llm_model = Ollama(model="llama3")
 
 
 tokenizer = AutoTokenizer.from_pretrained("bert-base-multilingual-cased")
@@ -104,7 +104,7 @@ def invoke_query(executor, query, max_attempts=5):
     return {"output": False, "description": "Too many failed attempts"}
 
 
-if __name__ == "__main__":
+def execute_agent_query():
     agent = create_react_agent(llm_model, tools, prompt)
     agent_executor = AgentExecutor(agent=agent,
                                    tools=tools,
@@ -122,6 +122,8 @@ if __name__ == "__main__":
     else:
         print(f"Query failed: {result['description']}")
 
+
+def execute_basic_chroma_query():
     # Initialize ChromaDB client and create a collection with the embedding
     # function
     chroma_client = chromadb.Client()
@@ -138,3 +140,8 @@ if __name__ == "__main__":
 
     # Query the collection
     basic_chroma_query(collection, sample_doc)
+
+
+if __name__ == "__main__":
+    execute_agent_query()
+    execute_basic_chroma_query()
