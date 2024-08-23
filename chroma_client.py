@@ -111,11 +111,11 @@ def execute_agent_query():
                                    verbose=True,
                                    handle_parsing_errors=True,
                                    max_iterations=5,
-                                #    callbacks=m,   TODO: Validate if behaviour can be corrected with callbacks
+                                   #  callbacks=m, TODO: Validate if behaviour can be corrected with callbacks
                                    return_intermediate_steps=True)
-
-    query = "Cuál es la longitud de la palabra 'juan'"
-    result = invoke_query(agent_executor, query)
+    query_prompt = "Cuál es la longitud de la palabra: "
+    query = input(f"{query_prompt}")
+    result = invoke_query(agent_executor, f'{query_prompt}"{query}"')
 
     if result['output']:
         print(f"Query result is: {result}")
@@ -131,7 +131,9 @@ def execute_basic_chroma_query():
         chroma_client.create_collection(name="my_collection",
                                         embedding_function=EmbedderFunction()))
 
-    # Prepare text data in PDF file/s
+    # TODO: Define life cycle calling to base source documents
+    # TODO: Check if by persisting database, embeddings may be obtained and
+    # there is no need to check the previous
     pdf_text = pdf_to_bytes('test_file.pdf')
     sample_doc = pdf_text.decode('utf-8')
 
