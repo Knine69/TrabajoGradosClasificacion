@@ -7,6 +7,11 @@
     https://visualstudio.microsoft.com/es/visual-cpp-build-tools/
 ```
 
+### Python version required:
+
+This project as of today, requires the use of python 3.9.13
+
+
 #### Dependencies installation:
 
 In order to solve possible issues that may arise, run the following dependencies installation:
