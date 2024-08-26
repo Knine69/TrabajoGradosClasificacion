@@ -14,6 +14,7 @@ class ChromaClient:
 
     def __init__(self) -> None:
         self._chroma_client = chromadb.Client()
+        self._loaded_collections = {}
 
     class EmbedderFunction(EmbeddingFunction):
         def __init__(self) -> None:
@@ -56,24 +57,30 @@ class ChromaClient:
     @staticmethod
     def add_document_embbeds(collection: Collection,
                              document: Document,
-                             metadata_filter: dict[str],
+                             metadata_filter: [dict[str, str]],
                              ids: list[str]):
         collection.add(
             documents=[document],
-            metadatas=[metadata_filter],
+            metadatas=metadata_filter,
             ids=ids
         )
 
-    def execute_basic_chroma_query(self):
+    def execute_basic_chroma_query(self, collection_name):
         collection = (
             self._chroma_client.create_collection(
-                name="my_collection",
+                name=collection_name,
                 embedding_function=ChromaClient.EmbedderFunction()))
 
         pdf_text = pdf_to_bytes('test_file.pdf')
         sample_doc = pdf_text.decode('utf-8')
 
-        self.add_document_embbeds(collection, sample_doc, str(time.time()))
+        self.add_document_embbeds(
+            collection,
+            sample_doc,
+            [
+                {"category": "chemistry", "category2": "control"}
+             ],
+            [str(time.time())])
 
         # TODO: Load by category either at the start or lazily (preferred)
         loaded_db_data = (
@@ -84,4 +91,4 @@ class ChromaClient:
 
 if __name__ == "__main__":
     sample_client = ChromaClient()
-    sample_client.execute_basic_chroma_query()
+    sample_client.execute_basic_chroma_query("some_collection")
