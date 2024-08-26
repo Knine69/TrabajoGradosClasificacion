@@ -1,6 +1,6 @@
-
 import chromadb
 import torch
+import time
 from transformers import AutoTokenizer, AutoModel
 from chromadb.api.types import Document
 from chromadb import Documents, EmbeddingFunction, Embeddings
@@ -18,8 +18,8 @@ class ChromaClient:
     class EmbedderFunction(EmbeddingFunction):
         def __init__(self) -> None:
             super().__init__()
-            self.tokenizer = ChromaClient.tokenizer
             self.embedding_model = ChromaClient.embedding_model
+            self.tokenizer = ChromaClient.tokenizer
 
         def __call__(self, input: Documents) -> Embeddings:
             embedding_results = []
@@ -41,23 +41,27 @@ class ChromaClient:
 
             return embedding_results
 
-    def basic_chroma_query(self,
-                           collection: Collection,
-                           document: list[Document]) -> None:
+    @staticmethod
+    def basic_chroma_query(collection: Collection,
+                           document: list[Document],
+                           contained_text: str) -> None:
         results = collection.query(
             n_results=10,
             query_texts=document,
-            where_document={"$contains": "input entered"}
+            where_document={"$contains": contained_text}
             ).items()
 
         print(f"Results are: {results}")
 
-    def add_document_embbeds(self, collection: Collection, document: Document):
+    @staticmethod
+    def add_document_embbeds(collection: Collection,
+                             document: Document,
+                             metadata_filter: dict[str],
+                             ids: list[str]):
         collection.add(
             documents=[document],
-            metadatas=[{"category": "chemistry"}],
-            # TODO: check how to validate last ID or create some new
-            ids=["id1"]
+            metadatas=[metadata_filter],
+            ids=ids
         )
 
     def execute_basic_chroma_query(self):
@@ -69,13 +73,13 @@ class ChromaClient:
         pdf_text = pdf_to_bytes('test_file.pdf')
         sample_doc = pdf_text.decode('utf-8')
 
-        self.add_document_embbeds(collection, sample_doc)
+        self.add_document_embbeds(collection, sample_doc, str(time.time()))
 
         # TODO: Load by category either at the start or lazily (preferred)
         loaded_db_data = (
             collection.get(where={"category": "chemistry"})['documents'])
 
-        self.basic_chroma_query(collection, loaded_db_data)
+        self.basic_chroma_query(collection, loaded_db_data, "input")
 
 
 if __name__ == "__main__":

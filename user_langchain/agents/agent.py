@@ -21,7 +21,8 @@ class LangchainAgent:
             # callbacks
             return_intermediate_steps=True)
 
-    def invoke_query(self, executor, query, max_attempts=5):
+    @staticmethod
+    def invoke_query(executor, query, max_attempts=5):
         def output_handler(string):
             black_list = ["stopped", "limit", 'not a valid tool']
             output_response = any(word in string['output']
