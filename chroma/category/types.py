@@ -1,7 +1,7 @@
-import enum
+from enum import Enum
 
 
-class FileCategories(enum):
+class FileCategories(Enum):
     ROBOTICS = "robotica"
     CONTROL = "control"
     CHEMISTRY = "quimica"
