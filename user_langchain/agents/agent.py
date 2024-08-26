@@ -61,3 +61,8 @@ class LangchainAgent:
             print(f"Query result is: {result}")
         else:
             print(f"Query failed: {result['description']}")
+
+
+if __name__ == "__main__":
+    agent = LangchainAgent()
+    agent.execute_agent_query()
