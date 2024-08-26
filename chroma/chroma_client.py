@@ -6,6 +6,7 @@ from chromadb.api.types import Document
 from chromadb import Documents, EmbeddingFunction, Embeddings
 from chromadb.api.models.Collection import Collection
 from documents.utils import pdf_to_bytes
+from utils.outputs import OutputColors
 
 
 class ChromaClient:
@@ -52,7 +53,8 @@ class ChromaClient:
             where_document={"$contains": contained_text}
             ).items()
 
-        print(f"Results are: {results}")
+        ChromaClient.print_console_message(OutputColors.OKGREEN.value,
+                                           f"Results are: {results}")
 
     @staticmethod
     def add_document_embbeds(collection: Collection,
@@ -65,28 +67,69 @@ class ChromaClient:
             ids=ids
         )
 
-    def execute_basic_chroma_query(self, collection_name):
-        collection = (
-            self._chroma_client.create_collection(
-                name=collection_name,
-                embedding_function=ChromaClient.EmbedderFunction()))
+    @staticmethod
+    def _create_metadata_object(categories_list: list[str]) -> dict:
+        result = {}
+        count = 1
+        for category in categories_list:
+            result[f'category_{count}'] = category
+            count += 1
 
-        pdf_text = pdf_to_bytes('test_file.pdf')
+        return result
+
+    @staticmethod
+    def print_console_message(message_color: str, message: str) -> None:
+        print(f"{message_color}{message}{OutputColors.WHITE.value}")
+
+    def _validate_existing_collection(self, collection_name: str) -> Collection:
+        try:
+            result = self._chroma_client.get_collection(name=collection_name)
+        except ValueError:
+            self.print_console_message(OutputColors.WARNING.value,
+                                       "Collection does not exist.")
+            self.print_console_message(OutputColors.HEADER.value,
+                                       "Creating collection...")
+            return (
+                self._chroma_client.create_collection(
+                    name=collection_name,
+                    embedding_function=ChromaClient.EmbedderFunction()))
+        return result
+
+    def execute_basic_chroma_query(self, collection_name):
+        collection = self._validate_existing_collection(collection_name)
+
+        self.process_pdf_file('test_file.pdf',
+                              collection=collection,
+                              categories=["chemistry"])
+
+        # TODO: Load by category either at the start or lazily (preferred)
+        loaded_db_data = (
+            collection.get(where={"category_1": "chemistry"})['documents'])
+
+        self.print_console_message(OutputColors.BOLD.value,
+                                   f"Loaded data...\n{loaded_db_data}")
+
+        self.basic_chroma_query(collection, loaded_db_data, "input")
+
+    def process_pdf_file(self,
+                         file_path: str,
+                         categories: list[str],
+                         collection_name: str = None,
+                         collection: Collection = None
+                         ):
+        collection = (collection if collection else
+                      self._validate_existing_collection(collection_name))
+
+        pdf_text = pdf_to_bytes(file_path)
         sample_doc = pdf_text.decode('utf-8')
 
         self.add_document_embbeds(
             collection,
             sample_doc,
             [
-                {"category": "chemistry", "category2": "control"}
-             ],
+                self._create_metadata_object(categories)
+            ],
             [str(time.time())])
-
-        # TODO: Load by category either at the start or lazily (preferred)
-        loaded_db_data = (
-            collection.get(where={"category": "chemistry"})['documents'])
-
-        self.basic_chroma_query(collection, loaded_db_data, "input")
 
 
 if __name__ == "__main__":
