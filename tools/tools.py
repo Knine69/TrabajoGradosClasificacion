@@ -9,3 +9,5 @@ def check_word_length(word: str) -> int:
 
 
 tools = [check_word_length]
+
+# TODO: create a tool which calls chroma query
