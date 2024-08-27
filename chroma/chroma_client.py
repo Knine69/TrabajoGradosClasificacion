@@ -7,6 +7,7 @@ from chromadb import Documents, EmbeddingFunction, Embeddings
 from chromadb.api.models.Collection import Collection
 from documents.utils import pdf_to_bytes
 from utils.outputs import OutputColors
+from chroma.category.types import FileCategories
 
 
 class ChromaClient:
@@ -71,10 +72,10 @@ class ChromaClient:
     @staticmethod
     def _create_metadata_object(categories_list: list[str]) -> dict:
         result = {}
-        count = 1
         for category in categories_list:
-            result[f'category_{count}'] = category
-            count += 1
+            aux = category.lower()
+            if FileCategories(aux):
+                result[aux] = True
 
         return result
 
@@ -97,21 +98,34 @@ class ChromaClient:
                     embedding_function=ChromaClient.EmbedderFunction()))
         return result
 
-    def execute_basic_chroma_query(self, collection_name):
+    def _load_category_data(self, category: str, collection: Collection):
+        if category in self._loaded_collections.keys():
+            return self._loaded_collections[category]
+        else:
+            loaded_data = collection.get(where={category: True}).values()
+            self._loaded_collections[category] = loaded_data
+
+            return list(loaded_data)
+
+    def execute_basic_chroma_query(self,
+                                   collection_name: str,
+                                   categories: list[str]):
         collection = self._validate_existing_collection(collection_name)
 
         self.process_pdf_file('test_file.pdf',
                               collection=collection,
-                              categories=["chemistry"])
+                              categories=categories)
+        self.process_pdf_file('chemistry_sample.pdf',
+                              collection=collection,
+                              categories=[categories[0]])
 
-        # TODO: Load by category either at the start or lazily (preferred)
-        loaded_db_data = (
-            collection.get(where={"category_1": "chemistry"})['documents'])
+        loaded_db_data = self._load_category_data(
+            category=categories[0],
+            collection=collection)
 
-        self.print_console_message(OutputColors.BOLD.value,
-                                   f"Loaded data...\n{loaded_db_data}")
-
-        self.basic_chroma_query(collection, loaded_db_data, "input")
+        self.basic_chroma_query(collection,
+                                loaded_db_data[3],
+                                "hydrogenation")
 
     def process_pdf_file(self,
                          file_path: str,
@@ -134,9 +148,15 @@ class ChromaClient:
             [str(time.time())])
 
         self.print_console_message(
+            message_color=OutputColors.OKCYAN.value,
             message=f"Successfully processed: {file_path}")
 
 
 if __name__ == "__main__":
     sample_client = ChromaClient()
-    sample_client.execute_basic_chroma_query("some_collection")
+    sample_client.execute_basic_chroma_query("some_collection",
+                                             [
+                                                 FileCategories.CHEMISTRY.value,
+                                                 FileCategories.CONTROL.value,
+                                                 FileCategories.ROBOTICS.value,
+                                             ])
