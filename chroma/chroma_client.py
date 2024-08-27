@@ -123,6 +123,9 @@ class ChromaClient:
             category=categories[0],
             collection=collection)
 
+        # TODO: if query empty, reload, update loaded dict and retry query,
+        #  research indexing by category to reduce possible downtime
+
         self.basic_chroma_query(collection,
                                 loaded_db_data[3],
                                 "hydrogenation")
