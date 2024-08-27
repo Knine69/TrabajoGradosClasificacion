@@ -53,8 +53,9 @@ class ChromaClient:
             where_document={"$contains": contained_text}
             ).items()
 
-        ChromaClient.print_console_message(OutputColors.OKGREEN.value,
-                                           f"Results are: {results}")
+        ChromaClient.print_console_message(
+            message_color=OutputColors.OKGREEN.value,
+            message=f"Results are: {results}")
 
     @staticmethod
     def add_document_embbeds(collection: Collection,
@@ -78,17 +79,18 @@ class ChromaClient:
         return result
 
     @staticmethod
-    def print_console_message(message_color: str, message: str) -> None:
+    def print_console_message(message: str,
+                              message_color: str = OutputColors.WHITE.value) -> None:
         print(f"{message_color}{message}{OutputColors.WHITE.value}")
 
     def _validate_existing_collection(self, collection_name: str) -> Collection:
         try:
             result = self._chroma_client.get_collection(name=collection_name)
         except ValueError:
-            self.print_console_message(OutputColors.WARNING.value,
-                                       "Collection does not exist.")
-            self.print_console_message(OutputColors.HEADER.value,
-                                       "Creating collection...")
+            self.print_console_message(message_color=OutputColors.WARNING.value,
+                                       message="Collection does not exist.")
+            self.print_console_message(message_color=OutputColors.HEADER.value,
+                                       message="Creating collection...")
             return (
                 self._chroma_client.create_collection(
                     name=collection_name,
@@ -130,6 +132,9 @@ class ChromaClient:
                 self._create_metadata_object(categories)
             ],
             [str(time.time())])
+
+        self.print_console_message(
+            message=f"Successfully processed: {file_path}")
 
 
 if __name__ == "__main__":
