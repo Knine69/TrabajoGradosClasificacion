@@ -59,11 +59,14 @@ class ChromaClient:
             where_document={"$contains": contained_text}
             ).items()
 
+        results = dict(results)
+
         ChromaClient.print_console_message(
             message_color=OutputColors.OKGREEN.value,
             message=f"Results are: {results}")
 
-        return {"query_result": results}
+        return {"query_result": results} if bool(results['documents'][0]) else \
+            {}
 
     @staticmethod
     def add_document_embbeds(collection: Collection,
@@ -109,24 +112,34 @@ class ChromaClient:
 
     @staticmethod
     def _load_category_data(category: str, collection: Collection):
-
-        def create_loaded_data_dict() -> dict:
-            aux = collection.get(where={category: True}).items()
-            response_dict = {
-                'data': dict(aux),
-                'expiration_time': time.time() + (60 * 10)
-            }
-
-            loaded_collections[category] = response_dict
-            return response_dict['data']
-
         if category in loaded_collections.keys():
             if time.time() < loaded_collections[category]['expiration_time']:
                 return loaded_collections[category]
 
-            return create_loaded_data_dict()
+            return ChromaClient.update_loaded_data(collection, category)
         else:
-            return create_loaded_data_dict()
+            return ChromaClient.update_loaded_data(collection, category)
+
+    @staticmethod
+    def update_loaded_data(collection: Collection,
+                           category: str,
+                           re_query: bool = False) -> dict:
+        if re_query:
+            ChromaClient.print_console_message(
+                message="Nothing found, updating loaded data...",
+                message_color=OutputColors.WARNING.value)
+        else:
+            ChromaClient.print_console_message(
+                message="Updating loaded data...",
+                message_color=OutputColors.WARNING.value)
+        aux = collection.get(where={category: True}).items()
+        response_dict = {
+            'data': dict(aux),
+            'expiration_time': time.time() + (60 * 10)
+        }
+
+        loaded_collections[category] = response_dict
+        return response_dict['data']
 
     def execute_basic_chroma_query(self,
                                    collection_name: str,
@@ -137,14 +150,24 @@ class ChromaClient:
             category=categories[0],
             collection=collection)
 
-        # TODO: if query empty, reload, update loaded dict and retry query,
-        #  research indexing by category to reduce possible downtime
-
         # TODO: Modify tool to simply categorize information retrieved from database
+
+        query_result = self.basic_chroma_query(collection,
+                                               loaded_db_data['documents'],
+                                               "paramilitar")
+        if bool(query_result):
+            return query_result
+
+        loaded_db_data = ChromaClient.update_loaded_data(collection=collection,
+                                                         category=categories[0],
+                                                         re_query=True)
+        ChromaClient.print_console_message(
+            message="Retrying query...",
+            message_color=OutputColors.WARNING.value)
 
         return self.basic_chroma_query(collection,
                                        loaded_db_data['documents'],
-                                       "hydrogenation")
+                                       "paramilitar")
 
     def process_pdf_file(self,
                          file_path: str,
