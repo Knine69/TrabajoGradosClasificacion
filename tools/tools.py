@@ -1,4 +1,5 @@
 from langchain.tools import tool
+from tools import chroma_client
 
 
 @tool
@@ -8,6 +9,13 @@ def check_word_length(word: str) -> int:
     return result
 
 
-tools = [check_word_length]
+@tool
+def perform_chroma_query(collection: str, categories: list[str]) -> bool:
+    """Takes an input text and queries a chroma database"""
+    result = chroma_client.execute_basic_chroma_query(collection, categories)
+    print(f"Result: {result}")
+    return True if result else False
 
-# TODO: create a tool which calls chroma query
+
+tools = [check_word_length, perform_chroma_query]
+
