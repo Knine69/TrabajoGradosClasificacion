@@ -26,10 +26,10 @@ class ChromaClient:
             self.embedding_model = ChromaClient.embedding_model
             self.tokenizer = ChromaClient.tokenizer
 
-        def __call__(self, input: Documents) -> Embeddings:
+        def __call__(self, doc_input: Documents) -> Embeddings:
             embedding_results = []
 
-            for doc in input:
+            for doc in doc_input:
                 inputs = self.tokenizer(doc,
                                         return_tensors="pt",
                                         padding=True,
