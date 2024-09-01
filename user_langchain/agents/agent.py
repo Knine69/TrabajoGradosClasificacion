@@ -7,18 +7,17 @@ from tools.tools import tools
 class LangchainAgent:
 
     def __init__(self) -> None:
-        self.llm_model = Ollama(model="llama3")
+        self.llm_model = Ollama(model="llava:13b")
         self._agent = create_react_agent(self.llm_model,
                                          tools,
                                          prompt)
+        # TODO: Validate in depth agent executor
         self.agent_executor = AgentExecutor(
             agent=self._agent,
             tools=tools,
             verbose=True,
             handle_parsing_errors=True,
             max_iterations=5,
-            # callbacks=m, TODO: Validate if behaviour can be corrected with
-            # callbacks
             return_intermediate_steps=True)
 
     @staticmethod
@@ -53,10 +52,24 @@ class LangchainAgent:
         return {"output": False, "description": "Too many failed attempts"}
 
     def execute_agent_query(self):
-        query_prompt = "Cuál es la longitud de la palabra: "
-        query = input(f"{query_prompt}")
+        query_prompt = """
+        No hagas escape al caracter '\\_'
+        Realiza una consulta en la colección 'sample_collection' (collection) usando la herramienta 'perform_chroma_query'.
+    
+        Las categorías (categories) son:
+        
+        - robotica
+        - control
+        - quimica
+            
+        El formato de entrada debe ser:
+        Action Input: collection, categories
+        
+        Asegúrate de que las categorías se proporcionen como una lista de strings.
+        """
+
         result = self.invoke_query(executor=self.agent_executor,
-                                   query=f'{query_prompt}"{query}"')
+                                   query=f'{query_prompt}')
 
         if result['output']:
             print(f"Query result is: {result}")
