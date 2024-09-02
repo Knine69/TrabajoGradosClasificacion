@@ -90,8 +90,9 @@ class ChromaClient:
         return result
 
     @staticmethod
-    def print_console_message(message: str,
-                              message_color: str = OutputColors.WHITE.value) -> None:
+    def print_console_message(
+            message: str,
+            message_color: str = OutputColors.WHITE.value) -> None:
         print(f"{message_color}{message}{OutputColors.WHITE.value}")
 
     def _validate_existing_collection(self, collection_name: str) -> Collection:
@@ -143,18 +144,17 @@ class ChromaClient:
 
     def execute_basic_chroma_query(self,
                                    collection_name: str,
-                                   categories: list[str]):
+                                   categories: list[str],
+                                   search_text: str):
         collection = self._validate_existing_collection(collection_name)
 
         loaded_db_data = self._load_category_data(
             category=categories[0],
             collection=collection)
 
-        # TODO: Modify tool to simply categorize information retrieved from database
-
         query_result = self.basic_chroma_query(collection,
                                                loaded_db_data['documents'],
-                                               "paramilitar")
+                                               search_text)
         if bool(query_result):
             return query_result
 
@@ -167,7 +167,7 @@ class ChromaClient:
 
         return self.basic_chroma_query(collection,
                                        loaded_db_data['documents'],
-                                       "paramilitar")
+                                       search_text)
 
     def process_pdf_file(self,
                          file_path: str,
@@ -205,4 +205,5 @@ if __name__ == "__main__":
                                                  FileCategories.CHEMISTRY.value,
                                                  FileCategories.CONTROL.value,
                                                  FileCategories.ROBOTICS.value,
-                                             ])
+                                             ],
+                                             "hydrogenation")
