@@ -1,8 +1,5 @@
 from flask import Flask
-from chroma.flask.controller.chroma_client import  chroma_router
-
-loaded_collections = {}
-__all__ = ['loaded_collections']
+from chroma.flask.controller.chroma_client import chroma_router
 
 
 def create_app():
