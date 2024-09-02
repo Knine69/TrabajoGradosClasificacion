@@ -1,8 +1,4 @@
 import chromadb
-import torch
-
-from transformers import AutoTokenizer, AutoModel
-from chromadb import Documents, EmbeddingFunction, Embeddings
 
 from chroma.category.types import FileCategories
 from chroma.flask.domain.chroma_collections import ChromaCollections
@@ -13,42 +9,11 @@ chroma_router = Blueprint('chroma', __name__, url_prefix='/chroma')
 
 
 class ChromaClient:
-    tokenizer = AutoTokenizer.from_pretrained("bert-base-multilingual-cased")
-    embedding_model = AutoModel.from_pretrained("bert-base-multilingual-cased")
 
     def __init__(self) -> None:
         # TODO: research db indexation
         self._chroma_client = chromadb.PersistentClient(path='./chroma')
         self._chroma_collections = ChromaCollections(self._chroma_client)
-
-    class EmbedderFunction(EmbeddingFunction):
-        def __init__(self) -> None:
-            super().__init__()
-            self.embedding_model = ChromaClient.embedding_model
-            self.tokenizer = ChromaClient.tokenizer
-
-        def __call__(self, doc_input: Documents) -> Embeddings:
-            embedding_results = []
-
-            for doc in doc_input:
-                inputs = self.tokenizer(doc,
-                                        return_tensors="pt",
-                                        padding=True,
-                                        truncation=True,
-                                        max_length=512)
-
-                with torch.no_grad():
-                    outputs = self.embedding_model(**inputs)
-
-                last_hidden_state = outputs.last_hidden_state
-                embeddings = torch.mean(last_hidden_state, dim=1).squeeze()
-
-                if embeddings.shape[-1] != 768:
-                    raise ValueError("Embedding dimensionality mismatch.")
-
-                embedding_results.append(embeddings.numpy().tolist())
-
-            return embedding_results
 
     @staticmethod
     def _validate_params(*args) -> bool:

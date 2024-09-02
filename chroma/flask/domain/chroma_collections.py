@@ -1,13 +1,15 @@
 import chromadb
 import time
+import torch
 
+from transformers import AutoTokenizer, AutoModel
+from chromadb import Documents, EmbeddingFunction, Embeddings
 from chromadb.errors import InvalidDimensionException
 from chromadb.api.models.Collection import Collection
 from documents.utils import pdf_to_bytes
 
 from chroma.flask import loaded_collections
 from chroma.category.types import FileCategories
-from chroma.flask.controller.chroma_client import ChromaClient
 
 from utils.outputs import OutputColors, print_console_message
 
@@ -16,21 +18,35 @@ class ChromaCollections:
     def __init__(self, chroma_client: chromadb):
         self._chroma_client = chroma_client
 
-    def validate_existing_collection(self, collection_name: str) -> Collection:
-        try:
-            result = self._chroma_client.get_collection(
-                name=collection_name,
-                embedding_function=ChromaClient.EmbedderFunction())
-        except (ValueError, InvalidDimensionException):
-            print_console_message(message_color=OutputColors.WARNING.value,
-                                  message="Collection does not exist.")
-            print_console_message(message_color=OutputColors.HEADER.value,
-                                  message="Creating collection...")
-            return (
-                self._chroma_client.create_collection(
-                    name=collection_name,
-                    embedding_function=ChromaClient.EmbedderFunction()))
-        return result
+    class EmbedderFunction(EmbeddingFunction):
+
+        tokenizer = (
+            AutoTokenizer.from_pretrained("bert-base-multilingual-cased"))
+        embedding_model = (
+            AutoModel.from_pretrained("bert-base-multilingual-cased"))
+
+        def __call__(self, doc_input: Documents) -> Embeddings:
+            embedding_results = []
+
+            for doc in doc_input:
+                inputs = self.tokenizer(doc,
+                                        return_tensors="pt",
+                                        padding=True,
+                                        truncation=True,
+                                        max_length=512)
+
+                with torch.no_grad():
+                    outputs = self.embedding_model(**inputs)
+
+                last_hidden_state = outputs.last_hidden_state
+                embeddings = torch.mean(last_hidden_state, dim=1).squeeze()
+
+                if embeddings.shape[-1] != 768:
+                    raise ValueError("Embedding dimensionality mismatch.")
+
+                embedding_results.append(embeddings.numpy().tolist())
+
+            return embedding_results
 
     @staticmethod
     def create_metadata_object(categories_list: list[str]) -> dict:
@@ -41,16 +57,6 @@ class ChromaCollections:
                 result[aux] = True
 
         return result
-
-    @staticmethod
-    def load_category_data(category: str, collection: Collection):
-        if category in loaded_collections.keys():
-            if time.time() < loaded_collections[category]['expiration_time']:
-                return loaded_collections[category]
-
-            return ChromaCollections.update_loaded_data(collection, category)
-        else:
-            return ChromaCollections.update_loaded_data(collection, category)
 
     @staticmethod
     def update_loaded_data(collection: Collection,
@@ -86,13 +92,13 @@ class ChromaCollections:
         results = dict(results)
 
         return {"query_result": results} if bool(results['documents'][0]) else \
-            {}
+            False
 
     @staticmethod
-    def add_document_embbeds(collection: Collection,
-                             document: str,
-                             metadata_filter: [dict[str, str]],
-                             ids: list[str]):
+    def add_document_embeds(collection: Collection,
+                            document: str,
+                            metadata_filter: [dict[str, str]],
+                            ids: list[str]):
         try:
             collection.add(
                 documents=[document],
@@ -106,13 +112,38 @@ class ChromaCollections:
                                   message_color=OutputColors.FAIL.value)
             return False
 
+    def validate_existing_collection(self, collection_name: str) -> Collection:
+        try:
+            result = self._chroma_client.get_collection(
+                name=collection_name,
+                embedding_function=ChromaCollections.EmbedderFunction())
+        except (ValueError, InvalidDimensionException):
+            print_console_message(message_color=OutputColors.WARNING.value,
+                                  message="Collection does not exist.")
+            print_console_message(message_color=OutputColors.HEADER.value,
+                                  message="Creating collection...")
+            return (
+                self._chroma_client.create_collection(
+                    name=collection_name,
+                    embedding_function=ChromaCollections.EmbedderFunction()))
+        return result
+
+    def load_category_data(self, category: str, collection: Collection):
+        if category in loaded_collections.keys():
+            if time.time() < loaded_collections[category]['expiration_time']:
+                return loaded_collections[category]
+
+            return self.update_loaded_data(collection, category)
+        else:
+            return self.update_loaded_data(collection, category)
+
     def process_pdf_file(self, file_path, categories, collection_name):
         collection = self.validate_existing_collection(collection_name)
 
         pdf_text = pdf_to_bytes(file_path)
         sample_doc = pdf_text.decode('utf-8')
 
-        result = self.add_document_embbeds(
+        result = self.add_document_embeds(
             collection,
             sample_doc,
             [
@@ -135,7 +166,7 @@ class ChromaCollections:
                              max_tries: int = 2):
         collection = self.validate_existing_collection(collection_name)
 
-        loaded_db_data = ChromaCollections.load_category_data(
+        loaded_db_data = self.load_category_data(
             category=category,
             collection=collection)
 
