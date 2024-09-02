@@ -8,7 +8,7 @@ from chromadb.errors import InvalidDimensionException
 from chromadb.api.models.Collection import Collection
 from documents.utils import pdf_to_bytes
 
-from chroma.flask import loaded_collections
+from chroma import loaded_collections
 from chroma.category.types import FileCategories
 
 from utils.outputs import OutputColors, print_console_message
