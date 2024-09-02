@@ -20,4 +20,3 @@ def perform_chroma_query(collection: str, categories: list[str]) -> bool:
 
 
 tools = [check_word_length, perform_chroma_query]
-
