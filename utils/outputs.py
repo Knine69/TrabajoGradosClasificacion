@@ -12,3 +12,9 @@ class OutputColors(Enum):
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
     WHITE = '\33[0m'
+
+
+def print_console_message(
+        message: str,
+        message_color: str = OutputColors.WHITE.value) -> None:
+    print(f"{message_color}{message}{OutputColors.WHITE.value}")
