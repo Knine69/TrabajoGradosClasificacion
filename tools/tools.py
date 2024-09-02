@@ -9,6 +9,8 @@ def check_word_length(word: str) -> int:
     return result
 
 
+# TODO: Modify tool to simply categorize information retrieved from database
+
 @tool
 def perform_chroma_query(collection: str, categories: list[str]) -> bool:
     """Takes an input text and queries a chroma database"""
