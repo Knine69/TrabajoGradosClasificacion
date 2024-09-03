@@ -1,6 +1,7 @@
 from chroma.flask.domain.chroma_collections import ChromaCollections
 from utils.request_validator import validate_params
 from flask import Blueprint, request, jsonify
+import json
 
 chroma_router = Blueprint('chroma', __name__, url_prefix='/chroma')
 chroma_collections = ChromaCollections()
@@ -8,9 +9,10 @@ chroma_collections = ChromaCollections()
 
 @chroma_router.get("/documents")
 def execute_basic_chroma_query():
-    collection_name = request.args.get('collection')
-    category = request.args.get('category')
-    search_text = request.args.get('search_text')
+    request_data = json.loads(request.data.decode('utf-8'))
+    search_text = request_data.get('search_text', False)
+    category = request_data.get('category', False)
+    collection_name = request_data.get('collection_name', False)
 
     if validate_params(
             collection_name, category, search_text):
@@ -26,9 +28,11 @@ def execute_basic_chroma_query():
 
 @chroma_router.post("/embed_document")
 def process_pdf_file():
-    file_path = request.args.get('file_path')
-    categories = request.args.getlist('categories')
-    collection_name = request.args.get('collection_name')
+
+    request_data = json.loads(request.data.decode('utf-8'))
+    file_path = request_data.get('file_path', False)
+    categories = request_data.get('categories', False)
+    collection_name = request_data.get('collection_name', False)
 
     if validate_params(
             file_path, categories, collection_name):
