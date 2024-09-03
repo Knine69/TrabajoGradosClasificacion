@@ -1,14 +1,9 @@
-import chromadb
-
 from chroma.flask.domain.chroma_collections import ChromaCollections
 from utils.request_validator import validate_params
 from flask import Blueprint, request, jsonify
 
 chroma_router = Blueprint('chroma', __name__, url_prefix='/chroma')
-# TODO: research db indexation
-chroma_client = chromadb.PersistentClient(
-    path='chroma/flask/controller/chroma')
-chroma_collections = ChromaCollections(chroma_client)
+chroma_collections = ChromaCollections()
 
 
 @chroma_router.get("/documents")

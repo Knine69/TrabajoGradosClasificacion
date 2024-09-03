@@ -14,9 +14,12 @@ from chroma.category.types import FileCategories
 from utils.outputs import OutputColors, print_console_message
 
 
+# TODO: research initialization as server
 class ChromaCollections:
-    def __init__(self, chroma_client: chromadb):
-        self._chroma_client = chroma_client
+    def __init__(self):
+        self._chroma_client = chromadb.PersistentClient(
+            path='chroma/flask/controller/chroma',
+        )
 
     class EmbedderFunction(EmbeddingFunction):
 
@@ -125,7 +128,11 @@ class ChromaCollections:
             return (
                 self._chroma_client.create_collection(
                     name=collection_name,
-                    embedding_function=ChromaCollections.EmbedderFunction()))
+                    embedding_function=ChromaCollections.EmbedderFunction(),
+                    metadata={"hnsw:space": "cosine",
+                              "hnsw:M": 1024,
+                              "hnsw:ef": 64}
+                ))
         return result
 
     def load_category_data(self, category: str, collection: Collection):
