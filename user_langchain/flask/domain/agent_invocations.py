@@ -68,5 +68,7 @@ class LangchainAgent:
 
         if result['output']:
             print(f"Query result is: {result}")
+            return result
         else:
             print(f"Query failed: {result['description']}")
+            return False
