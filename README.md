@@ -37,5 +37,5 @@ For a whole dependency installation run:
 curl -X POST 'http://localhost:5000/chroma/embed_document' -H 'Content-Type: application/json' -d '{"collection_name": "some_collection", "categories": ["quimica", "control"], "file_path": "chroma/sample_documents/chemistry_sample.pdf"}'
 
 # QUERY FILES IN DATABASE SERVER
-curl -X POST 'http://localhost:5000/chroma/documents' -H 'Content-Type: application/json' -d '{"collection_name": "some_collection", "category": "quimica", "search_text": "hydrogenation"}'
+curl -X GET 'http://localhost:5000/chroma/documents' -H 'Content-Type: application/json' -d '{"collection_name": "some_collection", "category": "quimica", "search_text": "hydrogenation"}'
 ```
