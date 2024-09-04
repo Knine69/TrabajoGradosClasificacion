@@ -1,6 +1,7 @@
 import chromadb
 import time
 import torch
+import requests
 
 from transformers import AutoTokenizer, AutoModel
 from chromadb import Documents, EmbeddingFunction, Embeddings
@@ -14,7 +15,6 @@ from chroma.category.types import FileCategories
 from utils.outputs import OutputColors, print_console_message
 
 
-# TODO: research initialization as server
 class ChromaCollections:
     def __init__(self):
         self._chroma_client = chromadb.HttpClient(host='localhost', port=8000)
@@ -92,8 +92,7 @@ class ChromaCollections:
 
         results = dict(results)
 
-        return {"query_result": results} if bool(results['documents'][0]) else \
-            False
+        return results if bool(results['documents'][0]) else False
 
     @staticmethod
     def add_document_embeds(collection: Collection,
@@ -194,8 +193,21 @@ class ChromaCollections:
                 message_color=OutputColors.WARNING.value)
             counter += 1
 
+        print(f"Query result: {query_result}")
+
+        response = requests.post(
+            url="http://localhost:5001/langchain/search",
+            json={
+                "categories": query_result.get("metadatas", []),
+                "documents": query_result.get("documents", [])
+            },
+            headers={
+                "Content-Type": "application/json"
+            }
+        ).json()
+
         return {
             "STATE": "OK",
             "DESCRIPTION": "Successfully performed your query",
-            "RESPONSE_DATA": query_result
+            "RESPONSE_DATA": response
         }
