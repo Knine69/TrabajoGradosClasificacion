@@ -51,16 +51,13 @@ class LangchainAgent:
             print(f"Attempt {attempt + 1}")
         return {"output": False, "description": "Too many failed attempts"}
 
-    def execute_agent_query(self, categories: list[str]):
+    def execute_agent_query(self, categories: list, documents: list):
         query_prompt = f"""
-        No hagas escape al caracter '\\_'
-        Realiza una clasificación usando la herramienta 'perform_chroma_query'.
-    
-        La información con la cuál debes hacer la clasificación es:
+        Realiza una clasificación de los documentos más apropiados a ser electos según la siguiente lista de categorías:
         
         {categories}
         
-        Asegúrate de que las categorías se proporcionen como una lista de strings.
+        La lista de documentos es: {documents}
         """
 
         result = self._invoke_query(executor=self.agent_executor,
