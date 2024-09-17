@@ -13,4 +13,4 @@ pip install -r ./requirements.txt
 EOF
 
 CMD ["flask", "run", "--debug", "--host=0.0.0.0"]
-EXPOSE 5000
+EXPOSE 8001

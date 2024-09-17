@@ -5,7 +5,7 @@ ENV PYTHONUNBUFFERED=1 \
     FLASK_ENV=development
 
 WORKDIR /app
-COPY . ../requirements.txt ./
+COPY . ./
 
 RUN <<EOF
 apk update
@@ -13,4 +13,4 @@ pip install -r ./requirements.txt
 EOF
 
 CMD ["flask", "run", "--debug", "--host=0.0.0.0"]
-EXPOSE 5000
+EXPOSE 8000
