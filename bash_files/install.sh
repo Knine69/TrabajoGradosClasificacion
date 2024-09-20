@@ -74,8 +74,8 @@ OLLAMA_INSTALL_DIR="$HOME/.local"
 BINDIR="$HOME/.local/bin"
 
 status "Installing ollama to $OLLAMA_INSTALL_DIR"
-install -o0 -g0 -m755 -d "$HOME"/.local/bin
-install -o0 -g0 -m755 -d "$OLLAMA_INSTALL_DIR"
+install  -m755 -d "$HOME"/.local/bin
+install  -m755 -d "$OLLAMA_INSTALL_DIR"
 if curl -I --silent --fail --location "https://ollama.com/download/ollama-linux-${ARCH}.tgz${VER_PARAM}" >/dev/null ; then
     status "Downloading Linux ${ARCH} bundle"
     curl --fail --show-error --location --progress-bar \
@@ -90,7 +90,7 @@ else
     status "Downloading Linux ${ARCH} CLI"
     curl --fail --show-error --location --progress-bar -o "$TEMP_DIR/ollama"\
     "https://ollama.com/download/ollama-linux-${ARCH}${VER_PARAM}"
-    install -o0 -g0 -m755 "$TEMP_DIR"/ollama "$OLLAMA_INSTALL_DIR"/ollama
+    install  -m755 "$TEMP_DIR"/ollama "$OLLAMA_INSTALL_DIR"/ollama
     BUNDLE=0
     if [ "$OLLAMA_INSTALL_DIR/ollama" != "$BINDIR/ollama" ] ; then
         status "Making ollama accessible in the PATH in $BINDIR"
