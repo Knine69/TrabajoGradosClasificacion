@@ -117,7 +117,7 @@ class ChromaCollections:
             result = self._chroma_client.get_collection(
                 name=collection_name,
                 embedding_function=ChromaCollections.EmbedderFunction())
-        except (ValueError, InvalidDimensionException):
+        except (ValueError, InvalidDimensionException, Exception):
             print_console_message(message_color=OutputColors.WARNING.value,
                                   message="Collection does not exist.")
             print_console_message(message_color=OutputColors.HEADER.value,
