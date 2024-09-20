@@ -29,6 +29,92 @@ For a whole dependency installation run:
     pip install -r requirements.txt
 ```
 
+#### Ollama Installation
+
+In order to install Ollama, as a root user the process is simple, simply run:
+
+```
+    # Download and install ollama 
+    curl -fsSL https://ollama.com/install.sh | sh
+    
+    # Check if Ollama was installed in terminal
+    ollama
+    
+    # Serve Ollama in a separate terminal
+    ollama serve
+    
+    # Check ollama version
+    ollama -v
+```
+
+If, on the other hand, you wish to install ollama as a non-root user, then follow the next instructions:
+
+```
+    # Run sh in shell files in repo
+        cd bash_files/
+        sh install.sh
+    
+    # Verify ollama was installed locally after installation finishes
+        ls ~/.local/bin/ollama
+    
+    # Add local variable path into path variable to enable running ollama
+        nano ~/.bashrc
+        # Add at end of file
+            export PATH=$HOME/.local/bin:$PATH
+        # Reload your configuration in .bashrc 
+            source ~/.bashrc 
+        
+    # Verify that path was correctly exported
+        echo $PATH
+    
+    # Check ollama is working
+        ollama
+        
+    # Check ollama version
+         ollama --version
+         
+         # Run in separate terminal if ollama version does not work and try again
+            ollama serve 
+         
+    
+```
+
+#### Install LLM Ollama models
+
+In order to get fine-tunned models which are created for chat/dialogue use cases:
+```
+    # 40 GB model
+    ollama run llama3:70b-instruct
+    
+    # 49 GB model
+    ollama run llama3:70b-instruct-q5_K_S
+    
+    # 58 GB model
+    ollama run llama3:70b-instruct-q6_K
+    
+    # 75 GB model
+    ollama run llama3:70b-instruct-q8_0
+```
+
+To install a pre-trained base model then run: 
+
+```
+    # 40 GB model
+    ollama run llama3:70b-text
+    
+    # 49 GB model
+    ollama run llama3:70b-text-q5_0
+    
+    # 58 GB model
+    ollama run llama3:70b-text-q6_K
+    
+    # 75 GB model
+    ollama run llama3:70b-text-q8_0
+```
+
+To check for more available models, look into: 
+
+https://ollama.com/library
 
 #### CURLS EXAMPLES:
 
