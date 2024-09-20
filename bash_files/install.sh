@@ -107,52 +107,52 @@ trap install_success EXIT
 
 # Everything from this point onwards is optional.
 
-configure_systemd() {
-    if ! id ollama >/dev/null 2>&1; then
-        status "Creating ollama user..."
-        useradd -r -s /bin/false -U -m -d /usr/share/ollama ollama
-    fi
-    if getent group render >/dev/null 2>&1; then
-        status "Adding ollama user to render group..."
-        usermod -a -G render ollama
-    fi
-    if getent group video >/dev/null 2>&1; then
-        status "Adding ollama user to video group..."
-        usermod -a -G video ollama
-    fi
-
-    status "Adding current user to ollama group..."
-    usermod -a -G ollama $(whoami)
-
-    status "Creating ollama systemd service..."
-    cat <<EOF | tee /etc/systemd/system/ollama.service >/dev/null
-[Unit]
-Description=Ollama Service
-After=network-online.target
-
-[Service]
-ExecStart=$BINDIR/ollama serve
-User=ollama
-Group=ollama
-Restart=always
-RestartSec=3
-Environment="PATH=$PATH"
-
-[Install]
-WantedBy=default.target
-EOF
-    SYSTEMCTL_RUNNING="$(systemctl is-system-running || true)"
-    case $SYSTEMCTL_RUNNING in
-        running|degraded)
-            status "Enabling and starting ollama service..."
-            systemctl daemon-reload
-            systemctl enable ollama
-
-            start_service() { systemctl restart ollama; }
-            trap start_service EXIT
-            ;;
-    esac
-}
+#configure_systemd() {
+#    if ! id ollama >/dev/null 2>&1; then
+#        status "Creating ollama user..."
+#        useradd -r -s /bin/false -U -m -d /usr/share/ollama ollama
+#    fi
+#    if getent group render >/dev/null 2>&1; then
+#        status "Adding ollama user to render group..."
+#        usermod -a -G render ollama
+#    fi
+#    if getent group video >/dev/null 2>&1; then
+#        status "Adding ollama user to video group..."
+#        usermod -a -G video ollama
+#    fi
+#
+#    status "Adding current user to ollama group..."
+#    usermod -a -G ollama $(whoami)
+#
+#    status "Creating ollama systemd service..."
+#    cat <<EOF | tee /etc/systemd/system/ollama.service >/dev/null
+#[Unit]
+#Description=Ollama Service
+#After=network-online.target
+#
+#[Service]
+#ExecStart=$BINDIR/ollama serve
+#User=ollama
+#Group=ollama
+#Restart=always
+#RestartSec=3
+#Environment="PATH=$PATH"
+#
+#[Install]
+#WantedBy=default.target
+#EOF
+#    SYSTEMCTL_RUNNING="$(systemctl is-system-running || true)"
+#    case $SYSTEMCTL_RUNNING in
+#        running|degraded)
+#            status "Enabling and starting ollama service..."
+#            systemctl daemon-reload
+#            systemctl enable ollama
+#
+#            start_service() { systemctl restart ollama; }
+#            trap start_service EXIT
+#            ;;
+#    esac
+#}
 
 if available systemctl; then
     configure_systemd
