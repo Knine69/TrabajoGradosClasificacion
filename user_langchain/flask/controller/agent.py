@@ -25,7 +25,3 @@ def search_query():
     })
 
 # TODO: add celery as async queue
-
-if __name__ == "__main__":
-    agent = LangchainAgent()
-    agent.execute_agent_query()
