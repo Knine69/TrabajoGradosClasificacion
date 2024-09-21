@@ -24,6 +24,9 @@ def search_query():
         "DESCRIPTION": "Please provide the required information to query."
     })
 
+# TODO: add celery as async queue
+
+# TODO: add gunicorn as server
 
 if __name__ == "__main__":
     agent = LangchainAgent()

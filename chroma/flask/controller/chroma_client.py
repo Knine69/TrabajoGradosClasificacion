@@ -40,6 +40,10 @@ def process_pdf_file():
             file_path, categories, collection_name
         ))
 
+# TODO: add celery as async queue
+
+# TODO: add gunicorn as server
+
 # TODO: access pdf directory Try bind mounts
 
 # TODO: Load pdf files from database into local file system
