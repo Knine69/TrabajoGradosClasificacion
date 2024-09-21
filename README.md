@@ -16,8 +16,6 @@ This project as of today, requires the use of python 3.9.13
 
 In order to solve possible issues that may arise, run the following dependencies installation:
 
-Download Ollama and pull model to use locally
-
 ```
     pip torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
     pip install --upgrade pymupdf
@@ -25,7 +23,7 @@ Download Ollama and pull model to use locally
 
 For a whole dependency installation run:
 
-```
+```commandline
     pip install -r requirements.txt
 ```
 
@@ -33,7 +31,7 @@ For a whole dependency installation run:
 
 In order to install Ollama, as a root user the process is simple, simply run:
 
-```
+```commandline
     # Download and install ollama 
     curl -fsSL https://ollama.com/install.sh | sh
     
@@ -49,7 +47,7 @@ In order to install Ollama, as a root user the process is simple, simply run:
 
 If, on the other hand, you wish to install ollama as a non-root user, then follow the next instructions:
 
-```
+```commandline
     # Run sh in shell files in repo
         cd bash_files/
         sh install.sh
@@ -82,7 +80,7 @@ If, on the other hand, you wish to install ollama as a non-root user, then follo
 #### Install LLM Ollama models
 
 In order to get fine-tunned models which are created for chat/dialogue use cases:
-```
+```commandline
     # 40 GB model
     ollama run llama3:70b-instruct
     
@@ -98,7 +96,7 @@ In order to get fine-tunned models which are created for chat/dialogue use cases
 
 To install a pre-trained base model then run: 
 
-```
+```commandline
     # 40 GB model
     ollama run llama3:70b-text
     
@@ -116,11 +114,32 @@ To check for more available models, look into:
 
 https://ollama.com/library
 
+#### Server Running Configurations
+
+##### Run gunicorn as a server
+
+Having already installed the required dependencies, in order to configure gunicorn as a server
+it is only needed to run the following:
+
+```commandline
+
+    # Run from root directory
+    gunicorn -c chroma/gunicorn.conf.py 'chroma:create_app()'
+    
+    # Run from root directory
+    gunicorn -c user_langchain/gunicorn.conf.py 'user_langchain:create_app()'
+```
+
+
+
 #### CURLS EXAMPLES:
 
 ```
 # EMBED A DOCUMENT INTO THE DATABASE BASED ON LOCAL SYSTEM FILE PATH
 curl -X POST 'http://localhost:5000/chroma/embed_document' -H 'Content-Type: application/json' -d '{"collection_name": "some_collection", "categories": ["quimica", "control"], "file_path": "chroma/sample_documents/chemistry_sample.pdf"}'
+
+
+curl -X POST 'http://localhost:5000/chroma/embed_document' -H 'Content-Type: application/json' -d '{"collection_name": "some_collection", "categories": ["quimica", "control"], "file_path": "/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Jutta Heckhausen/Motivation and Action (8620)/Motivation and Action - Jutta Heckhausen.pdf"}'
 
 # QUERY FILES IN DATABASE SERVER
 curl -X GET 'http://localhost:5000/chroma/documents' -H 'Content-Type: application/json' -d '{"collection_name": "some_collection", "category": "quimica", "search_text": "hydrogenation"}'
