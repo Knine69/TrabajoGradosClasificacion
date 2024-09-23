@@ -1,20 +1,14 @@
 ## Setup Process:
 
-#### Resource installation:
-```
-    Need to install C++ build tools for chromadb. Follow resource: 
-
-    https://visualstudio.microsoft.com/es/visual-cpp-build-tools/
-```
 
 ### Python version required:
 
-This project as of today, requires the use of python 3.9.13
+This project as of today, requires the use of python 3.9.13 =<
 
 
 #### Dependencies installation:
 
-In order to solve possible issues that may arise, run the following dependencies installation:
+In order to solve possible issues that may arise, run the following dependencies' installation:
 
 ```
     pip torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
@@ -130,7 +124,18 @@ it is only needed to run the following:
     gunicorn -c user_langchain/gunicorn.conf.py 'user_langchain:create_app()'
 ```
 
+#### Install redis as a message broker
 
+In order to process tasks asynchronously, a message queue needs to be instanced.
+The dependencies were already during previous steps but, it's still necessary to
+run a redis server to set up the broker.
+
+To easily install a redis server, we will make use of docker. So simply run
+
+```commandline
+    docker run -d --name redis-backend -p 6379:6379 redis
+    docker run -d --hostname rabbit-broker --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+```
 
 #### CURLS EXAMPLES:
 
