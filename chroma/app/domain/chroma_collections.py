@@ -2,7 +2,6 @@ import chromadb
 import time
 import torch
 import requests
-import warnings
 
 from transformers import AutoTokenizer, AutoModel
 from chromadb import Documents, EmbeddingFunction, Embeddings
