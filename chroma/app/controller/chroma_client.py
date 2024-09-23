@@ -1,6 +1,6 @@
 from chroma.app.domain.chroma_collections import ChromaCollections
-from chroma.app.domain.task_executor import (chroma_search_query_task,
-                                             sse_stream)
+from task_executor.task_executor import (chroma_search_query_task,
+                                         sse_stream)
 from utils.request_validator import validate_params
 from flask import Blueprint, request, jsonify, Response
 import json
@@ -40,9 +40,7 @@ def execute_basic_chroma_query():
         print("PARAMS VALIDATED, ENTERING TASK INITIALIZATION")
         task = chroma_search_query_task.apply_async(
             args=[collection_name, category, search_text],)
-            # link=notify_task_completion.s(callback_url))
         return Response(sse_stream(task.id), content_type='text/event-stream')
-        # return jsonify({"task_id": task.id, "status": "Task submitted"}), 202
 
     return jsonify({
         'STATE': 'Query failed',
@@ -75,9 +73,6 @@ def _get_request_data(request_data, *names):
             else False)
         for name in names
     )
-
-
-# TODO: Check how to make webhooks answer http response to user
 
 # TODO: access pdf directory Try bind mounts
 

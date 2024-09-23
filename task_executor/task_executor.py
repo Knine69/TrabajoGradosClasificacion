@@ -3,7 +3,7 @@ import requests
 import json
 from chroma.celery_conf import celery
 from chroma.app.domain.chroma_collections import ChromaCollections
-from chroma.app.domain import redis_client
+from task_executor import redis_client
 from utils.outputs import print_console_message, OutputColors
 
 
