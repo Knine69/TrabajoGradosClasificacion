@@ -1,4 +1,4 @@
-bind = '0.0.0.0:8000'  # Address and port to bind to
+bind = '127.0.0.1:5001'  # Address and port to bind to
 workers = 4            # Number of worker processes
 threads = 2            # Number of threads per worker
 timeout = 120          # Timeout for requests
