@@ -4,10 +4,15 @@ celery = Celery()
 
 
 def celery_instantiation(app):
-    celery.conf.update(
-        backend=app.config['CELERY_RESULT_BACKEND'],
-        broker=app.config['CELERY_BROKER_URL']
-    )
+    celery.conf.update({
+        'broker_url': app.config['RABBIT_BROKER_URL'],
+        'result_backend': app.config['CELERY_RESULT_BACKEND'],
+        'task_serializer': 'json',
+        'result_serializer': 'json',
+        'accept_content': ['json'],
+        'timezone': 'UTC',
+        'enable_utc': True,
+    })
 
     class ContextTask(celery.Task):
         abstract = True
