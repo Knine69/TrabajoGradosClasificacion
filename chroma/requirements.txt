@@ -1,5 +1,11 @@
 annotated-types==0.7.0
 gunicorn==23.0.0
+redis==5.0.8
+redis-cli==1.0.1
+py-dotenv==0.1
+python-dotenv==1.0.1
+celery==5.4.0
+gunicorn==23.0.0
 anyio==4.4.0
 asgiref==3.8.1
 backoff==2.2.1
