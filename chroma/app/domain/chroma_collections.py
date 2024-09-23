@@ -2,6 +2,7 @@ import chromadb
 import time
 import torch
 import requests
+import json
 
 from transformers import AutoTokenizer, AutoModel
 from chromadb import Documents, EmbeddingFunction, Embeddings
@@ -166,9 +167,13 @@ class ChromaCollections:
                              max_tries: int = 2):
         collection = self.validate_existing_collection(collection_name)
 
-        loaded_db_data = self.load_category_data(
+        loaded_db_data: dict = self.load_category_data(
             category=category,
             collection=collection)
+
+        loaded_db_data = (
+            loaded_db_data if loaded_db_data.get('documents', None)
+            else loaded_db_data['data'])
 
         counter = 0
 
