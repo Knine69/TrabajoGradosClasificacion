@@ -35,8 +35,6 @@ def execute_basic_chroma_query():
                                        'collection_name',
                                        'callback_url')
 
-    print(f'Received params: {search_text}\n{category}\n{collection_name}\n{callback_url}')
-
     if validate_params(
             collection_name, category, search_text):
         print("PARAMS VALIDATED, ENTERING TASK INITIALIZATION")
