@@ -38,7 +38,8 @@ def execute_basic_chroma_query():
     if validate_params(
             collection_name, category, user_query):
         task = chroma_search_query_task.apply_async(
-            args=[collection_name, category, user_query],)
+            args=[collection_name, category, user_query],
+            queue='chroma_queue')
         return Response(sse_stream(task.id), content_type='text/event-stream')
 
     return jsonify({
