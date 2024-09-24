@@ -1,7 +1,7 @@
 from flask import Flask
-from chroma.app_config import Configuration
+from app_config import Configuration
 from chroma.app.controller.chroma_client import chroma_router
-from chroma.celery_conf import celery, celery_instantiation
+from chroma.celery_conf import celery_instantiation, celery
 
 
 def create_app():
@@ -9,5 +9,4 @@ def create_app():
     app.config.from_object(Configuration())
     celery_instantiation(app)
     app.register_blueprint(chroma_router)
-
     return app
