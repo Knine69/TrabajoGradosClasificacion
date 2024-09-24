@@ -8,6 +8,7 @@ class LangchainAgent:
 
     def __init__(self) -> None:
         self.llm_model = Ollama(model="llama3:70b-instruct")
+        # self.llm_model = Ollama(model="llava:13b")
         self._agent = create_react_agent(self.llm_model,
                                          tools,
                                          prompt)
@@ -26,7 +27,6 @@ class LangchainAgent:
             black_list = ["stopped", "limit", 'not a valid tool']
             output_response = any(word in string['output']
                                   for word in black_list)
-
             if output_response:
                 for step in string['intermediate_steps']:
                     if isinstance(step[1], str):
@@ -34,22 +34,25 @@ class LangchainAgent:
                             return step[1]
                     elif isinstance(step[1], int):
                         return step[1]
-
                 raise ValueError("Couldn't process query")
             else:
                 return string['output']
 
+        final_result = {"output": False,
+                        "description": "Too many failed attempts"}
         for attempt in range(max_attempts):
             try:
                 result = executor.invoke({"input": query})
                 return {
-                    'query_made': query,
-                    'output': output_handler(result)
+                    "STATE": "PROCESSED",
+                    "QUERY_MADE": query,
+                    "RESPONSE": output_handler(result)
                 }
             except Exception as e:
                 print(f"Something failed: {e}")
+
             print(f"Attempt {attempt + 1}")
-        return {"output": False, "description": "Too many failed attempts"}
+        return final_result
 
     def execute_agent_query(self, categories: list, documents: list):
         query_prompt = f"""
@@ -68,4 +71,4 @@ class LangchainAgent:
             return result
         else:
             print(f"Query failed: {result['description']}")
-            return False
+            return {"STATE": "ERROR", "DESCRIPTION": result['description']}
