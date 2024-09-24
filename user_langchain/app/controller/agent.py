@@ -24,4 +24,3 @@ def search_query():
         "STATE": "ERROR",
         "DESCRIPTION": "Please provide the required information to query."
     })
-
