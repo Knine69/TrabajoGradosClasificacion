@@ -1,6 +1,7 @@
 import time
 import requests
 import json
+import chroma.app.task_executor
 from user_langchain.celery_conf import celery
 from user_langchain.app import redis_client
 from user_langchain.app.domain.agent_invocations import LangchainAgent
@@ -24,9 +25,11 @@ def execute_task(*data, function):
     return function(*data)
 
 
-@celery.task
-def langchain_agent_invocation_task(categories, documents):
-    result = LangchainAgent().execute_agent_query(categories, documents)
+@celery.task(soft_time_limit=30, time_limit=50)
+def langchain_agent_invocation_task(categories, documents, user_query):
+    result = LangchainAgent().execute_agent_query(categories,
+                                                  documents,
+                                                  user_query)
 
     task_id = langchain_agent_invocation_task.request.id
     _store_task_results(task_id, result)
@@ -34,7 +37,7 @@ def langchain_agent_invocation_task(categories, documents):
     return result
 
 
-@celery.task
+@celery.task(soft_time_limit=30, time_limit=50)
 def notify_task_completion(result, callback_url):
     response = requests.post(callback_url, json={
         'status': 'Completed',

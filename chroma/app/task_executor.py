@@ -19,12 +19,12 @@ def sse_stream(task_id):
         time.sleep(2)  # Poll every 2 seconds
 
 
-@celery.task
+@celery.task(soft_time_limit=30, time_limit=50)
 def execute_task(*data, function):
     return function(*data)
 
 
-@celery.task
+@celery.task(soft_time_limit=30, time_limit=50)
 def chroma_search_query_task(collection_name, category, user_query):
 
     result = ChromaCollections().execute_search_query(collection_name,
@@ -37,7 +37,7 @@ def chroma_search_query_task(collection_name, category, user_query):
     return result
 
 
-@celery.task
+@celery.task(soft_time_limit=30, time_limit=50)
 def notify_task_completion(result, callback_url):
     response = requests.post(callback_url, json={
         'status': 'Completed',
