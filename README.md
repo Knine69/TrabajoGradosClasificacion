@@ -148,8 +148,8 @@ In order for us to run our Celery applications, we must run the following comman
 ```commandline
     
     # Run from a separate terminal each, at root level
-    celery -A chroma worker --loglevel=info
-    celery -A user_langchain worker --loglevel=debug
+    celery -A chroma worker --loglevel=info --time-limit=50 --soft-time-limit=30 -Q chroma_queue
+    celery -A user_langchain worker --loglevel=debug --time-limit=50 --soft-time-limit=30 -Q langchain_queue
 
 ```
 
@@ -157,7 +157,7 @@ In order for us to run our Celery applications, we must run the following comman
 
 ```
 # EMBED A DOCUMENT INTO THE DATABASE BASED ON LOCAL SYSTEM FILE PATH
-curl -X POST 'http://localhost:5000/chroma/embed_document' -H 'Content-Type: application/json' -d '{"collection_name": "some_collection", "categories": ["quimica", "control"], "file_path": "chroma/sample_documents/chemistry_sample.pdf"}'
+curl -X POST 'http://localhost:5000/chroma/embed_document' -H 'Content-Type: application/json' -d '{"collection_name": "some_collection", "categories": ["electronica"], "file_path": "chroma/sample_documents/tdg_sample.pdf"}'
 
 
 curl -X POST 'http://localhost:5000/chroma/embed_document' -H 'Content-Type: application/json' -d '{"collection_name": "some_collection", "categories": ["quimica", "control"], "file_path": "/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Jutta Heckhausen/Motivation and Action (8620)/Motivation and Action - Jutta Heckhausen.pdf"}'
