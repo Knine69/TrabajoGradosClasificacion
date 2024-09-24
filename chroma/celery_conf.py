@@ -12,6 +12,12 @@ def celery_instantiation(app):
         'accept_content': ['json'],
         'timezone': 'UTC',
         'enable_utc': True,
+        'task_queues': {
+            app.config.get('CHROMA_QUEUE', 'chroma_queue'): {
+                'exchange': 'chroma_exchange',
+                'routing_key': 'chroma.#',
+            },
+        },
     })
 
     class ContextTask(celery.Task):

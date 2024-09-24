@@ -12,6 +12,12 @@ def celery_instantiation(app):
         'accept_content': ['json'],
         'timezone': 'UTC',
         'enable_utc': True,
+        'task_queues': {
+            app.config.get('LANGCHAIN_QUEUE', 'langchain_queue'): {
+                'exchange': 'langchain_exchange',
+                'routing_key': 'langchain.#',
+            }
+        },
     })
 
     class ContextTask(celery.Task):
