@@ -2,6 +2,7 @@ import chromadb
 import time
 import torch
 import requests
+import json
 
 from transformers import AutoTokenizer, AutoModel
 from chromadb import Documents, EmbeddingFunction, Embeddings
@@ -208,10 +209,23 @@ class ChromaCollections:
             headers={
                 "Content-Type": "application/json"
             }
-        ).json()
+        )
 
-        return {
-            "STATE": "OK",
-            "DESCRIPTION": "Successfully performed your query",
-            "RESPONSE_DATA": response
-        }
+        print(f"Response is: {str(response)} - {response.content}")
+
+        try:
+            response_content = response.content.decode('utf-8').strip()
+            response_content = response_content.replace('data:', '').strip()
+            response_data = json.loads(response_content)
+
+            return {
+                "RESPONSE_DATA": response_data
+            }
+
+        except requests.exceptions.JSONDecodeError as e:
+            print(f"Failed to decode JSON: {e}")
+            return {
+                "STATE": "ERROR",
+                "DESCRIPTION": "Could not process response JSON"
+            }
+
