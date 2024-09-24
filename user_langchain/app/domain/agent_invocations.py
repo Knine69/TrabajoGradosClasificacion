@@ -60,7 +60,8 @@ class LangchainAgent:
                             documents: list,
                             user_query: str):
         query_prompt = f"""
-        Responde la siguiente pregunta: {user_query}
+        Responde la siguiente pregunta, en caso de ser una pregunta, o 
+        referencia información asociada a la siguiente consulta: {user_query}
         
         Considera a qué categoria puede asociarse la pregunta y tu respuesta,
         a partir de las siguientes categorias:
