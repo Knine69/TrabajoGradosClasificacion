@@ -26,19 +26,19 @@ def receive_task_status():
 @chroma_router.get("/documents")
 def execute_basic_chroma_query():
     request_data = json.loads(request.data.decode('utf-8'))
-    (search_text,
+    (user_query,
      category,
      collection_name,
      callback_url) = get_request_data(request_data,
-                                      'search_text',
+                                      'user_query',
                                       'category',
                                       'collection_name',
                                       'callback_url')
 
     if validate_params(
-            collection_name, category, search_text):
+            collection_name, category, user_query):
         task = chroma_search_query_task.apply_async(
-            args=[collection_name, category, search_text],)
+            args=[collection_name, category, user_query],)
         return Response(sse_stream(task.id), content_type='text/event-stream')
 
     return jsonify({
