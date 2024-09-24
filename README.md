@@ -108,21 +108,7 @@ To check for more available models, look into:
 
 https://ollama.com/library
 
-#### Server Running Configurations
-
-##### Run gunicorn as a server
-
-Having already installed the required dependencies, in order to configure gunicorn as a server
-it is only needed to run the following:
-
-```commandline
-
-    # Run from root directory
-    gunicorn -c chroma/gunicorn.conf.py 'chroma:create_app()'
-    
-    # Run from root directory
-    gunicorn -c user_langchain/gunicorn.conf.py 'user_langchain:create_app()'
-```
+### Server Running Configurations
 
 #### Install redis as a message broker
 
@@ -137,7 +123,37 @@ To easily install a redis server, we will make use of docker. So simply run
     docker run -d --hostname rabbit-broker --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
 ```
 
-#### CURLS EXAMPLES:
+#### Run gunicorn as a server
+
+Having already installed the required dependencies, in order to configure gunicorn as a server
+it is only needed to run the following:
+
+```commandline
+
+    # Run from root directory
+    gunicorn -c chroma/gunicorn.conf.py 'chroma:create_app()'
+    
+    # Run from root directory
+    gunicorn -c user_langchain/gunicorn.conf.py 'user_langchain:create_app()'
+```
+
+
+#### Start Celery Application to process tasks
+
+Now that we have our Flask application up and running, we need the celery application correspondent to each
+Flask application in order for us to be able to process our tasks. 
+
+In order for us to run our Celery applications, we must run the following commands:
+
+```commandline
+    
+    # Run from a separate terminal each, at root level
+    celery -A chroma worker --loglevel=info
+    celery -A user_langchain worker --loglevel=debug
+
+```
+
+### CURLS EXAMPLES:
 
 ```
 # EMBED A DOCUMENT INTO THE DATABASE BASED ON LOCAL SYSTEM FILE PATH
