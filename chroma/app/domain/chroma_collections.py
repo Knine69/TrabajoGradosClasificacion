@@ -16,6 +16,20 @@ from chroma.category.types import FileCategories
 from utils.outputs import OutputColors, print_console_message
 
 
+def chunk_text(text: str, max_chunk_length=1024) -> tuple:
+    """
+    Chunk the text into smaller parts that fit within the model's max token limit.
+    """
+    words = text.split()
+    chunks = []
+    ids = []
+    for i in range(0, len(words), max_chunk_length):
+        chunk = " ".join(words[i:i + max_chunk_length])
+        chunks.append(chunk)
+        ids.append(str(time.time()))
+    return chunks, ids
+
+
 class ChromaCollections:
     def __init__(self):
         self._chroma_client = chromadb.HttpClient(host='localhost', port=8000)
@@ -29,9 +43,10 @@ class ChromaCollections:
 
         def __call__(self, doc_input: Documents) -> Embeddings:
             embedding_results = []
-
-            for doc in doc_input:
-                inputs = self.tokenizer(doc,
+            batch_size = 16
+            for i in range(0, len(doc_input), batch_size):
+                batch_docs = doc_input[i:i + batch_size]
+                inputs = self.tokenizer(batch_docs,
                                         return_tensors="pt",
                                         padding=True,
                                         truncation=True,
@@ -84,11 +99,15 @@ class ChromaCollections:
     @staticmethod
     def basic_chroma_query(collection: Collection,
                            document: list[str],
-                           contained_text: str) -> dict:
+                           user_query: str,
+                           max_results: int = 5) -> dict:
+
+        query_embedding = ChromaCollections.EmbedderFunction()([user_query])[0]
         results = collection.query(
-            n_results=10,
+            n_results=max_results,
             query_texts=document,
-            where_document={"$contains": contained_text}
+            query_embeddings=query_embedding,
+            where_document={"$contains": user_query}
         ).items()
 
         results = dict(results)
@@ -98,12 +117,13 @@ class ChromaCollections:
     @staticmethod
     def add_document_embeds(collection: Collection,
                             document: str,
-                            metadata_filter: dict[str, str],
-                            ids: list[str]):
+                            metadata_filter: dict[str, str]):
         try:
+            document_chunks, ids = chunk_text(document)
             collection.add(
-                documents=[document],
+                documents=document_chunks,
                 metadatas=metadata_filter,
+                embeddings=ChromaCollections.EmbedderFunction()(document_chunks),
                 ids=ids
             )
 
@@ -149,8 +169,7 @@ class ChromaCollections:
         result = self.add_document_embeds(
             collection,
             sample_doc,
-            self.create_metadata_object(categories),
-            [str(time.time())])
+            self.create_metadata_object(categories))
 
         if result:
             print_console_message(
@@ -163,7 +182,7 @@ class ChromaCollections:
     def execute_search_query(self,
                              collection_name,
                              category,
-                             search_text,
+                             user_query,
                              max_tries: int = 2):
         collection = self.validate_existing_collection(collection_name)
 
@@ -181,7 +200,7 @@ class ChromaCollections:
                 query_result := ChromaCollections.basic_chroma_query(
                     collection,
                     loaded_db_data['documents'],
-                    search_text)
+                    user_query)
         ) is False:
             if counter == max_tries:
                 return {
@@ -204,7 +223,8 @@ class ChromaCollections:
             url="http://localhost:5001/langchain/search",
             json={
                 "categories": query_result.get("metadatas", []),
-                "documents": query_result.get("documents", [])
+                "documents": query_result.get("documents", []),
+                "user_query": user_query
             },
             headers={
                 "Content-Type": "application/json"
