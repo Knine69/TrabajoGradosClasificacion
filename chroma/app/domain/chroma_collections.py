@@ -58,10 +58,11 @@ class ChromaCollections:
                 last_hidden_state = outputs.last_hidden_state
                 embeddings = torch.mean(last_hidden_state, dim=1).squeeze()
 
-                if embeddings.shape[-1] != 768:
-                    raise ValueError("Embedding dimensionality mismatch.")
+                if len(embeddings.shape) == 1:
+                    embeddings = [embeddings]
 
-                embedding_results.append(embeddings.numpy().tolist())
+                for embedding in embeddings:
+                    embedding_results.append(embedding.numpy().tolist())
 
             return embedding_results
 
@@ -105,7 +106,7 @@ class ChromaCollections:
         query_embedding = ChromaCollections.EmbedderFunction()([user_query])[0]
         results = collection.query(
             n_results=max_results,
-            query_texts=document,
+            # query_texts=document,
             query_embeddings=query_embedding,
             where_document={"$contains": user_query}
         ).items()
@@ -122,8 +123,9 @@ class ChromaCollections:
             document_chunks, ids = chunk_text(document)
             collection.add(
                 documents=document_chunks,
-                metadatas=metadata_filter,
-                embeddings=ChromaCollections.EmbedderFunction()(document_chunks),
+                metadatas=[metadata_filter] * len(document_chunks),
+                embeddings=(
+                    ChromaCollections.EmbedderFunction()(document_chunks)),
                 ids=ids
             )
 
