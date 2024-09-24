@@ -42,7 +42,8 @@ class LangchainAgent:
                         "description": "Too many failed attempts"}
         for attempt in range(max_attempts):
             try:
-                result = executor.invoke({"input": query})
+                result = executor.invoke({"input": query,
+                                          "max_tokens": 500})
                 return {
                     "STATE": "PROCESSED",
                     "QUERY_MADE": query,
@@ -54,13 +55,19 @@ class LangchainAgent:
             print(f"Attempt {attempt + 1}")
         return final_result
 
-    def execute_agent_query(self, categories: list, documents: list):
+    def execute_agent_query(self,
+                            categories: list,
+                            documents: list,
+                            user_query: str):
         query_prompt = f"""
-        Realiza una clasificación de los documentos más apropiados a ser electos según la siguiente lista de categorías:
+        Responde la siguiente pregunta: {user_query}
         
+        Considera a qué categoria puede asociarse la pregunta y tu respuesta,
+        a partir de las siguientes categorias:
         {categories}
         
-        La lista de documentos es: {documents}
+        Finalmente, si necesitas hacer referencias sobre la información para
+        responder, puedes basarte en los siguientes documentos: {documents}
         """
 
         result = self._invoke_query(executor=self.agent_executor,
