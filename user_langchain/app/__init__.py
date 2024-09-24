@@ -1,7 +1,8 @@
 import redis
-from chroma.app_config import Configuration
+from app_config import Configuration
 
 redis_client = redis.StrictRedis.from_url(Configuration.CELERY_RESULT_BACKEND)
+loaded_collections = {}
 
 
 def test_redis_connection():
@@ -14,4 +15,4 @@ def test_redis_connection():
         print(f"Redis connection error: {e}")
 
 
-__all__ = ["redis_client"]
+test_redis_connection()
