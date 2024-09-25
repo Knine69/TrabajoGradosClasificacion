@@ -61,8 +61,7 @@ class LangchainAgent:
                             documents: list,
                             user_query: str):
         query_prompt = f"""
-        Responde la siguiente pregunta, en caso de ser una pregunta, o 
-        referencia información asociada a la siguiente consulta: {user_query}
+        Responde la siguiente consulta de la forma más apropiada: {user_query}
         
         Considera a qué categoria puede asociarse la pregunta y tu respuesta,
         a partir de las siguientes categorias:
@@ -71,6 +70,8 @@ class LangchainAgent:
         Finalmente, si necesitas hacer referencias sobre la información para
         responder, puedes basarte en los siguientes documentos: {documents}
         """
+
+        print(f"Query prompt is: {query_prompt}")
 
         result = self._invoke_query(executor=self.agent_executor,
                                     query=f'{query_prompt}')
