@@ -167,15 +167,23 @@ class ChromaCollections:
         pdf_text = pdf_to_bytes(file_path)
         sample_doc = pdf_text.decode('utf-8')
 
+        start_time = time.time()
+
         result = self.add_document_embeds(
             collection,
             sample_doc,
             self.create_metadata_object(categories))
 
+        end_time = time.time()
+
         if result:
             print_console_message(
                 message_color=OutputColors.OKCYAN.value,
                 message=f"Successfully processed: {file_path}")
+            print_console_message(
+                message_color=OutputColors.BOLD.value,
+                message=f"Document took {end_time - start_time}s being embedded"
+            )
             return {"STATE": "OK", "DESCRIPTION": "Successfully processed file"}
 
         return {"STATE": "ERROR", "DESCRIPTION": "Something went wrong"}
