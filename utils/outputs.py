@@ -1,4 +1,6 @@
 from enum import Enum
+import os
+import datetime
 
 
 class OutputColors(Enum):
@@ -16,5 +18,58 @@ class OutputColors(Enum):
 
 def print_console_message(
         message: str,
-        message_color: str = OutputColors.WHITE.value) -> None:
+        app: str,
+        message_color: str = OutputColors.WHITE.value,
+        ) -> None:
     print(f"{message_color}{message}{OutputColors.WHITE.value}")
+    path = f"logs/{app}"
+    if os.path.exists(path):
+        _write_to_log(path, message)
+    else:
+        os.mkdir(path)
+        _write_to_log(path, message)
+
+
+def _write_to_log(path: str, message: str):
+    with open(f"{path}/{datetime.date.today()}_logs.txt", 'a') as logs:
+        logs.write(f"[{datetime.datetime.now()}] - {message}\n")
+
+
+def print_header_message(message: str, app: str):
+    print_console_message(
+        message=message,
+        message_color=OutputColors.HEADER.value,
+        app=app
+    )
+
+
+def print_bold_message(message: str, app: str):
+    print_console_message(
+        message=message,
+        message_color=OutputColors.BOLD.value,
+        app=app
+    )
+
+
+def print_error(message: str, app) -> None:
+    print_console_message(
+        message=message,
+        message_color=OutputColors.FAIL.value,
+        app=app
+    )
+
+
+def print_successful_message(message, app):
+    print_console_message(
+        message=message,
+        message_color=OutputColors.OKGREEN.value,
+        app=app
+    )
+
+
+def print_warning_message(message, app):
+    print_console_message(
+        message=message,
+        message_color=OutputColors.WARNING.value,
+        app=app
+    )
