@@ -26,7 +26,8 @@ def print_console_message(
     if os.path.exists(path):
         _write_to_log(path, message)
     else:
-        os.mkdir(path)
+        os.mkdir(
+            os.path.join(os.path.dirname('TrabajoGradosClasificacion'), path))
         _write_to_log(path, message)
 
 
