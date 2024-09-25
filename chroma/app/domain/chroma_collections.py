@@ -13,12 +13,17 @@ from documents.utils import pdf_to_bytes
 from chroma.app import loaded_collections
 from chroma.category.types import FileCategories
 
-from utils.outputs import OutputColors, print_console_message
+from utils.outputs import (print_warning_message,
+                           print_successful_message,
+                           print_header_message,
+                           print_bold_message,
+                           print_error)
 
 
 def chunk_text(text: str, max_chunk_length=1024) -> tuple:
     """
-    Chunk the text into smaller parts that fit within the model's max token limit.
+    Chunk the text into smaller parts that fit within the model's max token
+    limit.
     """
     words = text.split()
     chunks = []
@@ -81,13 +86,11 @@ class ChromaCollections:
                            category: str,
                            re_query: bool = False) -> dict:
         if re_query:
-            print_console_message(
-                message="Nothing found, updating loaded data...",
-                message_color=OutputColors.WARNING.value)
+            print_warning_message("Nothing found, updating loaded data...",
+                                  "chroma")
         else:
-            print_console_message(
-                message="Updating loaded data...",
-                message_color=OutputColors.WARNING.value)
+            print_warning_message("Updating loaded data...", "chroma")
+
         aux = collection.get(where={category: True}).items()
         response_dict = {
             'data': dict(aux),
@@ -99,7 +102,7 @@ class ChromaCollections:
 
     @staticmethod
     def basic_chroma_query(collection: Collection,
-                           document: list[str],
+                           category: str,
                            user_query: str,
                            max_results: int = 5) -> dict:
 
@@ -107,7 +110,8 @@ class ChromaCollections:
         results = collection.query(
             n_results=max_results,
             query_embeddings=query_embedding,
-            where_document={"$contains": user_query}
+            where_document={"$contains": user_query},
+            where={category: True}
         ).items()
 
         results = dict(results)
@@ -130,20 +134,85 @@ class ChromaCollections:
 
             return True
         except Exception as e:
-            print_console_message(message=str(e),
-                                  message_color=OutputColors.FAIL.value)
+            print_error(message=str(e), app="chroma")
             return False
 
-    def validate_existing_collection(self, collection_name: str) -> Collection:
+    @staticmethod
+    def _invoke_llm(query_result, user_query):
+        response = requests.post(
+            url="http://localhost:5001/langchain/search",
+            json={
+                "categories": query_result.get("metadatas", []),
+                "documents": query_result.get("documents", []),
+                "user_query": user_query
+            },
+            headers={
+                "Content-Type": "application/json"
+            }
+        )
+
+        try:
+            response_content = response.content.decode('utf-8').strip()
+            response_content = response_content.replace('data:', '').strip()
+            response_data = json.loads(response_content)
+
+            if response_data["STATE"] == "ERROR":
+                print_error(response_data["DESCRIPTION"], "langchain")
+            else:
+                print_successful_message(response_data["DESCRIPTION"],
+                                         "langchain")
+
+            return {
+                "RESPONSE_DATA": response_data
+            }
+
+        except requests.exceptions.JSONDecodeError as e:
+            print_error(f"Failed to decode JSON: {e}", "chroma")
+            return {
+                "STATE": "ERROR",
+                "DESCRIPTION": "Could not process response JSON"
+            }
+
+    @staticmethod
+    def _validate_loaded_response(loaded_db_data: dict) -> tuple:
+        if loaded_db_data.get('data', None):
+            if loaded_db_data['data'].get('ids', None):
+                return True, loaded_db_data['data'], ""
+        else:
+            if loaded_db_data.get('ids', None):
+                return True, loaded_db_data, ""
+
+        return (False,
+                loaded_db_data,
+                "No information found at present for this category.")
+
+    @staticmethod
+    def _parse_request(option: str, *data):
+        return json.dumps(
+            {
+                'operation': option,
+                'collection': data[0],
+                'category': data[1],
+                'user_query': data[2]
+             }
+        ) if option == "query" else json.dumps(
+            {
+                'operation': option,
+                'collection': data[0],
+                'file_path': data[1],
+                'categories': data[2]}
+        )
+
+    def _validate_existing_collection(self, collection_name: str) -> Collection:
         try:
             result = self._chroma_client.get_collection(
                 name=collection_name,
                 embedding_function=ChromaCollections.EmbedderFunction())
         except (ValueError, InvalidDimensionException, Exception):
-            print_console_message(message_color=OutputColors.WARNING.value,
-                                  message="Collection does not exist.")
-            print_console_message(message_color=OutputColors.HEADER.value,
-                                  message="Creating collection...")
+            print_warning_message(message="Collection does not exist.",
+                                  app="chroma")
+            print_header_message(message="Creating collection...",
+                                 app="chroma")
             return (
                 self._chroma_client.create_collection(
                     name=collection_name,
@@ -162,7 +231,14 @@ class ChromaCollections:
             return self.update_loaded_data(collection, category)
 
     def process_pdf_file(self, file_path, categories, collection_name):
-        collection = self.validate_existing_collection(collection_name)
+        request_register = self._parse_request("embed",
+                                               collection_name,
+                                               file_path,
+                                               categories)
+        print_header_message(message=f"Received request: {request_register}",
+                             app="chroma")
+        
+        collection = self._validate_existing_collection(collection_name)
 
         pdf_text = pdf_to_bytes(file_path)
         sample_doc = pdf_text.decode('utf-8')
@@ -177,13 +253,12 @@ class ChromaCollections:
         end_time = time.time()
 
         if result:
-            print_console_message(
-                message_color=OutputColors.OKCYAN.value,
-                message=f"Successfully processed: {file_path}")
-            print_console_message(
-                message_color=OutputColors.BOLD.value,
-                message=f"Document took {end_time - start_time}s being embedded"
-            )
+            print_successful_message(f"Successfully processed: {file_path}",
+                                     "chroma")
+            print_bold_message(
+                f"Document took {end_time - start_time}s to embedded",
+                "chroma")
+
             return {"STATE": "OK", "DESCRIPTION": "Successfully processed file"}
 
         return {"STATE": "ERROR", "DESCRIPTION": "Something went wrong"}
@@ -193,77 +268,56 @@ class ChromaCollections:
                              category,
                              user_query,
                              max_tries: int = 2):
-        collection = self.validate_existing_collection(collection_name)
+        request_register = self._parse_request("query",
+                                               collection_name,
+                                               category,
+                                               user_query)
+        print_header_message(message=f"Received request: {request_register}",
+                             app="chroma")
+
+        collection = self._validate_existing_collection(collection_name)
 
         loaded_db_data: dict = self.load_category_data(
             category=category,
             collection=collection)
 
-        print(f"Response data is: {loaded_db_data}")
+        (found_data,
+         loaded_db_data,
+         response_message) = self._validate_loaded_response(loaded_db_data)
 
-        if not loaded_db_data.get('data', None):
+        if not found_data:
+            print_error(response_message, "chroma")
             return {
                 "STATE": "ERROR",
-                "DESCRIPTION": "This category does not contain any documents "
-                               "at present."
+                "DESCRIPTION": response_message
             }
 
-        loaded_db_data = (
-            loaded_db_data if loaded_db_data.get('documents', None)
-            else loaded_db_data['data'])
-
         counter = 0
-
         while (
                 query_result := ChromaCollections.basic_chroma_query(
                     collection,
-                    loaded_db_data['documents'],
+                    category,
                     user_query)
         ) is False:
             if counter == max_tries:
+                err_message = "Your search yielded no results."
+                print_error(err_message, "chroma")
                 return {
                     "STATE": "ERROR",
-                    "DESCRIPTION": "Your search yielded no results."
+                    "DESCRIPTION": err_message
                 }
 
-            loaded_db_data = ChromaCollections.update_loaded_data(
+            ChromaCollections.update_loaded_data(
                 collection=collection,
                 category=category,
                 re_query=True)
-            print_console_message(
-                message="Retrying query...",
-                message_color=OutputColors.WARNING.value)
+
+            print_warning_message("Retrying query...", "chroma")
             counter += 1
 
-        print(f"Query result: {query_result}")
+        print_successful_message(
+            f"Successfully retrieved db data: {query_result}", "chroma")
 
-        response = requests.post(
-            url="http://localhost:5001/langchain/search",
-            json={
-                "categories": query_result.get("metadatas", []),
-                "documents": query_result.get("documents", []),
-                "user_query": user_query
-            },
-            headers={
-                "Content-Type": "application/json"
-            }
-        )
+        return self._invoke_llm(query_result, user_query)
 
-        print(f"Response is: {str(response)} - {response.content}")
-
-        try:
-            response_content = response.content.decode('utf-8').strip()
-            response_content = response_content.replace('data:', '').strip()
-            response_data = json.loads(response_content)
-
-            return {
-                "RESPONSE_DATA": response_data
-            }
-
-        except requests.exceptions.JSONDecodeError as e:
-            print(f"Failed to decode JSON: {e}")
-            return {
-                "STATE": "ERROR",
-                "DESCRIPTION": "Could not process response JSON"
-            }
 
