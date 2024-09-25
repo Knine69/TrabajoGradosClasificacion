@@ -193,7 +193,7 @@ class ChromaCollections:
 
         print(f"Response data is: {loaded_db_data}")
 
-        if not loaded_db_data['data']:
+        if not loaded_db_data.get('data', None):
             return {
                 "STATE": "ERROR",
                 "DESCRIPTION": "This category does not contain any documents "
