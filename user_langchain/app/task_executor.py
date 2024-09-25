@@ -5,7 +5,7 @@ import chroma.app.task_executor
 from user_langchain.celery_conf import celery
 from user_langchain.app import redis_client
 from user_langchain.app.domain.agent_invocations import LangchainAgent
-from utils.outputs import print_console_message, OutputColors
+from utils.outputs import print_successful_message
 
 
 def sse_stream(task_id):
@@ -49,8 +49,7 @@ def notify_task_completion(result, callback_url):
 
 
 def _store_task_results(task_id, result) -> None:
-    print_console_message(
+    print_successful_message(
         message=f"Storing result of task: {task_id} on redis...",
-        message_color=OutputColors.OKBLUE.value
-    )
+        app="langchain")
     redis_client.set(task_id, json.dumps(result))
