@@ -21,6 +21,18 @@ For a whole dependency installation run:
     pip install -r requirements.txt
 ```
 
+#### Create .env configuration file
+
+Using your preferred code editor, create a `.env` file that will load environment variables to our applications:
+
+```text
+# .env file
+RABBIT_BROKER_URL=pyamqp://guest@localhost//
+CELERY_RESULT_BACKEND=redis://localhost:6379/0
+CHROMA_QUEUE=chroma_queue
+LANGCHAIN_QUEUE=langchain_queue
+```
+
 #### Ollama Installation
 
 In order to install Ollama, as a root user the process is simple, simply run:
