@@ -200,6 +200,9 @@ class ChromaCollections:
                                "at present."
             }
 
+        print_console_message(message=f"Loaded data: {loaded_db_data}",
+                              message_color=OutputColors.BOLD.value)
+
         loaded_db_data = (
             loaded_db_data if loaded_db_data.get('documents', None)
             else loaded_db_data['data'])
