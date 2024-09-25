@@ -192,6 +192,8 @@ class ChromaCollections:
             category=category,
             collection=collection)
 
+        print(f"Response data is: {loaded_db_data}")
+
         loaded_db_data = (
             loaded_db_data if loaded_db_data.get('documents', None)
             else loaded_db_data['data'])
