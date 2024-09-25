@@ -7,7 +7,8 @@ from tools.tools import tools
 class LangchainAgent:
 
     def __init__(self) -> None:
-        self.llm_model = Ollama(model="llama3:70b-instruct")
+        self.llm_model = Ollama(model="llama3:70b-instruct-q2_K")
+        # self.llm_model = Ollama(model="llama3:70b-instruct")
         # self.llm_model = Ollama(model="llava:13b")
         self._agent = create_react_agent(self.llm_model,
                                          tools,
