@@ -197,7 +197,7 @@ class ChromaCollections:
             loaded_db_data if loaded_db_data.get('documents', None)
             else loaded_db_data['data'])
 
-        if not loaded_db_data.get('data', None):
+        if not loaded_db_data['data']:
             return {
                 "STATE": "ERROR",
                 "DESCRIPTION": "This category does not contain any documents "
