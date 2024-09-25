@@ -106,7 +106,6 @@ class ChromaCollections:
         query_embedding = ChromaCollections.EmbedderFunction()([user_query])[0]
         results = collection.query(
             n_results=max_results,
-            # query_texts=document,
             query_embeddings=query_embedding,
             where_document={"$contains": user_query}
         ).items()
@@ -197,6 +196,13 @@ class ChromaCollections:
         loaded_db_data = (
             loaded_db_data if loaded_db_data.get('documents', None)
             else loaded_db_data['data'])
+
+        if not bool(loaded_db_data['documents']):
+            return {
+                "STATE": "ERROR",
+                "DESCRIPTION": "This category does not contain any documents "
+                               "at present."
+            }
 
         counter = 0
 
