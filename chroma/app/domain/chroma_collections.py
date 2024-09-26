@@ -4,6 +4,7 @@ import torch
 import requests
 import json
 
+from gensim.parsing.preprocessing import remove_stopwords
 from transformers import AutoTokenizer, AutoModel
 from chromadb import Documents, EmbeddingFunction, Embeddings
 from chromadb.errors import InvalidDimensionException
@@ -12,6 +13,7 @@ from documents.utils import pdf_to_bytes
 
 from chroma.app import loaded_collections
 from chroma.category.types import FileCategories
+from app_config import Configuration
 
 from utils.outputs import (print_warning_message,
                            print_successful_message,
@@ -87,9 +89,10 @@ class ChromaCollections:
                            re_query: bool = False) -> dict:
         if re_query:
             print_warning_message("Nothing found, updating loaded data...",
-                                  "chroma")
+                                  Configuration.CHROMA_QUEUE)
         else:
-            print_warning_message("Updating loaded data...", "chroma")
+            print_warning_message("Updating loaded data...",
+                                  Configuration.CHROMA_QUEUE)
 
         aux = collection.get(where={category: True}).items()
         response_dict = {
@@ -106,17 +109,52 @@ class ChromaCollections:
                            user_query: str,
                            max_results: int = 5) -> dict:
 
-        query_embedding = ChromaCollections.EmbedderFunction()([user_query])[0]
-        results = collection.query(
-            n_results=max_results,
-            query_embeddings=query_embedding,
-            where_document={"$contains": user_query},
-            where={category: True}
-        ).items()
+        query_no_stopwords = remove_stopwords(user_query)
+        query_terms = query_no_stopwords.split()
 
-        results = dict(results)
+        query_embeddings = [
+            ChromaCollections.EmbedderFunction()([term])[0]
+            for term in query_terms
+        ]
 
-        return results if bool(results['documents'][0]) else False
+        document_scores = {}
+        metadata_scores = {}
+        id_scores = {}
+
+        for query_embedding in query_embeddings:
+            results: dict = dict(collection.query(
+                n_results=max_results,
+                query_embeddings=query_embedding,
+                where={category: True}
+            ).items())
+
+            for i, doc in enumerate(results['documents']):
+                doc_id = results['ids'][0][i]
+                metadata = results['metadatas'][0][i]
+
+                if doc_id in document_scores:
+                    document_scores[doc_id].append(doc)
+                    metadata_scores[doc_id].append(metadata)
+                else:
+                    document_scores[doc_id] = [doc]
+                    metadata_scores[doc_id] = [metadata]
+                    id_scores[doc_id] = doc_id
+
+        sorted_docs = sorted(
+            document_scores.keys(),
+            key=lambda dcmnt_id: len(document_scores[dcmnt_id]), reverse=True)
+
+        top_results = {
+            'documents': [
+                document_scores[doc_id][0]
+                for doc_id in sorted_docs[:max_results]],
+            'metadatas': [
+                metadata_scores[doc_id][0]
+                for doc_id in sorted_docs[:max_results]],
+            'ids': [id_scores[doc_id] for doc_id in sorted_docs[:max_results]],
+        }
+
+        return top_results if top_results['documents'] else False
 
     @staticmethod
     def add_document_embeds(collection: Collection,
@@ -134,40 +172,47 @@ class ChromaCollections:
 
             return True
         except Exception as e:
-            print_error(message=str(e), app="chroma")
+            print_error(message=str(e), app=Configuration.CHROMA_QUEUE)
             return False
 
     @staticmethod
     def _invoke_llm(query_result, user_query):
-        response = requests.post(
-            url="http://localhost:5001/langchain/search",
-            json={
-                "categories": query_result.get("metadatas", []),
-                "documents": query_result.get("documents", []),
-                "user_query": user_query
-            },
-            headers={
-                "Content-Type": "application/json"
-            }
-        )
-
         try:
+            response = requests.post(
+                url="http://localhost:5001/langchain/search",
+                json={
+                    "categories": query_result.get("metadatas", []),
+                    "documents": query_result.get("documents", []),
+                    "user_query": user_query
+                },
+                headers={
+                    "Content-Type": "application/json"
+                }
+            )
             response_content = response.content.decode('utf-8').strip()
             response_content = response_content.replace('data:', '').strip()
             response_data = json.loads(response_content)
 
             if response_data["STATE"] == "ERROR":
-                print_error(response_data["DESCRIPTION"], "langchain")
+                print_error(response_data["DESCRIPTION"],
+                            Configuration.LANGCHAIN_QUEUE)
             else:
                 print_successful_message(response_data["DESCRIPTION"],
-                                         "langchain")
+                                         Configuration.LANGCHAIN_QUEUE)
 
             return {
                 "RESPONSE_DATA": response_data
             }
-
+        except requests.exceptions.ConnectionError as e:
+            print_error(f"Something went wrong: {str(e)}",
+                        Configuration.CHROMA_QUEUE)
+            return {
+                "STATE": "ERROR",
+                "DESCRIPTION": str(e)
+            }
         except requests.exceptions.JSONDecodeError as e:
-            print_error(f"Failed to decode JSON: {e}", "chroma")
+            print_error(f"Failed to decode JSON: {e}",
+                        Configuration.CHROMA_QUEUE)
             return {
                 "STATE": "ERROR",
                 "DESCRIPTION": "Could not process response JSON"
@@ -210,9 +255,9 @@ class ChromaCollections:
                 embedding_function=ChromaCollections.EmbedderFunction())
         except (ValueError, InvalidDimensionException, Exception):
             print_warning_message(message="Collection does not exist.",
-                                  app="chroma")
+                                  app=Configuration.CHROMA_QUEUE)
             print_header_message(message="Creating collection...",
-                                 app="chroma")
+                                 app=Configuration.CHROMA_QUEUE)
             return (
                 self._chroma_client.create_collection(
                     name=collection_name,
@@ -236,7 +281,7 @@ class ChromaCollections:
                                                file_path,
                                                categories)
         print_header_message(message=f"Received request: {request_register}",
-                             app="chroma")
+                             app=Configuration.CHROMA_QUEUE)
         
         collection = self._validate_existing_collection(collection_name)
 
@@ -253,11 +298,12 @@ class ChromaCollections:
         end_time = time.time()
 
         if result:
-            print_successful_message(f"Successfully processed: {file_path}",
-                                     "chroma")
+            print_successful_message(
+                f"Successfully processed: {file_path}",
+                Configuration.CHROMA_QUEUE)
             print_bold_message(
                 f"Document took {end_time - start_time}s to embedded",
-                "chroma")
+                Configuration.CHROMA_QUEUE)
 
             return {"STATE": "OK", "DESCRIPTION": "Successfully processed file"}
 
@@ -273,7 +319,7 @@ class ChromaCollections:
                                                category,
                                                user_query)
         print_header_message(message=f"Received request: {request_register}",
-                             app="chroma")
+                             app=Configuration.CHROMA_QUEUE)
 
         collection = self._validate_existing_collection(collection_name)
 
@@ -286,7 +332,7 @@ class ChromaCollections:
          response_message) = self._validate_loaded_response(loaded_db_data)
 
         if not found_data:
-            print_error(response_message, "chroma")
+            print_error(response_message, Configuration.CHROMA_QUEUE)
             return {
                 "STATE": "ERROR",
                 "DESCRIPTION": response_message
@@ -301,7 +347,7 @@ class ChromaCollections:
         ) is False:
             if counter == max_tries:
                 err_message = "Your search yielded no results."
-                print_error(err_message, "chroma")
+                print_error(err_message, Configuration.CHROMA_QUEUE)
                 return {
                     "STATE": "ERROR",
                     "DESCRIPTION": err_message
@@ -312,12 +358,12 @@ class ChromaCollections:
                 category=category,
                 re_query=True)
 
-            print_warning_message("Retrying query...", "chroma")
+            print_warning_message("Retrying query...",
+                                  Configuration.CHROMA_QUEUE)
             counter += 1
 
         print_successful_message(
-            f"Successfully retrieved db data: {query_result}", "chroma")
+            f"Successfully retrieved db data: {query_result}",
+            Configuration.CHROMA_QUEUE)
 
         return self._invoke_llm(query_result, user_query)
-
-
