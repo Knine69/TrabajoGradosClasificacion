@@ -165,6 +165,19 @@ In order for us to run our Celery applications, we must run the following comman
 
 ```
 
+#### Quick Server Setups
+
+Alternatively, instead of running multiple terminals to start each server, the following commands can be executed:
+
+```commandline
+
+    # Run at root level at a separate terminal each
+    sh bash_files/initialize_chroma_services.sh 8000
+    
+    sh bash_files/initialize_langchain_services.sh
+
+```
+
 ### CURLS EXAMPLES:
 
 ```
@@ -173,7 +186,9 @@ curl -X POST 'http://localhost:5000/chroma/embed_document' -H 'Content-Type: app
 
 
 curl -X POST 'http://localhost:5000/chroma/embed_document' -H 'Content-Type: application/json' -d '{"collection_name": "some_collection", "categories": ["quimica", "control"], "file_path": "/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Jutta Heckhausen/Motivation and Action (8620)/Motivation and Action - Jutta Heckhausen.pdf"}'
+curl -X POST 'http://localhost:5000/chroma/embed_document' -H 'Content-Type: application/json' -d '{"collection_name": "some_collection", "categories": ["quimica", "control"], "file_path": "/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/J. van Mill/Open Problems in Topology (4217)/Open Problems in Topology - J. van Mill.pdf"}'
 
 # QUERY FILES IN DATABASE SERVER
 curl -X GET 'http://localhost:5000/chroma/documents' -H 'Content-Type: application/json' -d '{"collection_name": "some_collection", "category": "quimica", "user_query": "hydrogenation"}'
+curl -X GET 'http://localhost:5000/chroma/documents' -H 'Content-Type: application/json' -d '{"collection_name": "some_collection", "category": "quimica", "user_query": "What is an action?"}'
 ```
