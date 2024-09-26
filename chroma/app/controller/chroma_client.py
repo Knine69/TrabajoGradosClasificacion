@@ -1,8 +1,10 @@
 from chroma.app.domain.chroma_collections import ChromaCollections
 from chroma.app.task_executor import (chroma_search_query_task,
+                                      chroma_embed_task,
                                       sse_stream)
 from utils.request_validator import (validate_params, get_request_data)
 from flask import Blueprint, request, jsonify, Response
+from app_config import Configuration
 import json
 
 chroma_router = Blueprint('chroma', __name__, url_prefix='/chroma')
@@ -39,7 +41,7 @@ def execute_basic_chroma_query():
             collection_name, category, user_query):
         task = chroma_search_query_task.apply_async(
             args=[collection_name, category, user_query],
-            queue='chroma_queue')
+            queue=Configuration.CHROMA_QUEUE)
         return Response(sse_stream(task.id), content_type='text/event-stream')
 
     return jsonify({
@@ -58,11 +60,11 @@ def process_pdf_file():
         'categories',
         'collection_name')
 
-    if validate_params(
-            file_path, categories, collection_name):
-        return jsonify(chroma_collections.process_pdf_file(
-            file_path, categories, collection_name
-        ))
+    if validate_params(file_path, categories, collection_name):
+        task = chroma_embed_task.apply_async(
+            args=[collection_name, file_path, categories],
+            queue=Configuration.CHROMA_QUEUE)
+        return Response(sse_stream(task.id), content_type='text/event-stream')
 
 # TODO: access pdf directory Try bind mounts
 

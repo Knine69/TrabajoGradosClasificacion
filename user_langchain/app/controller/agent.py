@@ -3,6 +3,7 @@ from flask import Blueprint, request, jsonify, Response
 from utils.request_validator import (validate_params, get_request_data)
 from user_langchain.app.task_executor import (langchain_agent_invocation_task,
                                               sse_stream)
+from app_config import Configuration
 
 langchain_router = Blueprint('langchain',
                              __name__,
@@ -19,7 +20,7 @@ def search_query():
     if validate_params(categories, documents):
         task = langchain_agent_invocation_task.apply_async(
             args=[categories, documents, user_query],
-            queue='langchain_queue')
+            queue=Configuration.LANGCHAIN_QUEUE)
         return Response(sse_stream(task.id), content_type='text/event-stream')
 
     return jsonify({
