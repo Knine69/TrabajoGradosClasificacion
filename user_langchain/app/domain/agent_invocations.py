@@ -2,6 +2,11 @@ from user_langchain.prompt import prompt
 from langchain_community.llms.ollama import Ollama
 from langchain.agents import AgentExecutor, create_react_agent
 from tools.tools import tools
+from utils.outputs import (print_error,
+                           print_bold_message,
+                           print_header_message,
+                           print_warning_message)
+from app_config import Configuration
 
 
 class LangchainAgent:
@@ -51,9 +56,11 @@ class LangchainAgent:
                     "RESPONSE": output_handler(result)
                 }
             except Exception as e:
-                print(f"Something failed: {e}")
+                print_error(message=f"Something failed: {e}",
+                            app=Configuration.LANGCHAIN_QUEUE)
 
-            print(f"Attempt {attempt + 1}")
+            print_warning_message(message=f"Attempt {attempt + 1}",
+                                  app=Configuration.LANGCHAIN_QUEUE)
         return final_result
 
     def execute_agent_query(self,
@@ -71,14 +78,17 @@ class LangchainAgent:
         responder, puedes basarte en los siguientes documentos: {documents}
         """
 
-        print(f"Query prompt is: {query_prompt}")
+        print_header_message(message=f"Query prompt is: {query_prompt}",
+                             app=Configuration.LANGCHAIN_QUEUE)
 
         result = self._invoke_query(executor=self.agent_executor,
                                     query=f'{query_prompt}')
 
         if result['output']:
-            print(f"Query result is: {result}")
+            print_bold_message(message=f"Query result is: {result}",
+                               app=Configuration.LANGCHAIN_QUEUE)
             return result
         else:
-            print(f"Query failed: {result['description']}")
+            print_error(message=f"Query failed: {result['description']}",
+                        app=Configuration.LANGCHAIN_QUEUE)
             return {"STATE": "ERROR", "DESCRIPTION": result['description']}
