@@ -149,6 +149,9 @@ it is only needed to run the following:
     gunicorn -c user_langchain/gunicorn.conf.py 'user_langchain:create_app()'
 ```
 
+Take into consideration: As the langchain app needs to recognize celery kind of tasks,
+it is necessary for a chroma server to be up as imports are loaded on the libraries,
+and so, the chroma initializer must be run first.
 
 #### Start Celery Application to process tasks
 
