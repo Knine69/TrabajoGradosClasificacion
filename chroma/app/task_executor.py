@@ -5,6 +5,7 @@ from chroma.celery_conf import celery
 from chroma.app import redis_client
 from chroma.app.domain.chroma_collections import ChromaCollections
 from utils.outputs import print_successful_message
+from app_config import Configuration
 
 
 def sse_stream(task_id):
@@ -65,6 +66,6 @@ def notify_task_completion(result, callback_url):
 def _store_task_results(task_id, result) -> None:
     print_successful_message(
         message=f"Storing result of task: {task_id} on redis...",
-        app="chroma")
+        app=Configuration.CHROMA_QUEUE)
 
     redis_client.set(task_id, json.dumps(result))

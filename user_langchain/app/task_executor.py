@@ -6,6 +6,7 @@ from user_langchain.celery_conf import celery
 from user_langchain.app import redis_client
 from user_langchain.app.domain.agent_invocations import LangchainAgent
 from utils.outputs import print_successful_message
+from app_config import Configuration
 
 
 def sse_stream(task_id):
@@ -51,5 +52,5 @@ def notify_task_completion(result, callback_url):
 def _store_task_results(task_id, result) -> None:
     print_successful_message(
         message=f"Storing result of task: {task_id} on redis...",
-        app="langchain")
+        app=Configuration.LANGCHAIN_QUEUE)
     redis_client.set(task_id, json.dumps(result))
