@@ -176,14 +176,15 @@ class ChromaCollections:
             return False
 
     @staticmethod
-    def _invoke_llm(query_result, user_query):
+    def _invoke_llm(query_result, user_query, task_id):
         try:
             response = requests.post(
                 url="http://localhost:5001/langchain/search",
                 json={
                     "categories": query_result.get("metadatas", []),
                     "documents": query_result.get("documents", []),
-                    "user_query": user_query
+                    "user_query": user_query,
+                    "task_id": task_id
                 },
                 headers={
                     "Content-Type": "application/json"
@@ -313,6 +314,7 @@ class ChromaCollections:
                              collection_name,
                              category,
                              user_query,
+                             task_id: int,
                              max_tries: int = 2):
         request_register = self._parse_request("query",
                                                collection_name,
@@ -366,4 +368,4 @@ class ChromaCollections:
             f"Successfully retrieved db data: {query_result}",
             Configuration.CHROMA_QUEUE)
 
-        return self._invoke_llm(query_result, user_query)
+        return self._invoke_llm(query_result, user_query, task_id)
