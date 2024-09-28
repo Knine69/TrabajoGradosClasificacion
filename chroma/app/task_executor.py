@@ -28,11 +28,12 @@ def execute_task(*data, function):
 @celery.task(soft_time_limit=30, time_limit=50)
 def chroma_search_query_task(collection_name, category, user_query):
 
+    task_id = chroma_search_query_task.request.id
     result = ChromaCollections().execute_search_query(collection_name,
                                                       category,
-                                                      user_query)
+                                                      user_query,
+                                                      task_id)
 
-    task_id = chroma_search_query_task.request.id
     _store_task_results(task_id, result)
 
     return result

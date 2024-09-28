@@ -1,7 +1,6 @@
 import time
 import requests
 import json
-import chroma.app.task_executor
 from user_langchain.celery_conf import celery
 from user_langchain.app import redis_client
 from user_langchain.app.domain.agent_invocations import LangchainAgent
