@@ -1,16 +1,16 @@
 FROM python:3.9-alpine
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    FLASK_APP=chroma/flask/ \
+    FLASK_APP=chroma/ \
     FLASK_ENV=development
 
-WORKDIR /app
-COPY . ./
+WORKDIR /chroma_app
+COPY ../chroma ../bash_files/initialize_chroma_services.sh ./
 
 RUN <<EOF
 apk update
-pip install -r ./requirements.txt
+pip install -r ./chroma/requirements.txt
 EOF
 
-CMD ["flask", "run", "--debug", "--host=0.0.0.0"]
-EXPOSE 8000
+CMD ["sh", "bash_files/intialize_chroma_services.sh", "8000"]
+EXPOSE 5000

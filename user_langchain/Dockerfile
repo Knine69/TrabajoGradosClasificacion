@@ -1,16 +1,16 @@
 FROM python:3.9-alpine
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    FLASK_APP=user_langchain/flask/ \
+    FLASK_APP=user_langchain/ \
     FLASK_ENV=development
 
-WORKDIR /app
-COPY . ../requirements.txt ./
+WORKDIR /langchain_app
+COPY ../user_langchain ../bash_files/initialize_langchain_services.sh ./
 
 RUN <<EOF
 apk update
-pip install -r ./requirements.txt
+pip install -r ./user_langchain/requirements.txt
 EOF
 
-CMD ["flask", "run", "--debug", "--host=0.0.0.0"]
-EXPOSE 8001
+CMD ["sh", "bash_files/initialize_langchain_services.sh"]
+EXPOSE 5001
