@@ -32,6 +32,16 @@ services:
       - "5672:5672"
       - "15672:15672"
 
+  chroma:
+    image: chromadb/chroma
+    container_name: chromadb
+    networks:
+      - shared_network
+    ports:
+      - "8000:8000"
+    volumes:
+      - /chroma_server:/chroma/chroma
+
 networks:
   shared_network:
     driver: bridge
