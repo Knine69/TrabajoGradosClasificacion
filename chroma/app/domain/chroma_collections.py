@@ -39,7 +39,8 @@ def chunk_text(text: str, max_chunk_length=1024) -> tuple:
 
 class ChromaCollections:
     def __init__(self):
-        self._chroma_client = chromadb.HttpClient(host='localhost', port=8000)
+        self._chroma_client = chromadb.HttpClient(host=Configuration.CHROMA_URL,
+                                                  port=8000)
 
     class EmbedderFunction(EmbeddingFunction):
 
