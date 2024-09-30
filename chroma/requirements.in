@@ -1,0 +1,17 @@
+app_config==1.0.1
+celery==5.4.0
+chromadb-client
+documents==0.0.1
+Flask==3.0.3
+gensim==4.3.3
+Requests==2.32.3
+torch==2.2.2
+transformers[torch]==4.44.2
+utils==1.0.2
+gunicorn==23.0.0
+redis==5.0.8
+redis-cli==1.0.1
+py-dotenv==0.1
+python-dotenv==1.0.1
+pdfminer==20191125
+pdfminer.six==20240706
