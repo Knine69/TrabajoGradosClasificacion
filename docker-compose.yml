@@ -1,0 +1,37 @@
+services:
+  chroma-executor:
+    image: jhuguet/chroma-executor
+    container_name: chroma-executor
+    networks:
+      - shared_network
+    ports:
+      - "5000:5000"
+
+  langchain-executor:
+    image: jhuguet/langchain-executor
+    container_name: langchain-executor
+    networks:
+      - shared_network
+    ports:
+      - "5001:5001"
+
+  redis:
+    image: redis
+    container_name: redis-backend
+    networks:
+      - shared_network
+    ports:
+      - "6379:6379"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    networks:
+      - shared_network
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+networks:
+  shared_network:
+    driver: bridge
