@@ -185,7 +185,7 @@ Alternatively, instead of running multiple terminals to start each server, the f
 
 ```
 # EMBED A DOCUMENT INTO THE DATABASE BASED ON LOCAL SYSTEM FILE PATH
-curl -X POST 'http://localhost:5000/chroma/embed_document' -H 'Content-Type: application/json' -d '{"collection_name": "some_collection", "categories": ["electronica"], "file_path": "chroma/sample_documents/tdg_sample.pdf"}'
+curl -X POST 'http://localhost:5000/chroma/embed_document' -H 'Content-Type: application/json' -d '{"collection_name": "some_collection", "categories": ["quimica"], "file_path": "sample_documents/chemistry_sample.pdf"}'
 
 
 curl -X POST 'http://localhost:5000/chroma/embed_document' -H 'Content-Type: application/json' -d '{"collection_name": "some_collection", "categories": ["quimica", "control"], "file_path": "/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Jutta Heckhausen/Motivation and Action (8620)/Motivation and Action - Jutta Heckhausen.pdf"}'
