@@ -13,3 +13,4 @@ class Configuration:
                                       'redis://redis:6379/0')
     LANGCHAIN_QUEUE = os.getenv('LANGCHAIN_QUEUE', 'langchain_queue')
     CHROMA_QUEUE = os.getenv('CHROMA_QUEUE', 'chroma_queue')
+    CHROMA_URL = os.getenv('CHROMA_URL', 'chroma')
