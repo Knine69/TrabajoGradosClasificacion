@@ -11,17 +11,20 @@ RUN mkdir -p /chroma_app/bash_files
 # Set working directory
 WORKDIR /chroma_app
 
+ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh /chroma_app/wait-for-it.sh
+
 # Install necessary build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends bash gcc g++ make musl-dev libffi-dev && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && chmod +x /wait-for-it.sh
 
 # Copy source code
 COPY chroma /chroma_app/chroma
-COPY app_config.py utils documents /chroma_app/
-
+COPY documents /chroma_app/documents
+COPY utils /chroma_app/utils
+COPY app_config.py /chroma_app/
 
 # Set up virtual environment and install dependencies
-RUN touch .env && ls -la && \
+RUN touch .env && ls -la && cat app_config.py && \
     mv chroma/initialize_chroma_services.sh bash_files/ && \
     python -m venv /chroma_app/.chroma && \
     bash -c ". /chroma_app/.chroma/bin/activate && pip install --no-cache-dir -r chroma/requirements.txt"
@@ -54,4 +57,4 @@ COPY --from=build-stage /chroma_app /chroma_app
 EXPOSE 5000
 
 # Set the command to start the application
-CMD ["bash", "bash_files/initialize_chroma_services.sh"]
+CMD ["./wait-for-it.sh", "redis:6379", "--", "./wait-for-it.sh", "rabbitmq:5672", "--", "bash", "bash_files/initialize_chroma_services.sh"]
