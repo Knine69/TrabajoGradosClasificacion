@@ -1,9 +1,12 @@
+echo "Creating chroma persistance directory..."
+
+mkdir chroma_server
+
 echo "Building and updating Chroma Docker Image..."
 
 docker build -f chroma/Dockerfile -t chroma-executor .
 docker tag chroma-executor jhuguet/chroma-executor
 docker push jhuguet/chroma-executor
-cd ..
 
 echo "Building and updating Langchain Docker Image..."
 
