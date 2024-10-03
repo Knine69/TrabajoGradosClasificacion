@@ -15,7 +15,7 @@ ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.s
 
 # Install necessary build dependencies
 RUN apt-get update && apt-get install -y bash gcc g++ make musl-dev libffi-dev && \
-    rm -rf /var/lib/apt/lists/* && chmod +x /wait-for-it.sh
+    rm -rf /var/lib/apt/lists/* && chmod +x /langchain_app/wait-for-it.sh
 
 # Copy source code for the build
 COPY user_langchain /langchain_app/user_langchain

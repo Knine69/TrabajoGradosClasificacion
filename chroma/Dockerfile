@@ -15,7 +15,7 @@ ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.s
 
 # Install necessary build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends bash gcc g++ make musl-dev libffi-dev && \
-    rm -rf /var/lib/apt/lists/* && chmod +x /wait-for-it.sh
+    rm -rf /var/lib/apt/lists/* && chmod +x /chroma_app/wait-for-it.sh
 
 # Copy source code
 COPY chroma /chroma_app/chroma
