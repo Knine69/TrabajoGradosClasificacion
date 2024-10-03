@@ -1,5 +1,6 @@
 services:
   chroma-executor:
+    platform: linux/amd64
     image: jhuguet/chroma-executor
     container_name: chroma-executor
     networks:
@@ -12,6 +13,7 @@ services:
       - rabbitmq
 
   langchain-executor:
+    platform: linux/amd64
     image: jhuguet/langchain-executor
     container_name: langchain-executor
     networks:

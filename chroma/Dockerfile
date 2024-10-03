@@ -57,4 +57,4 @@ COPY --from=build-stage /chroma_app /chroma_app
 EXPOSE 5000
 
 # Set the command to start the application
-CMD ["./wait-for-it.sh", "redis:6379", "--", "./wait-for-it.sh", "rabbitmq:5672", "--", "bash", "bash_files/initialize_chroma_services.sh"]
+CMD ["/bin/bash", "-c", "./wait-for-it.sh redis:6379 -- ./wait-for-it.sh rabbitmq:5672 -- ./wait-for-it.sh chroma:8000 -- bash bash_files/initialize_chroma_services.sh"]

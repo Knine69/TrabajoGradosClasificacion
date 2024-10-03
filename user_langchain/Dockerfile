@@ -55,6 +55,6 @@ COPY --from=build-stage /langchain_app /langchain_app
 # Expose the necessary port
 EXPOSE 5001
 
-# Set the command to start the application
-CMD ["./wait-for-it.sh", "redis:6379", "--", "./wait-for-it.sh", "rabbitmq:5672", "--", "bash", "bash_files/initialize_langchain_services.sh"]
+# Set the command to start the application# Set the command to start the application using bash -c to execute wait-for-it
+CMD ["/bin/bash", "-c", "./wait-for-it.sh redis:6379 -- ./wait-for-it.sh rabbitmq:5672 -- ./wait-for-it.sh chroma:8000 -- bash bash_files/initialize_langchain_services.sh"]
 
