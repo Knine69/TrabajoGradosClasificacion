@@ -1,11 +1,10 @@
 import chromadb
 import time
-import torch
 import requests
 import json
 
 from gensim.parsing.preprocessing import remove_stopwords
-from transformers import AutoTokenizer, AutoModel
+from sentence_transformers import SentenceTransformer
 from chromadb import Documents, EmbeddingFunction, Embeddings
 from chromadb.errors import InvalidDimensionException
 from chromadb.api.models.Collection import Collection
@@ -44,34 +43,15 @@ class ChromaCollections:
 
     class EmbedderFunction(EmbeddingFunction):
 
-        tokenizer = (
-            AutoTokenizer.from_pretrained("bert-base-multilingual-cased"))
-        embedding_model = (
-            AutoModel.from_pretrained("bert-base-multilingual-cased"))
+        embedding_model = SentenceTransformer("bert-base-multilingual-cased")
 
         def __call__(self, doc_input: Documents) -> Embeddings:
             embedding_results = []
-            batch_size = 64
-            for i in range(0, len(doc_input), batch_size):
-                batch_docs = doc_input[i:i + batch_size]
-                inputs = self.tokenizer(batch_docs,
-                                        return_tensors="pt",
-                                        padding=True,
-                                        truncation=True,
-                                        max_length=512)
-
-                with torch.no_grad():
-                    outputs = self.embedding_model(**inputs)
-
-                last_hidden_state = outputs.last_hidden_state
-                embeddings = torch.mean(last_hidden_state, dim=1).squeeze()
-
-                if len(embeddings.shape) == 1:
-                    embeddings = [embeddings]
-
-                for embedding in embeddings:
-                    embedding_results.append(embedding.numpy().tolist())
-
+            embeddings = self.embedding_model.encode(doc_input,
+                                                     batch_size=64,
+                                                     convert_to_numpy=True)
+            for embedding in embeddings:
+                embedding_results.append(embedding)
             return embedding_results
 
     @staticmethod
@@ -255,7 +235,7 @@ class ChromaCollections:
             result = self._chroma_client.get_collection(
                 name=collection_name,
                 embedding_function=ChromaCollections.EmbedderFunction())
-        except (ValueError, InvalidDimensionException, Exception):
+        except (ValueError, chromadb.errors.InvalidCollectionException, Exception):
             print_warning_message(message="Collection does not exist.",
                                   app=Configuration.CHROMA_QUEUE)
             print_header_message(message="Creating collection...",
