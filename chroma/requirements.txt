@@ -223,17 +223,11 @@ tenacity==9.0.0
     # via chromadb-client
 tokenizers==0.19.1
     # via transformers
-torch==2.2.2
-    # via
-    #   -r requirements.in
-    #   accelerate
-    #   transformers
+sentence-transformers==2.2.2
 tqdm==4.66.5
     # via
     #   huggingface-hub
     #   transformers
-transformers[torch]==4.44.2
-    # via -r requirements.in
 typing-extensions==4.12.2
     # via
     #   chromadb-client
