@@ -133,6 +133,7 @@ To easily install a redis server, we will make use of docker. So simply run
 ```commandline
     docker run -d --name redis-backend -p 6379:6379 redis
     docker run -d --hostname rabbit-broker --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+    docker run --name chromadb --rm -p 8000:8000 chromadb/chroma
 ```
 
 #### Run gunicorn as a server
@@ -180,6 +181,11 @@ Alternatively, instead of running multiple terminals to start each server, the f
     sh bash_files/initialize_langchain_services.sh
 
 ```
+
+
+INSTALL DOCKER COMPOSE
+
+apt-get install docker-compose-plugin
 
 ### CURLS EXAMPLES:
 
