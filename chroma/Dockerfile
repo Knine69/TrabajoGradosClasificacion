@@ -1,5 +1,5 @@
 # Stage 1: Build Stage
-FROM python:3.10-slim-bullseye AS build-stage
+FROM --platform=linux/amd64 python:3.9-slim AS build-stage
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
@@ -17,6 +17,7 @@ ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.s
 RUN apt-get update && apt-get install -y --no-install-recommends bash gcc g++ make musl-dev libffi-dev && \
     rm -rf /var/lib/apt/lists/* && chmod +x /chroma_app/wait-for-it.sh
 
+
 # Copy source code
 COPY chroma /chroma_app/chroma
 COPY documents /chroma_app/documents
@@ -24,14 +25,16 @@ COPY utils /chroma_app/utils
 COPY app_config.py /chroma_app/
 
 # Set up virtual environment and install dependencies
-RUN touch .env && ls -la && cat app_config.py && \
+RUN touch .env && ls -la && \
     mv chroma/initialize_chroma_services.sh bash_files/ && \
     python -m venv /chroma_app/.chroma && \
-    bash -c ". /chroma_app/.chroma/bin/activate && pip install --no-cache-dir -r chroma/requirements.txt"
+    bash -c ". /chroma_app/.chroma/bin/activate && pip install --no-cache-dir -r chroma/requirements.txt" && \
+    pip install sentence-transformers==2.2.2 --no-deps
+
 
 
 # Stage 2: Final Stage (Runtime Image)
-FROM python:3.10-slim-bullseye AS runtime-stage
+FROM python:3.9-slim AS runtime-stage
 
 # Set environment variables for runtime
 ENV PYTHONUNBUFFERED=1 \
