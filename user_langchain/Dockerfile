@@ -1,5 +1,5 @@
 # Stage 1: Build Stage
-FROM python:3.9-slim as build-stage
+FROM --platform=linux/amd64 python:3.9-slim as build-stage
 
 # Set environment variables for build
 ENV PYTHONUNBUFFERED=1 \
@@ -31,7 +31,7 @@ RUN touch .env && ls -la &&  cat app_config.py && \
     /bin/bash -c ". /langchain_app/.langchain/bin/activate && pip install --no-cache-dir -r /langchain_app/user_langchain/requirements.txt"
 
 # Stage 2: Runtime Stage
-FROM python:3.9-slim as runtime-stage
+FROM --platform=linux/amd64 python:3.9-slim as runtime-stage
 
 # Set environment variables for runtime
 ENV PYTHONUNBUFFERED=1 \
