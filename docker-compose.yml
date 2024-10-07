@@ -16,6 +16,11 @@ services:
     platform: linux/amd64
     image: jhuguet/langchain-executor
     container_name: langchain-executor
+    environment:
+      - CELERY_BROKER_URL=pyamqp://guest@rabbitmq//
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - LANGCHAIN_QUEUE=langchain_queue
+      - CELERYD_NODES=langchain@%h
     networks:
       - shared_network
     ports:
