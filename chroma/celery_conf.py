@@ -1,12 +1,13 @@
 from celery import Celery
+from app_config import Configuration
 
 celery = Celery()
 
 
 def celery_instantiation(app):
     celery.conf.update({
-        'broker_url': app.config['RABBIT_BROKER_URL'],
-        'result_backend': app.config['CELERY_RESULT_BACKEND'],
+        'broker_url': Configuration.CELERY_BROKER_URL,
+        'result_backend': Configuration.CELERY_RESULT_BACKEND,
         'task_serializer': 'json',
         'result_serializer': 'json',
         'accept_content': ['json'],
