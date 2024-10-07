@@ -4,6 +4,8 @@
 #
 #    pip-compile chroma/requirements.in
 #
+accelerate==1.0.0
+    # via transformers
 amqp==5.2.0
     # via kombu
 annotated-types==0.7.0
@@ -88,6 +90,7 @@ httpx==0.27.2
     # via chromadb-client
 huggingface-hub==0.25.1
     # via
+    #   accelerate
     #   sentence-transformers
     #   tokenizers
     #   transformers
@@ -122,6 +125,7 @@ networkx==3.2.1
     # via torch
 numpy==1.26.4
     # via
+    #   accelerate
     #   chromadb-client
     #   gensim
     #   scikit-learn
@@ -153,6 +157,7 @@ overrides==7.7.0
     # via chromadb-client
 packaging==24.1
     # via
+    #   accelerate
     #   gunicorn
     #   huggingface-hub
     #   transformers
@@ -170,6 +175,8 @@ protobuf==4.25.5
     # via
     #   googleapis-common-protos
     #   opentelemetry-proto
+psutil==6.0.0
+    # via accelerate
 py-dotenv==0.1
     # via -r chroma/requirements.in
 pycparser==2.22
@@ -188,6 +195,7 @@ python-dotenv==1.0.1
     # via -r chroma/requirements.in
 pyyaml==6.0.2
     # via
+    #   accelerate
     #   chromadb-client
     #   huggingface-hub
     #   transformers
@@ -206,7 +214,9 @@ requests==2.32.3
     #   posthog
     #   transformers
 safetensors==0.4.5
-    # via transformers
+    # via
+    #   accelerate
+    #   transformers
 scikit-learn==1.5.2
     # via sentence-transformers
 scipy==1.13.1
@@ -232,17 +242,23 @@ tenacity==9.0.0
     # via chromadb-client
 threadpoolctl==3.5.0
     # via scikit-learn
-tokenizers==0.20.0
+tokenizers==0.19.1
     # via transformers
 torch==2.2.2
-    # via sentence-transformers
+    # via
+    #   -r chroma/requirements.in
+    #   accelerate
+    #   sentence-transformers
+    #   transformers
 tqdm==4.66.5
     # via
     #   huggingface-hub
     #   sentence-transformers
     #   transformers
-transformers==4.45.1
-    # via sentence-transformers
+transformers[torch]==4.44.2
+    # via
+    #   -r chroma/requirements.in
+    #   sentence-transformers
 typing-extensions==4.12.2
     # via
     #   anyio
@@ -276,4 +292,3 @@ wrapt==1.16.0
     #   smart-open
 zipp==3.20.2
     # via importlib-metadata
-wheel
