@@ -25,7 +25,7 @@ COPY tools /langchain_app/tools
 COPY app_config.py /langchain_app/
 
 # Set up virtual environment and install dependencies
-RUN touch .env && ls -la &&  cat app_config.py && \
+RUN touch .env && ls -la && \
     mv user_langchain/initialize_langchain_services.sh bash_files/ && \
     python -m venv /langchain_app/.langchain && \
     /bin/bash -c ". /langchain_app/.langchain/bin/activate && pip install --no-cache-dir -r /langchain_app/user_langchain/requirements.txt"
@@ -46,7 +46,7 @@ RUN mkdir -p /langchain_app
 WORKDIR /langchain_app
 
 # Install runtime dependencies only (no build tools)
-RUN apt-get update && apt-get install -y --no-install-recommends bash && \
+RUN apt-get update && apt-get install -y --no-install-recommends bash iputils-ping && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy only the necessary files and virtual environment from the build stage
@@ -57,4 +57,3 @@ EXPOSE 5001
 
 # Set the command to start the application# Set the command to start the application using bash -c to execute wait-for-it
 CMD ["/bin/bash", "-c", "./wait-for-it.sh redis:6379 -- ./wait-for-it.sh rabbitmq:5672 -- ./wait-for-it.sh chroma:8000 -- bash bash_files/initialize_langchain_services.sh"]
-
