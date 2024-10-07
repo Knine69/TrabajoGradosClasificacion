@@ -2,7 +2,6 @@ from flask import Flask
 from app_config import Configuration
 from user_langchain.celery_conf import celery_instantiation, celery
 from user_langchain.app.controller.langchain_controller import langchain_router
-from user_langchain.celery_conf import celery
 
 
 def create_app():
@@ -13,4 +12,3 @@ def create_app():
     return app
 
 
-__all__ = ['celery']
