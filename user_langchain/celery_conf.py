@@ -1,9 +1,11 @@
 from celery import Celery
 from app_config import Configuration
+
 celery = Celery()
 
 
 def celery_instantiation(app):
+    print(f"Using RABBIT_BROKER_URL: {Configuration.RABBIT_BROKER_URL}")
     celery.conf.update({
         'broker_url': Configuration.RABBIT_BROKER_URL,
         'result_backend': Configuration.CELERY_RESULT_BACKEND,
