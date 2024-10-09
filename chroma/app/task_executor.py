@@ -39,7 +39,7 @@ def chroma_search_query_task(collection_name, category, user_query):
     return result
 
 
-@celery.task(soft_time_limit=180, time_limit=240)
+@celery.task(soft_time_limit=240, time_limit=300)
 def chroma_embed_task(collection_name, file_path, categories):
 
     result = ChromaCollections().process_pdf_file(
