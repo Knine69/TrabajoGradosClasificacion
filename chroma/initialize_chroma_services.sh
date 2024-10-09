@@ -1,8 +1,5 @@
 #!/bin/bash
 
-
-python3 -m venv .chroma
-source .chroma/bin/activate
 pip install -r chroma/requirements.txt
 # Start Gunicorn in the background
 gunicorn -c chroma/gunicorn.conf.py 'chroma:create_app()' & \
