@@ -1,7 +1,9 @@
 from flask import Flask
+from flask_cors import CORS
 from app_config import Configuration
 from chroma.app.controller.chroma_client import chroma_router
 from chroma.celery_conf import celery_instantiation, celery
+
 
 
 def create_app():
@@ -9,4 +11,5 @@ def create_app():
     app.config.from_object(Configuration())
     celery_instantiation(app)
     app.register_blueprint(chroma_router)
+    CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
     return app
