@@ -25,7 +25,7 @@ def receive_task_status():
                     "RESPONSE_DATA": task_result})
 
 
-@chroma_router.get("/documents")
+@chroma_router.post("/documents")
 def execute_basic_chroma_query():
     request_data = json.loads(request.data.decode('utf-8'))
     (user_query,
@@ -65,7 +65,5 @@ def process_pdf_file():
             args=[collection_name, file_path, categories],
             queue=Configuration.CHROMA_QUEUE)
         return Response(sse_stream(task.id), content_type='text/event-stream')
-
-# TODO: access pdf directory Try bind mounts
 
 # TODO: Load pdf files from database into local file system
