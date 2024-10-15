@@ -12,9 +12,7 @@ from app_config import Configuration
 class LangchainAgent:
 
     def __init__(self) -> None:
-        self.llm_model = Ollama(model="llama3:70b-instruct-q2_K")
-        # self.llm_model = Ollama(model="llama3:70b-instruct")
-        # self.llm_model = Ollama(model="llava:13b")
+        self.llm_model = Ollama(model="llama3:70b-instruct-q2_K", base_url="http://192.168.0.58:11434")
         self._agent = create_react_agent(self.llm_model,
                                          tools,
                                          prompt)

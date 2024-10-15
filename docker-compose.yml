@@ -1,17 +1,4 @@
 services:
-#  chroma-executor:
-#    platform: linux/amd64
-#    image: jhuguet/chroma-executor
-#    container_name: chroma-executor
-#    networks:
-#      - shared_network
-#    ports:
-#      - "5000:5000"
-#    depends_on:
-#      - redis
-#      - chroma
-#      - rabbitmq
-
   langchain-executor:
     platform: linux/amd64
     image: jhuguet/langchain-executor
