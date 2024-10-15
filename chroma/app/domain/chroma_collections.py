@@ -51,8 +51,9 @@ class ChromaCollections:
             embedding_results = []
             batch_size = 64
             for i in range(0, len(doc_input), batch_size):
-                print_header_message(message=f"Iteration: {i}", app=Configuration.CHROMA_QUEUE)
                 batch_docs = doc_input[i:i + batch_size]
+                print_header_message(
+                    message=f"Iteration: {i} - Batch DOCS: {batch_docs}", app=Configuration.CHROMA_QUEUE)
                 inputs = self.tokenizer(batch_docs,
                                 return_tensors="pt",
                                 padding=True,
