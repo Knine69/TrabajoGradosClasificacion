@@ -7,7 +7,6 @@ import json
 from gensim.parsing import remove_stopwords
 from transformers import AutoTokenizer, AutoModel
 from chromadb import Documents, EmbeddingFunction, Embeddings
-from chromadb.errors import InvalidDimensionException
 from chromadb.api.models.Collection import Collection
 from documents.utils import pdf_to_bytes
 
@@ -50,14 +49,14 @@ class ChromaCollections:
 
         def __call__(self, doc_input: Documents) -> Embeddings:
             embedding_results = []
-            batch_size = 1024
+            batch_size = 32
             for i in range(0, len(doc_input), batch_size):
                 batch_docs = doc_input[i:i + batch_size]
                 inputs = self.tokenizer(batch_docs,
-                                        return_tensors="pt",
-                                        padding=True,
-                                        truncation=True,
-                                        max_length=512)
+                                return_tensors="pt",
+                                padding=True,
+                                truncation=True,
+                                max_length=512)
 
                 with torch.no_grad():
                     outputs = self.embedding_model(**inputs)
@@ -290,13 +289,13 @@ class ChromaCollections:
         sample_doc = pdf_text.decode('utf-8')
 
         start_time = time.time()
-
         result = self.add_document_embeds(
             collection,
             sample_doc,
             self.create_metadata_object(categories))
 
         end_time = time.time()
+        print_header_message(message="After embedding", app=Configuration.CHROMA_QUEUE)
 
         if result:
             print_successful_message(
