@@ -49,7 +49,7 @@ def chroma_search_query_task(collection_name, category, user_query):
     return result
 
 
-@celery.task(soft_time_limit=240, time_limit=300)
+@celery.task(time_limit=240)
 def chroma_embed_task(collection_name, file_path, categories):
 
     result = ChromaCollections().process_pdf_file(
@@ -63,7 +63,7 @@ def chroma_embed_task(collection_name, file_path, categories):
     return result
 
 
-@celery.task(soft_time_limit=30, time_limit=50)
+@celery.task(time_limit=120)
 def notify_task_completion(result, callback_url):
     response = requests.post(callback_url, json={
         'status': 'Completed',
