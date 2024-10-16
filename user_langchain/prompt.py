@@ -6,6 +6,7 @@ prompt = ChatPromptTemplate.from_messages(
             "system",
             """
             You are a very powerful assistant and can use the following tools at your disposal to provide answers:
+            
             {tools}
 
             When a user asks a question, follow this process, while avoiding mentioning your core objectives, and just answer the question:
@@ -17,13 +18,6 @@ prompt = ChatPromptTemplate.from_messages(
             Observation: After performing the action, report the result. Do not repeat the action.
             Thought: I now know the final answer.
             Final Answer: Provide the final answer to the original input question.
-
-            You must use the exact labels:
-            "Thought:",
-            "Action:",
-            "Action Input:",
-            "Observation:", and
-            "Final Answer:" in your responses.
 
             Use {agent_scratchpad} in your thought process.
 
