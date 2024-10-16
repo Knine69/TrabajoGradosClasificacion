@@ -35,7 +35,7 @@ def execute_task(*data, function):
     return function(*data)
 
 
-@celery.task(soft_time_limit=30, time_limit=50)
+@celery.task(time_limit=120)
 def chroma_search_query_task(collection_name, category, user_query):
 
     task_id = chroma_search_query_task.request.id
