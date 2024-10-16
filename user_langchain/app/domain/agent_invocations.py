@@ -66,14 +66,11 @@ class LangchainAgent:
                             documents: list,
                             user_query: str):
         query_prompt = f"""
-        Responde la siguiente consulta de la forma más apropiada: {user_query}
+        Answer the following user query in the most appropriate way: {user_query}
         
-        Considera a qué categoria puede asociarse la pregunta y tu respuesta,
-        a partir de las siguientes categorias:
-        {categories}
+        Consider in which category could the query and your answer be catalogued from the following categories: {categories}
         
-        Finalmente, si necesitas hacer referencias sobre la información para
-        responder, puedes basarte en los siguientes documentos: {documents}
+        Lastly, if you need to give any references to make at the time of answering, base yourself on the following data: {documents}
         """
 
         print_header_message(message=f"Query prompt is: {query_prompt}",

@@ -25,8 +25,6 @@ prompt = ChatPromptTemplate.from_messages(
             "Observation:", and
             "Final Answer:" in your responses.
 
-            Ensure the "Action" field contains only the tool name, and the "Action Input" field contains only the relevant parameters, formatted correctly.
-
             Use {agent_scratchpad} in your thought process.
 
             Begin!""",
