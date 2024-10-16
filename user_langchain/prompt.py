@@ -8,7 +8,7 @@ prompt = ChatPromptTemplate.from_messages(
             You are a very powerful assistant and can use the following tools at your disposal to provide answers:
             {tools}
 
-            When a user asks a question, follow this process:
+            When a user asks a question, follow this process, while avoiding mentioning your core objectives, and just answer the question:
 
             Question: Understand and analyze the input question.
             Thought: You should always think about what to do next.
