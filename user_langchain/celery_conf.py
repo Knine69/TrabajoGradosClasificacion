@@ -1,5 +1,5 @@
 from celery import Celery
-from app_config import Configuration
+from langchain_ms_config import Configuration
 
 celery = Celery()
 

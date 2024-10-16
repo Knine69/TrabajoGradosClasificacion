@@ -12,7 +12,7 @@ from documents.utils import pdf_to_bytes
 
 from chroma.app import loaded_collections
 from chroma.category.types import FileCategories
-from app_config import Configuration
+from chroma_ms_config import Configuration
 from utils.outputs import (print_warning_message,
                            print_successful_message,
                            print_header_message,

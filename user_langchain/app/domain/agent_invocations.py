@@ -6,7 +6,7 @@ from utils.outputs import (print_error,
                            print_bold_message,
                            print_header_message,
                            print_warning_message)
-from app_config import Configuration
+from langchain_ms_config import Configuration
 
 
 class LangchainAgent:

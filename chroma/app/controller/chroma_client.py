@@ -4,7 +4,7 @@ from chroma.app.task_executor import (chroma_search_query_task,
                                       sse_stream)
 from utils.request_validator import (validate_params, get_request_data)
 from flask import Blueprint, request, jsonify, Response
-from app_config import Configuration
+from chroma_ms_config import Configuration
 import json
 
 chroma_router = Blueprint('chroma', __name__, url_prefix='/chroma')

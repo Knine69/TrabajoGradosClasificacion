@@ -22,7 +22,7 @@ COPY user_langchain /langchain_app/user_langchain
 COPY utils /langchain_app/utils
 COPY documents /langchain_app/documents
 COPY tools /langchain_app/tools
-COPY app_config.py /langchain_app/
+COPY langchain_ms_config.py /langchain_app/
 
 # Set up virtual environment and install dependencies
 RUN touch .env && ls -la && \

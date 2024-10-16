@@ -4,4 +4,5 @@
 !documents
 !utils
 !tools
-!app_config.py
+!chroma_ms_config.py
+!langchain_ms_config.py

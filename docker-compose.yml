@@ -8,10 +8,7 @@ services:
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - LANGCHAIN_QUEUE=langchain_queue
       - CELERYD_NODES=langchain@%h
-    extra_hosts:
-      - "host.docker.internal:192.168.0.58"
-    networks:
-      - shared_network
+    network_mode: "host"
     ports:
       - "5001:5001"
     depends_on:

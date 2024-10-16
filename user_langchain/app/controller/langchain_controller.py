@@ -3,7 +3,7 @@ from flask import Blueprint, request, jsonify, Response
 from utils.request_validator import (validate_params, get_request_data)
 from user_langchain.app.task_executor import (langchain_agent_invocation_task,
                                               sse_stream)
-from app_config import Configuration
+from langchain_ms_config import Configuration
 
 langchain_router = Blueprint('langchain',
                              __name__,

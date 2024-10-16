@@ -5,7 +5,7 @@ from user_langchain.celery_conf import celery
 from user_langchain.app import redis_client
 from user_langchain.app.domain.agent_invocations import LangchainAgent
 from utils.outputs import print_successful_message
-from app_config import Configuration
+from langchain_ms_config import Configuration
 
 
 def sse_stream(task_id):

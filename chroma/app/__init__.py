@@ -1,5 +1,5 @@
 import redis
-from app_config import Configuration
+from chroma_ms_config import Configuration
 
 redis_client = redis.StrictRedis.from_url(Configuration.CELERY_RESULT_BACKEND)
 loaded_collections = {}

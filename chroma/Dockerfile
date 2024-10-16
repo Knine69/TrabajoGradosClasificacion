@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends bash gcc g++ ma
 COPY chroma /chroma_app/chroma
 COPY documents /chroma_app/documents
 COPY utils /chroma_app/utils
-COPY app_config.py /chroma_app/
+COPY chroma_ms_config.py /chroma_app/
 
 # Set up virtual environment and install dependencies
 RUN touch .env && ls -la && \
