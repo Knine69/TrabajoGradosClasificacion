@@ -23,9 +23,10 @@ COPY utils /langchain_app/utils
 COPY documents /langchain_app/documents
 COPY tools /langchain_app/tools
 COPY langchain_ms_config.py /langchain_app/
+COPY .env /langchain_app/
 
 # Set up virtual environment and install dependencies
-RUN touch .env && ls -la && \
+RUN ls -la && \
     mv user_langchain/initialize_langchain_services.sh bash_files/ && \
     python -m venv /langchain_app/.langchain && \
     /bin/bash -c ". /langchain_app/.langchain/bin/activate && pip install --no-cache-dir -r /langchain_app/user_langchain/requirements.txt"
