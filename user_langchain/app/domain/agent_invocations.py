@@ -8,6 +8,7 @@ from utils.outputs import (print_error,
                            print_warning_message)
 from langchain_ms_config import Configuration
 
+# TODO: validate task execution error responses to client in event architecture
 
 class LangchainAgent:
 
@@ -71,6 +72,18 @@ class LangchainAgent:
         Consider in which category could the query and your answer be catalogued from the following categories: {categories}
         
         Lastly, if you need to give any references to make at the time of answering, base yourself on the following data: {documents}
+
+        When answering, follow this strict format:
+
+        1. Question: Restate the user's question.
+        2. Thought: Explain your reasoning step-by-step.
+        3. Action: Specify the action you will take (choose one from the tools provided).
+        4. Action Input: Provide the exact input for the chosen action.
+        5. Observation: Describe the result of the action.
+        6. Thought: Reflect on the result to form a final conclusion.
+        7. Final Answer: Provide a clear and concise final answer.
+
+        Ensure you follow this format without skipping any steps or labels.
         """
 
         print_header_message(message=f"Query prompt is: {query_prompt}",
