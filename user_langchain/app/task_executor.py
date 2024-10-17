@@ -25,7 +25,7 @@ def execute_task(*data, function):
     return function(*data)
 
 
-@celery.task(time_limit=120)
+@celery.task(time_limit=220)
 def langchain_agent_invocation_task(categories, documents, user_query):
     result = LangchainAgent().execute_agent_query(categories,
                                                   documents,
