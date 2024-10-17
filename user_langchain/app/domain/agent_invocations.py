@@ -64,10 +64,18 @@ class LangchainAgent:
 
     def execute_agent_query(self, categories: list, documents: list, user_query: str):
         query_prompt = f"""
-        Answer the following question based on the tools provided and references listed below.
-        
         Question: {user_query}
         References for context: {documents}
+        
+        Present your answer in the format of: 
+        1. Question:
+        2. Thought:
+        3. Action:
+        4. Action Input:
+        5. Observation:
+        6. Thought:
+        7. Final Answer:
+
         """
 
         print_header_message(message=f"Query prompt is: {query_prompt}", app=Configuration.LANGCHAIN_QUEUE)
