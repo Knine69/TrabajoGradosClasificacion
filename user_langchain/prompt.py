@@ -12,7 +12,7 @@ prompt = ChatPromptTemplate.from_messages(
 
             1. Question: Restate the user's question.
             2. Thought: Explain your reasoning step-by-step.
-            3. Action: Specify the action you will take (choose one from [{tool_names}]).
+            3. Action: Specify the action you will take (if need be, you may use: [{tool_names}]).
             4. Action Input: Provide the exact input for the chosen action.
             5. Observation: Describe the result of the action.
             6. Thought: Reflect on the result to form a final conclusion.
