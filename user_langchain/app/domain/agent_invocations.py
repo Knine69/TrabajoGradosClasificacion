@@ -68,7 +68,7 @@ class LangchainAgent:
         References for context: {documents}
         
         Present your answer in the format of: 
-        1. Question:
+        1. Question: {user_query}
         2. Thought:
         3. Action:
         4. Action Input:
