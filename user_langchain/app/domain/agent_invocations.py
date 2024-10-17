@@ -62,17 +62,16 @@ class LangchainAgent:
                                   app=Configuration.LANGCHAIN_QUEUE)
         return final_result
 
-    def execute_agent_query(self,
-                            categories: list,
-                            documents: list,
-                            user_query: str):
+    def execute_agent_query(self, categories: list, documents: list, user_query: str):
         query_prompt = f"""
-        Answer the following user question in the most appropriate way: {user_query}
+        Answer the following question based on the tools provided and references listed below.
         
-        Consider in which category could the query and your answer be catalogued from the following categories: {categories}
+        Question: {user_query}
         
-        Lastly, if you need to give any references to make at the time of answering, base yourself on the following data: {documents}
-
+        Categories: {categories}
+        
+        References for context: {documents}
+        
         When answering, follow this strict format:
 
         1. Question: Restate the user's question.
@@ -83,20 +82,16 @@ class LangchainAgent:
         6. Thought: Reflect on the result to form a final conclusion.
         7. Final Answer: Provide a clear and concise final answer.
 
-        Ensure you follow this format without skipping any steps or labels.
+        Please ensure you follow this format without skipping any steps or labels.
         """
 
-        print_header_message(message=f"Query prompt is: {query_prompt}",
-                             app=Configuration.LANGCHAIN_QUEUE)
+        print_header_message(message=f"Query prompt is: {query_prompt}", app=Configuration.LANGCHAIN_QUEUE)
 
-        result = self._invoke_query(executor=self.agent_executor,
-                                    query=f'{query_prompt}')
+        result = self._invoke_query(executor=self.agent_executor, query=f'{query_prompt}')
 
         if result['output']:
-            print_bold_message(message=f"Query result is: {result}",
-                               app=Configuration.LANGCHAIN_QUEUE)
+            print_bold_message(message=f"Query result is: {result}", app=Configuration.LANGCHAIN_QUEUE)
             return result
         else:
-            print_error(message=f"Query failed: {result['description']}",
-                        app=Configuration.LANGCHAIN_QUEUE)
+            print_error(message=f"Query failed: {result['description']}", app=Configuration.LANGCHAIN_QUEUE)
             return {"STATE": "ERROR", "DESCRIPTION": result['description']}
