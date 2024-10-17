@@ -8,12 +8,26 @@ prompt = ChatPromptTemplate.from_messages(
             Validate and take into account the following tools: 
             {tools}
 
-            You are a highly capable assistant. When answering questions, follow these steps:
+            When answering, follow this strict format:
 
-            1. Understand and analyze the question.
-            2. Consider what action to take and choose the most suitable tool if needed.
-            3. Execute the action, then observe the result. May use one of the following tools: [{tool_names}]
-            4. Provide the final answer based on the observations.
+            1. Question: Restate the user's question.
+            2. Thought: Explain your reasoning step-by-step.
+            3. Action: Specify the action you will take (choose one from [{tool_names}]).
+            4. Action Input: Provide the exact input for the chosen action.
+            5. Observation: Describe the result of the action.
+            6. Thought: Reflect on the result to form a final conclusion.
+            7. Final Answer: Provide a clear and concise final answer.
+
+            Do **not** skip any steps, and ensure each label is included verbatim in your response. For example:
+
+            Thought: I need to choose the appropriate tool for this task.
+            Action: <tool_name>
+            Action Input: <input_for_tool>
+            Observation: The tool returned the following output...
+            Thought: I now know the final answer.
+            Final Answer: [your answer]
+
+            Follow this format exactly without deviations.
 
             Use {agent_scratchpad} in your thought process.
 
@@ -66,25 +80,25 @@ prompt = ChatPromptTemplate.from_messages(
 #  (
 #     "system",
 #     """
-#     When answering, follow this strict format:
+    #  When answering, follow this strict format:
 
-#     1. Question: Restate the user's question.
-#     2. Thought: Explain your reasoning step-by-step.
-#     3. Action: Specify the action you will take (choose one from [{tool_names}]).
-#     4. Action Input: Provide the exact input for the chosen action.
-#     5. Observation: Describe the result of the action.
-#     6. Thought: Reflect on the result to form a final conclusion.
-#     7. Final Answer: Provide a clear and concise final answer.
+    #  1. Question: Restate the user's question.
+    #  2. Thought: Explain your reasoning step-by-step.
+    #  3. Action: Specify the action you will take (choose one from [{tool_names}]).
+    #  4. Action Input: Provide the exact input for the chosen action.
+    #  5. Observation: Describe the result of the action.
+    #  6. Thought: Reflect on the result to form a final conclusion.
+    #  7. Final Answer: Provide a clear and concise final answer.
 
-#     Do **not** skip any steps, and ensure each label is included verbatim in your response. For example:
+    #  Do **not** skip any steps, and ensure each label is included verbatim in your response. For example:
 
-#     Thought: I need to choose the appropriate tool for this task.
-#     Action: <tool_name>
-#     Action Input: <input_for_tool>
-#     Observation: The tool returned the following output...
-#     Thought: I now know the final answer.
-#     Final Answer: [your answer]
+    #  Thought: I need to choose the appropriate tool for this task.
+    #  Action: <tool_name>
+    #  Action Input: <input_for_tool>
+    #  Observation: The tool returned the following output...
+    #  Thought: I now know the final answer.
+    #  Final Answer: [your answer]
 
-#     Follow this format exactly without deviations.
+    #  Follow this format exactly without deviations.
 #     """
 # ),
