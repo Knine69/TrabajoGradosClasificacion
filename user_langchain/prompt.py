@@ -12,7 +12,10 @@ prompt = ChatPromptTemplate.from_messages(
             3. Execute the action, then observe the result.
             4. Provide the final answer based on the observations.
 
-            If necessary, you may use the following tools: {tool_names}
+            If necessary, you may use the following tools: 
+            {tools}
+
+            Use {agent_scratchpad} in your thought process.
 
             Begin!
             """
