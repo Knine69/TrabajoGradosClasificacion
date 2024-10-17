@@ -45,7 +45,7 @@ In order to install Ollama, as a root user the process is simple, simply run:
     ollama
     
     # Serve Ollama in a separate terminal
-    ollama serve
+    OLLAMA_SCHED_SPREAD=true OLLAMA_NUM_PARALLEL=2 OLLAMA_GPU_OVERHEAD=1024M ollama serve
     
     # Check ollama version
     ollama -v
