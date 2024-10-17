@@ -5,15 +5,15 @@ prompt = ChatPromptTemplate.from_messages(
         (
             "system",
             """
+            Validate and take into account the following tools: 
+            {tools}
+
             You are a highly capable assistant. When answering questions, follow these steps:
 
             1. Understand and analyze the question.
             2. Consider what action to take and choose the most suitable tool if needed.
-            3. Execute the action, then observe the result.
+            3. Execute the action, then observe the result. May use one of the following tools: [{tool_names}]
             4. Provide the final answer based on the observations.
-
-            If necessary, you may use the following tools: 
-            {tools}
 
             Use {agent_scratchpad} in your thought process.
 
