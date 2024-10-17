@@ -67,7 +67,7 @@ class LangchainAgent:
                             documents: list,
                             user_query: str):
         query_prompt = f"""
-        Answer the following user query in the most appropriate way: {user_query}
+        Answer the following user question in the most appropriate way: {user_query}
         
         Consider in which category could the query and your answer be catalogued from the following categories: {categories}
         
