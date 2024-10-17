@@ -67,22 +67,7 @@ class LangchainAgent:
         Answer the following question based on the tools provided and references listed below.
         
         Question: {user_query}
-        
-        Categories: {categories}
-        
         References for context: {documents}
-        
-        When answering, follow this strict format:
-
-        1. Question: Restate the user's question.
-        2. Thought: Explain your reasoning step-by-step.
-        3. Action: Specify the action you will take (choose one from the tools provided).
-        4. Action Input: Provide the exact input for the chosen action.
-        5. Observation: Describe the result of the action.
-        6. Thought: Reflect on the result to form a final conclusion.
-        7. Final Answer: Provide a clear and concise final answer.
-
-        Please ensure you follow this format without skipping any steps or labels.
         """
 
         print_header_message(message=f"Query prompt is: {query_prompt}", app=Configuration.LANGCHAIN_QUEUE)

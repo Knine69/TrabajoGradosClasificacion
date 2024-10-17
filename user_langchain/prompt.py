@@ -16,7 +16,7 @@ prompt = ChatPromptTemplate.from_messages(
             4. Action Input: Provide the exact input for the chosen action.
             5. Observation: Describe the result of the action.
             6. Thought: Reflect on the result to form a final conclusion.
-            7. Final Answer: Provide a clear and concise final answer.
+            7. Final Answer: Provide a clear and concise final answer. In your answer, include any usefull references that you are given in the prompt.
 
             Do **not** skip any steps, and ensure each label is included verbatim in your response. For example:
 
