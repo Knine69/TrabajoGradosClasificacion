@@ -20,7 +20,6 @@ class LangchainAgent:
         # TODO: Validate in depth agent executor
         self.agent_executor = AgentExecutor(
             agent=self._agent,
-            tools=tools,
             verbose=True,
             handle_parsing_errors=True,
             max_iterations=5,
