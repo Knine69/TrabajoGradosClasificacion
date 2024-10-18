@@ -1,4 +1,4 @@
-from user_langchain.prompt import prompt
+from user_langchain.prompt import prompt, parser
 from langchain_community.llms.ollama import Ollama
 from langchain.agents import AgentExecutor, create_react_agent
 from tools.tools import tools
@@ -48,7 +48,8 @@ class LangchainAgent:
         for attempt in range(max_attempts):
             try:
                 result = executor.invoke({"input": query,
-                                          "max_tokens": 500})
+                                          "max_tokens": 1000})
+                result = parser.parse(result)
                 return {
                     "STATE": "PROCESSED",
                     "QUERY_MADE": query,
@@ -62,21 +63,23 @@ class LangchainAgent:
                                   app=Configuration.LANGCHAIN_QUEUE)
         return final_result
 
-    def execute_agent_query(self, categories: list, documents: list, user_query: str):
-        query_prompt = f"""
-        Question: {user_query}
-        References for context: {documents}
-        
-        Present your answer in the format of: 
-        1. Question: {user_query}
-        2. Thought:
-        3. Action:
-        4. Action Input:
-        5. Observation:
-        6. Thought:
-        7. Final Answer:
+    def execute_agent_query(self, documents: list, user_query: str):
+        query_prompt = prompt.format(user_query=user_query, documents=documents)
 
-        """
+        # query_prompt = f"""
+        # Question: {user_query}
+        # References for context: {documents}
+        
+        # Present your answer in the format of: 
+        # 1. Question: {user_query}
+        # 2. Thought:
+        # 3. Action:
+        # 4. Action Input:
+        # 5. Observation:
+        # 6. Thought:
+        # 7. Final Answer:
+
+        # """
 
         print_header_message(message=f"Query prompt is: {query_prompt}", app=Configuration.LANGCHAIN_QUEUE)
 
