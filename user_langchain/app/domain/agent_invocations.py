@@ -1,7 +1,6 @@
 from user_langchain.prompt import prompt, parser
-from langchain_community.llms.ollama import Ollama
-from langchain.agents import AgentExecutor, create_react_agent
-from tools.tools import tools
+from langchain.llms import Ollama
+from langchain.agents import AgentExecutor, BaseSingleActionAgent
 from utils.outputs import (print_error,
                            print_bold_message,
                            print_header_message,
@@ -10,51 +9,50 @@ from langchain_ms_config import Configuration
 
 # TODO: validate task execution error responses to client in event architecture
 
+
+# class SimpleRetriever(LlamaIndexRetriever):
+
+#     def __init__(self, documents: list):
+#         self.documents = documents
+
+#     def retrieve(self, query: str) -> list:
+#         results = [doc for doc in self.documents if any(word in doc for word in query.split())]
+#         return results
+
+
 class LangchainAgent:
 
     def __init__(self) -> None:
         self.llm_model = Ollama(model="llama3:70b-instruct-q2_K", base_url="http://localhost:11434")
-        self._agent = create_react_agent(self.llm_model,
-                                         tools,
-                                         prompt)
-        self.tool_names = [tool.name for tool in tools]
-        # TODO: Validate in depth agent executor
+
+        self.agent = BaseSingleActionAgent(
+            llm=self.llm_model,
+            prompt=prompt,
+            verbose=True
+        )
+
         self.agent_executor = AgentExecutor(
-            agent=self._agent,
-            tools=tools,
+            agent=self.agent,
             verbose=True,
+            output_parser=parser,
             handle_parsing_errors=True,
             max_iterations=5,
-            return_intermediate_steps=True)
+            return_intermediate_steps=True
+        )
 
     @staticmethod
-    def _invoke_query(executor, query, max_attempts=5):
-        def output_handler(string):
-            black_list = ["stopped", "limit", 'not a valid tool']
-            output_response = any(word in string['output']
-                                  for word in black_list)
-            if output_response:
-                for step in string['intermediate_steps']:
-                    if isinstance(step[1], str):
-                        if not any(word in step[1] for word in black_list):
-                            return step[1]
-                    elif isinstance(step[1], int):
-                        return step[1]
-                raise ValueError("Couldn't process query")
-            else:
-                return string['output']
-
+    def _invoke_query(executor: AgentExecutor, query, max_attempts=5):
         final_result = {"output": False,
                         "description": "Too many failed attempts"}
         for attempt in range(max_attempts):
             try:
-                result = executor.invoke({"input": query,
+                result = executor.run({"input": query,
                                           "max_tokens": 1000})
                 result = parser.parse(result)
                 return {
                     "STATE": "PROCESSED",
                     "QUERY_MADE": query,
-                    "RESPONSE": output_handler(result)
+                    "RESPONSE": result
                 }
             except Exception as e:
                 print_error(message=f"Something failed: {e}",
@@ -66,32 +64,11 @@ class LangchainAgent:
 
     def execute_agent_query(self, categories: list,  documents: list, user_query: str):
         
-        format_instructions = parser.get_format_instructions()
-        query_prompt = prompt.format(
-                user_query=user_query,
-                documents="\n".join(documents),
-                tools=tools,
-                tool_names=", ".join(self.tool_names),
-                agent_scratchpad="",  # Starts empty, can be updated with intermediate steps
-                format_instructions=format_instructions
-            )
-
-
-        # query_prompt = f"""
-        # Question: {user_query}
-        # References for context: {documents}
+        query_prompt = f"""
+            Question: {user_query}
+            References: {documents}
+        """
         
-        # Present your answer in the format of: 
-        # 1. Question: {user_query}
-        # 2. Thought:
-        # 3. Action:
-        # 4. Action Input:
-        # 5. Observation:
-        # 6. Thought:
-        # 7. Final Answer:
-
-        # """
-
         print_header_message(message=f"Query prompt is: {query_prompt}", app=Configuration.LANGCHAIN_QUEUE)
 
         result = self._invoke_query(executor=self.agent_executor, query=f'{query_prompt}')
