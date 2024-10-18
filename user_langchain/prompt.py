@@ -19,7 +19,7 @@ parser = PydanticOutputParser(pydantic_object=ResponseSchema)
 prompt = ChatPromptTemplate.from_messages(
     [
         ("system", "Answer the user query and give references following the given schema."),
-        ("human", "Question: {user_query}\n\nReferences: {documents}\n\n Schema: {format_instructions}\n\n tool names: {tool_names} \n\n tools: {tools} \n\n Use {agent_scratchpad} in your thought process.")
+        ("human", "Question: {user_query}\n\nReferences: {documents}\n\n Schema: {format_instructions}\n\n tools: {tools} \n\n tool names: {tool_names}\n\n Use {agent_scratchpad} in your thought process.")
     ]
 ).partial(format_instructions=parser.get_format_instructions())
 
