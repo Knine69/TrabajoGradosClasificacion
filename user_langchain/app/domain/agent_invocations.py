@@ -69,10 +69,10 @@ class LangchainAgent:
         format_instructions = parser.get_format_instructions()
         query_prompt = prompt.format(
                 user_query=user_query,
-                documents=documents,
+                documents="\n".join(documents),
                 tools=tools,
-                tool_names=self.tool_names,
-                agent_scratchpad="",
+                tool_names=", ".join(self.tool_names),
+                agent_scratchpad="",  # Starts empty, can be updated with intermediate steps
                 format_instructions=format_instructions
             )
 
