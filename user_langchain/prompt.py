@@ -25,9 +25,9 @@ prompt = ChatPromptTemplate.from_messages(
          
          The tool names are: [{tool_names}]
          Use {agent_scratchpad} in your thought process."""),
-        ("human", "Question: {{user_query}}\n\nReferences: {{documents}}\n\n Schema: {format_instructions}\n\n")
+        ("human", "Question: {user_query}\n\nReferences: {documents}\n\n Schema: {format_instructions}\n\n")
     ]
-).partial(format_instructions=parser.get_format_instructions())
+)
 
 # prompt = ChatPromptTemplate.from_messages(
 #     [
