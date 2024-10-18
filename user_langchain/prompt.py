@@ -20,7 +20,11 @@ prompt = ChatPromptTemplate.from_messages(
     [
         ("system", """
          Answer the user query and give references following the given schema. \n
-         You can use, if necessary, tools ({tools}) with names([{tool_names}])Use {agent_scratchpad} in your thought process."""),
+         You can use, if necessary, tools: {tools} 
+         
+         The tool names are: [{tool_names}]
+         
+         Use {agent_scratchpad} in your thought process."""),
         ("human", "Question: {user_query}\n\nReferences: {documents}\n\n Schema: {format_instructions}\n\n")
     ]
 ).partial(format_instructions=parser.get_format_instructions())
