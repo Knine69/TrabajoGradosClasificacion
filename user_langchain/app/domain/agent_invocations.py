@@ -65,11 +65,17 @@ class LangchainAgent:
         return final_result
 
     def execute_agent_query(self, categories: list,  documents: list, user_query: str):
-        query_prompt = prompt.format(user_query=user_query,
-                                     documents=documents,
-                                     tools=tools,
-                                     tool_names=self.tool_names,
-                                     agent_scratchpad="")
+        
+        format_instructions = parser.get_format_instructions()
+        query_prompt = prompt.format(
+                user_query=user_query,
+                documents=documents,
+                tools=tools,
+                tool_names=self.tool_names,
+                agent_scratchpad="",
+                format_instructions=format_instructions
+            )
+
 
         # query_prompt = f"""
         # Question: {user_query}
