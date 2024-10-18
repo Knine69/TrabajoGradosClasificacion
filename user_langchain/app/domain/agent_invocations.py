@@ -17,6 +17,7 @@ class LangchainAgent:
         self._agent = create_react_agent(self.llm_model,
                                          tools,
                                          prompt)
+        self.tool_names = [tool.name for tool in tools]
         # TODO: Validate in depth agent executor
         self.agent_executor = AgentExecutor(
             agent=self._agent,
@@ -64,7 +65,10 @@ class LangchainAgent:
         return final_result
 
     def execute_agent_query(self, categories: list,  documents: list, user_query: str):
-        query_prompt = prompt.format(user_query=user_query, documents=documents)
+        query_prompt = prompt.format(user_query=user_query,
+                                     documents=documents,
+                                     tools=tools,
+                                     tool_names=self.tool_names)
 
         # query_prompt = f"""
         # Question: {user_query}
