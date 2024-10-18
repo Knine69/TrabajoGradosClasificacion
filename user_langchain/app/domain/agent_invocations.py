@@ -68,7 +68,8 @@ class LangchainAgent:
         query_prompt = prompt.format(user_query=user_query,
                                      documents=documents,
                                      tools=tools,
-                                     tool_names=self.tool_names)
+                                     tool_names=self.tool_names,
+                                     agent_scratchpad="")
 
         # query_prompt = f"""
         # Question: {user_query}
