@@ -63,7 +63,7 @@ class LangchainAgent:
                                   app=Configuration.LANGCHAIN_QUEUE)
         return final_result
 
-    def execute_agent_query(self, documents: list, user_query: str):
+    def execute_agent_query(self, categories: list,  documents: list, user_query: str):
         query_prompt = prompt.format(user_query=user_query, documents=documents)
 
         # query_prompt = f"""
