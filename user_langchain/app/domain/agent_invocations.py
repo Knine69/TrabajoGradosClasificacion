@@ -22,7 +22,8 @@ class LangchainAgent:
                         "description": "Too many failed attempts"}
         for attempt in range(max_attempts):
             try:
-                result = executor.invoke({"input": query,
+                result = executor.invoke({"question": query['question'],
+                                          "references": query['references'],
                                           "max_tokens": 1000})
                 print_header_message(message=f"Response: {result}",
                                      app=Configuration.LANGCHAIN_QUEUE)
@@ -42,14 +43,14 @@ class LangchainAgent:
 
     def execute_chain_query(self, categories: list,  documents: list, user_query: str):
         
-        query_prompt = f"""
-Question: {user_query}
-References: {documents}
-        """
+        query_prompt = {
+            "question": user_query,
+            "references": documents
+        }
         
         print_header_message(message=f"Query prompt is: {query_prompt}", app=Configuration.LANGCHAIN_QUEUE)
 
-        result = self._invoke_query(executor=self.llm_chain, query=f'{query_prompt}')
+        result = self._invoke_query(executor=self.llm_chain, query=query_prompt)
 
         if result['STATE']:
             

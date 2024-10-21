@@ -37,7 +37,8 @@ prompt = ChatPromptTemplate.from_messages(
             - Provide a `final_answer` based on the question.
             - Use relevant `references` to support the `final_answer`.    
         """),
-        ("human", "{input}"),
+        ("human", "{references}"),
+        ("human", "{question}"),
         ("placeholder", "{agent_scratchpad}")
     ]
 ).partial(format_instructions=parser.get_format_instructions(), agent_scratchpad=[])
