@@ -78,7 +78,7 @@ If, on the other hand, you wish to install ollama as a non-root user, then follo
          ollama --version
          
          # Run in separate terminal if ollama version does not work and try again
-            ollama serve 
+            OLLAMA_SCHED_SPREAD=true OLLAMA_NUM_PARALLEL=2 OLLAMA_GPU_OVERHEAD=1024M ollama serve
          
     
 ```
