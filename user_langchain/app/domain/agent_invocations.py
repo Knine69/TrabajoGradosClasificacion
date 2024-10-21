@@ -1,8 +1,8 @@
-from user_langchain.prompt import prompt, parser
+from user_langchain.prompt import ResponseSchema, prompt, parser
 from langchain_community.llms import Ollama
 from langchain.chains.base import Chain
 from utils.outputs import (print_error,
-                           print_bold_message,
+                           print_successful_message,
                            print_header_message,
                            print_warning_message)
 from langchain_ms_config import Configuration
@@ -25,7 +25,7 @@ class LangchainAgent:
             try:
                 result = executor.invoke({"input": query,
                                           "max_tokens": 1000})
-                result = parser.parse(result)
+                result: ResponseSchema = parser.parse(result)
                 return {
                     "STATE": "PROCESSED",
                     "QUERY_MADE": query,
@@ -39,11 +39,11 @@ class LangchainAgent:
                                   app=Configuration.LANGCHAIN_QUEUE)
         return final_result
 
-    def execute_agent_query(self, categories: list,  documents: list, user_query: str):
+    def execute_chain_query(self, categories: list,  documents: list, user_query: str):
         
         query_prompt = f"""
-            Question: {user_query}
-            References: {documents}
+Question: {user_query}
+References: {documents}
         """
         
         print_header_message(message=f"Query prompt is: {query_prompt}", app=Configuration.LANGCHAIN_QUEUE)
@@ -51,7 +51,12 @@ class LangchainAgent:
         result = self._invoke_query(executor=self.llm_chain, query=f'{query_prompt}')
 
         if result['STATE']:
-            print_bold_message(message=f"Query result is: {result}", app=Configuration.LANGCHAIN_QUEUE)
+            
+            print_successful_message(
+                message=f"Query result is: {result['RESPONSE'].model_dump_json(indent=2)}",
+                app=Configuration.LANGCHAIN_QUEUE)
+            
+            result['RESPONSE'] = result['RESPONSE'].model_dump()
             return result
         else:
             print_error(message=f"Query failed: {result['description']}", app=Configuration.LANGCHAIN_QUEUE)
@@ -60,5 +65,4 @@ class LangchainAgent:
 
 if __name__ == "__main__":
     agent = LangchainAgent()
-    result = agent.execute_agent_query([], ["Some data for RAG", "Some other data for RAG"], "What is an action?")
-    print(f"Result: {result}")
+    result = agent.execute_chain_query([], ["Some data for RAG", "Some other data for RAG"], "What is an action?")
