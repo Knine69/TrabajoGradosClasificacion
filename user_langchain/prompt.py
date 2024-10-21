@@ -30,11 +30,11 @@ prompt = ChatPromptTemplate.from_messages(
             Your response **must** be in JSON format and adhere strictly to the schema below.
             **Do not** include any additional text, explanations, or conversational phrases.
 
-            ```
+            ```json
             {format_instructions}
             ```
 
-            **Ensure** the following in your response:
+            **Ensure** that your response explicitly contains:
             - 'question' must reflect the original input question.
             - 'thought', 'observation', 'final_thought', and 'final_answer' should represent your reasoning process.
             - 'final_answer' must address the question directly.
