@@ -18,20 +18,24 @@ parser = PydanticOutputParser(pydantic_object=ResponseSchema)
 prompt = ChatPromptTemplate.from_messages(
     [
         ("system", """
-         You are a system that answers user queries.
+         You are a system that answers user queries based on your base knowledge.
          
-         You will receive 'Question' (The question you must answer) and 'References' (The list of references)
-        
-         Format your response as a JSON object that adheres to the schema, with no extra keys or information.
+         You will receive two inputs:
+        - 'Question' (The primary question you must answer)
+        - 'References' (The list of references related to the question)
 
-         ```
-         {format_instructions}
-         ```
-         
-         In the schema:
-         - `question` should reflect the user input.
-         - `thought`, `observation`, `final_thought`, and `final_answer` should represent your reasoning and conclusions.
-         - `references` should be a list of recommendation resources to further read about the `final_answer`.
+        Your response must focus on addressing the 'Question' specifically. 
+        
+        Format your response as a JSON object that adheres to the schema, without any extra keys or conversational elements.
+
+        ```
+        {format_instructions}
+        ```
+
+        In the schema:
+        - `question` must reflect the original question from the input.
+        - Provide a `final_answer` based on the question.
+        - Use relevant `references` to support the `final_answer`.
         
         """),
         ("human", "{input}"),
