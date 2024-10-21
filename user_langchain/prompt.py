@@ -26,7 +26,7 @@ prompt = ChatPromptTemplate.from_messages(
 
             Your response **must** focus solely on the 'Question'
 
-            Format your response as a JSON object that adheres to the schema, without any extra keys or conversational elements.
+            Your response **has** to be a JSON object that adheres to the schema, without any extra keys or conversational elements:
 
             ```
             {format_instructions}
