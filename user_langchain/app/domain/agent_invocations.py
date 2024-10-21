@@ -24,6 +24,8 @@ class LangchainAgent:
             try:
                 result = executor.invoke({"input": query,
                                           "max_tokens": 1000})
+                print_header_message(message=f"Response: {result}",
+                                     app=Configuration.LANGCHAIN_QUEUE)
                 result: ResponseSchema = parser.parse(result)
                 return {
                     "STATE": "PROCESSED",
