@@ -10,7 +10,7 @@ class ResponseSchema(BaseModel):
     observation: str = Field(description="Observation after the action.")
     final_thought: str = Field(description="Final thought after observations.")
     final_answer: str = Field(description="The final answer to the user's question.")
-    references: list[str] = Field(description="A reference to resources that further explain the final answer")
+    references: list[list[str]] = Field(description="A reference to resources that further explain the final answer")
 
 
 parser = PydanticOutputParser(pydantic_object=ResponseSchema)
@@ -19,7 +19,6 @@ prompt = ChatPromptTemplate.from_messages(
     [
         ("system", """
          You will receive a question and supplementary information that act as references you may use. 
-         Provide a response matching the schema below.
 
          Format your response as a JSON object that adheres to the schema, with no extra keys or information.
 
