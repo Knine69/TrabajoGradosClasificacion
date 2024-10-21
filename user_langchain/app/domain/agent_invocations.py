@@ -12,7 +12,7 @@ import json
 
 class LangchainAgent:
     def __init__(self):
-        self.llm_model = Ollama(model="llama3.2", base_url="http://localhost:11434")
+        self.llm_model = Ollama(model="llama3:70b-instruct-q2_K", base_url="http://localhost:11434")
         # Set up the agent executor
         self.llm_chain = prompt | self.llm_model
 
