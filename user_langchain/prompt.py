@@ -38,6 +38,8 @@ prompt = ChatPromptTemplate.from_messages(
     ]
 ).partial(format_instructions=parser.get_format_instructions(), agent_scratchpad=[])
 
+# Future work: Create a chat functionality instead of chain
+
 # prompt = ChatPromptTemplate.from_messages(
 #     [
 #         (
