@@ -6,3 +6,4 @@
 !tools
 !chroma_ms_config.py
 !langchain_ms_config.py
+!.env
