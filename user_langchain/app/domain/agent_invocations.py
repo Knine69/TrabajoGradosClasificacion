@@ -16,7 +16,6 @@ class LangchainAgent:
         # Set up the agent executor
         self.llm_chain = prompt | self.llm_model
 
-
     @staticmethod
     def _invoke_query(executor: Chain, query, max_attempts=5):
         final_result = {"output": False,
