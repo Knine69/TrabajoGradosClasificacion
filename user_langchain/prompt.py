@@ -18,7 +18,7 @@ parser = PydanticOutputParser(pydantic_object=ResponseSchema)
 prompt = ChatPromptTemplate.from_messages(
     [
         ("system", """
-            You are a system that must answer user queries based strictly on JSON format.
+            You are a system that must answer user queries.
             
             You will receive:
             - 'Question' (The primary question to answer)
