@@ -46,7 +46,7 @@ def langchain_agent_invocation_task(categories, documents, user_query):
     task_id = langchain_agent_invocation_task.request.id
     
     try:
-        result = LangchainAgent().execute_agent_query(categories,
+        result = LangchainAgent().execute_chain_query(categories,
                                                   documents,
                                                   user_query)
         _store_task_results(task_id, result)
