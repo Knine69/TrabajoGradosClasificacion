@@ -20,14 +20,7 @@ prompt = ChatPromptTemplate.from_messages(
         ("system", """
          You are a system that answers user queries.
          
-         You will receive 'Question' (The question you must answer) and 'References' (The list of references) in the following format:
-         
-         ```json
-         {
-            Question: str
-            References: list[list[str]]
-         }
-         ```
+         You will receive 'Question' (The question you must answer) and 'References' (The list of references)
         
          Format your response as a JSON object that adheres to the schema, with no extra keys or information.
 
