@@ -1,52 +1,29 @@
 from user_langchain.prompt import prompt, parser
-from langchain.llms import Ollama
-from langchain.agents import AgentExecutor, BaseSingleActionAgent
+from langchain_community.llms import Ollama
+from langchain.chains.base import Chain
 from utils.outputs import (print_error,
                            print_bold_message,
                            print_header_message,
                            print_warning_message)
 from langchain_ms_config import Configuration
+import json
 
 # TODO: validate task execution error responses to client in event architecture
 
-
-# class SimpleRetriever(LlamaIndexRetriever):
-
-#     def __init__(self, documents: list):
-#         self.documents = documents
-
-#     def retrieve(self, query: str) -> list:
-#         results = [doc for doc in self.documents if any(word in doc for word in query.split())]
-#         return results
-
-
 class LangchainAgent:
+    def __init__(self):
+        self.llm_model = Ollama(model="llama3.2", base_url="http://localhost:11434")
+        # Set up the agent executor
+        self.llm_chain = prompt | self.llm_model
 
-    def __init__(self) -> None:
-        self.llm_model = Ollama(model="llama3:70b-instruct-q2_K", base_url="http://localhost:11434")
-
-        self.agent = BaseSingleActionAgent(
-            llm=self.llm_model,
-            prompt=prompt,
-            verbose=True
-        )
-
-        self.agent_executor = AgentExecutor(
-            agent=self.agent,
-            verbose=True,
-            output_parser=parser,
-            handle_parsing_errors=True,
-            max_iterations=5,
-            return_intermediate_steps=True
-        )
 
     @staticmethod
-    def _invoke_query(executor: AgentExecutor, query, max_attempts=5):
+    def _invoke_query(executor: Chain, query, max_attempts=5):
         final_result = {"output": False,
                         "description": "Too many failed attempts"}
         for attempt in range(max_attempts):
             try:
-                result = executor.run({"input": query,
+                result = executor.invoke({"input": query,
                                           "max_tokens": 1000})
                 result = parser.parse(result)
                 return {
@@ -71,11 +48,17 @@ class LangchainAgent:
         
         print_header_message(message=f"Query prompt is: {query_prompt}", app=Configuration.LANGCHAIN_QUEUE)
 
-        result = self._invoke_query(executor=self.agent_executor, query=f'{query_prompt}')
+        result = self._invoke_query(executor=self.llm_chain, query=f'{query_prompt}')
 
-        if result['output']:
+        if result['STATE']:
             print_bold_message(message=f"Query result is: {result}", app=Configuration.LANGCHAIN_QUEUE)
             return result
         else:
             print_error(message=f"Query failed: {result['description']}", app=Configuration.LANGCHAIN_QUEUE)
             return {"STATE": "ERROR", "DESCRIPTION": result['description']}
+
+
+if __name__ == "__main__":
+    agent = LangchainAgent()
+    result = agent.execute_agent_query([], ["Some data for RAG", "Some other data for RAG"], "What is an action?")
+    print(f"Result: {result}")
