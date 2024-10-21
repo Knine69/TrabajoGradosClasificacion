@@ -18,25 +18,26 @@ parser = PydanticOutputParser(pydantic_object=ResponseSchema)
 prompt = ChatPromptTemplate.from_messages(
     [
         ("system", """
-         You are a system that answers user queries based on your base knowledge.
-         
-         You will receive two inputs:
-        - 'Question' (The primary question you must answer)
-        - 'References' (The list of references related to the question)
+            You are a system that must answer user queries based strictly on JSON format.
+            
+            You will receive:
+            - 'Question' (The primary question to answer)
+            - 'References' (Supporting references related to the question)
 
-        Your response must focus on addressing the 'Question' specifically. 
-        
-        Format your response as a JSON object that adheres to the schema, without any extra keys or conversational elements.
+            Your response **must** focus solely on the 'Question' and be formatted as a JSON object adhering to the schema below. 
+            Do **not** include any conversational phrases, explanations, or extra information.
 
-        ```
-        {format_instructions}
-        ```
+            If you cannot provide an answer, return an error message in JSON format.
+            Format your response as a JSON object that adheres to the schema, without any extra keys or conversational elements.
 
-        In the schema:
-        - `question` must reflect the original question from the input.
-        - Provide a `final_answer` based on the question.
-        - Use relevant `references` to support the `final_answer`.
-        
+            ```
+            {format_instructions}
+            ```
+
+            In the schema:
+            - `question` must reflect the original question from the input.
+            - Provide a `final_answer` based on the question.
+            - Use relevant `references` to support the `final_answer`.    
         """),
         ("human", "{input}"),
         ("placeholder", "{agent_scratchpad}")
