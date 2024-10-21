@@ -7,11 +7,10 @@ from langchain.output_parsers import PydanticOutputParser
 class ResponseSchema(BaseModel):
     question: str = Field(description="The question asked by the user.")
     thought: str = Field(description="Initial thought process.")
-    action: str = Field(description="Action taken based on the thought.")
-    action_input: str = Field(description="Input required for the action.")
     observation: str = Field(description="Observation after the action.")
     final_thought: str = Field(description="Final thought after observations.")
     final_answer: str = Field(description="The final answer to the user's question.")
+    references: list[str] = Field(description="A reference to resources that further explain the final answer")
 
 
 parser = PydanticOutputParser(pydantic_object=ResponseSchema)
@@ -19,11 +18,25 @@ parser = PydanticOutputParser(pydantic_object=ResponseSchema)
 prompt = ChatPromptTemplate.from_messages(
     [
         ("system", """
-         Answer the user query following the given schema {format_instructions}. Create references based on received information."""),
+         You will receive a question and related references. 
+         Provide a response matching the schema below.
+
+         Format your response as a JSON object that adheres to the schema, with no extra keys or information.
+
+         ```
+         {format_instructions}
+         ```
+         
+         In the schema:
+         - `question` should reflect the user input.
+         - `thought`, `observation`, `final_thought`, and `final_answer` should represent your reasoning and conclusions.
+         - `references` should be a list of recommendation resources to further read about the `final_answer`.
+        
+        """),
         ("human", "{input}"),
         ("placeholder", "{agent_scratchpad}")
     ]
-).partial(format_instructions=parser.get_format_instructions(), agent_scratchpad="")
+).partial(format_instructions=parser.get_format_instructions(), agent_scratchpad=[])
 
 # prompt = ChatPromptTemplate.from_messages(
 #     [
