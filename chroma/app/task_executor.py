@@ -16,11 +16,15 @@ def sse_stream(task_id):
             result = redis_client.get(task_id)
 
             if result:
-                # Once the result is available, stream it to the client and exit
-                yield f"data: {result.decode('utf-8')}\n\n"
-                break  # End the loop after sending the result
+                state = result.get('state')
 
-            time.sleep(2)  # Poll every 2 seconds
+                if state == 'ERROR':
+                    yield f"data: {json.dumps({'state': 'ERROR', 'message': result.get('result')})}\n\n"
+                else:
+                    yield f"data: {json.dumps({'state': 'SUCCESS', 'result': result.get('result')})}\n\n"
+                break
+
+            time.sleep(2)
     except GeneratorExit:
         print_error(f"Client disconnected while waiting for task {task_id}",
                     app=Configuration.CHROMA_QUEUE)
@@ -30,9 +34,11 @@ def sse_stream(task_id):
         yield f"data: Error while processing task {task_id}\n\n"
 
 
-@celery.task(soft_time_limit=30, time_limit=50)
-def execute_task(*data, function):
-    return function(*data)
+def error_handler(task_id, exc):
+    print_error(message=f'{task_id} - Something went wrong: {exc}',
+                app=Configuration.CHROMA_QUEUE)
+    redis_client.set(task_id,
+                     {'state': 'ERROR', 'result': exc})
 
 
 @celery.task(time_limit=120)
@@ -52,31 +58,25 @@ def chroma_search_query_task(collection_name, category, user_query):
 @celery.task(time_limit=240)
 def chroma_embed_task(collection_name, file_path, categories):
 
-    result = ChromaCollections().process_pdf_file(
-        file_path=file_path,
-        collection_name=collection_name,
-        categories=categories)
-
     task_id = chroma_embed_task.request.id
-    _store_task_results(task_id, result)
+    
+    try:
+        result = ChromaCollections().process_pdf_file(
+            file_path=file_path,
+            collection_name=collection_name,
+            categories=categories)
+        
+        _store_task_results(task_id, result)
+    except Exception as exc:
+        error_handler(task_id, str(exc))
+        return None
 
     return result
-
-
-@celery.task(time_limit=120)
-def notify_task_completion(result, callback_url):
-    response = requests.post(callback_url, json={
-        'status': 'Completed',
-        'result': result
-    })
-
-    if response.status_code != 200:
-        print(f"Failed to notify callback URL: {callback_url}")
 
 
 def _store_task_results(task_id, result) -> None:
     print_successful_message(
         message=f"Storing result of task: {task_id} on redis...",
-        app=Configuration.CHROMA_QUEUE)
-
-    redis_client.set(task_id, json.dumps(result))
+        app=Configuration.LANGCHAIN_QUEUE)
+    redis_client.set(task_id,
+                     {'state': 'SUCCESS', 'result':json.dumps(result)})
