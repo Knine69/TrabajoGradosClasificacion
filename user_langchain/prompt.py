@@ -18,10 +18,10 @@ parser = PydanticOutputParser(pydantic_object=ResponseSchema)
 prompt = ChatPromptTemplate.from_messages(
     [
         ("system", """
-         You will receive a question and supplementary information that act as references you may use. 
-         
-         You are a system that answers user queries, and based on the references you receive, you make recommendations to further read
+         You are a system that answers user queries, and based on the list of references you receive, you make recommendations to further read
          based on the response you give to the user query.
+         
+         You will receive 'Question' (The user question) and 'References' (The list of references)
         
          Format your response as a JSON object that adheres to the schema, with no extra keys or information.
 
