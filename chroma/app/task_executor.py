@@ -1,11 +1,12 @@
 import time
-import requests
 import json
 from chroma.celery_conf import celery
 from chroma.app import redis_client
 from chroma.app.domain.chroma_collections import ChromaCollections
 from utils.outputs import print_successful_message, print_error
 from chroma_ms_config import Configuration
+
+from celery.exceptions import SoftTimeLimitExceeded
 
 
 def sse_stream(task_id):
@@ -67,6 +68,9 @@ def chroma_embed_task(collection_name, file_path, categories):
             categories=categories)
         
         _store_task_results(task_id, result)
+    except SoftTimeLimitExceeded:
+        error_handler(task_id, "Task exceeded the time alloted to be used.")
+        return None
     except Exception as exc:
         error_handler(task_id, str(exc))
         return None
