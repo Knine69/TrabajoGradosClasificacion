@@ -38,7 +38,7 @@ def error_handler(task_id, exc):
     print_error(message=f'{task_id} - Something went wrong: {exc}',
                 app=Configuration.CHROMA_QUEUE)
     redis_client.set(task_id,
-                     {'state': 'ERROR', 'result': exc})
+                     json.dumps({'state': 'ERROR', 'result': exc}))
 
 
 @celery.task(time_limit=120)
@@ -79,4 +79,4 @@ def _store_task_results(task_id, result) -> None:
         message=f"Storing result of task: {task_id} on redis...",
         app=Configuration.LANGCHAIN_QUEUE)
     redis_client.set(task_id,
-                     {'state': 'SUCCESS', 'result':json.dumps(result)})
+                     json.dumps({'state': 'SUCCESS', 'result':json.dumps(result)}))
