@@ -27,17 +27,20 @@ prompt = ChatPromptTemplate.from_messages(
             Your response **must** focus primarily and foremost on the 'Question'. 
             It should also include relevant information from 'References' in your final answer.
 
-            Your response **must** to be a JSON object that adheres to the next schema, without any extra keys or conversational elements:
+            Your response **must** be in JSON format and adhere strictly to the schema below.
+            **Do not** include any additional text, explanations, or conversational phrases.
 
             ```
             {format_instructions}
             ```
 
-            **Ensure** that your response contains, wihtout fault:
-            - `question` must reflect the original question from the input.
-            - 'though', 'observation', 'final_thought' as your thought process
-            - A `final_answer` based on the question.
-            - Use relevant `references` to enrich and support the `final_answer` based on 'References'.    
+            **Ensure** the following in your response:
+            - 'question' must reflect the original input question.
+            - 'thought', 'observation', 'final_thought', and 'final_answer' should represent your reasoning process.
+            - 'final_answer' must address the question directly.
+            - 'references' must be based on the provided references to support the 'final_answer'.
+            
+            If you cannot comply or provide the expected information, return an error message in JSON format.
         """),
         ("human", "{references}"),
         ("human", "{question}"),
