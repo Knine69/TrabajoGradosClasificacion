@@ -5,6 +5,7 @@ from user_langchain.app import redis_client
 from user_langchain.app.domain.chain_invocations import LangchainChain
 from utils.outputs import print_successful_message, print_error
 from langchain_ms_config import Configuration
+from billiard.exceptions import TimeLimitExceeded
 
 
 def sse_stream(task_id):
@@ -50,7 +51,10 @@ def langchain_agent_invocation_task(categories, documents, user_query):
                                                   documents,
                                                   user_query)
         _store_task_results(task_id, result)
-    except Exception as exc: 
+    except Exception as exc:
+        error_handler(task_id, str(exc))
+        return None
+    except TimeLimitExceeded as exc:
         error_handler(task_id, str(exc))
         return None
 
