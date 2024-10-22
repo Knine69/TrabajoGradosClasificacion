@@ -6,6 +6,7 @@ from utils.outputs import (print_error,
                            print_header_message,
                            print_warning_message)
 from langchain_ms_config import Configuration
+from pydantic_core import ValidationError
 import json
 
 # TODO: validate task execution error responses to client in event architecture
@@ -34,7 +35,10 @@ class LangchainAgent:
                     "RESPONSE": result
                 }
             except Exception as e:
-                print_error(message=f"Something failed: {e}",
+                print_error(message=f"Something failed: {str(e)}",
+                            app=Configuration.LANGCHAIN_QUEUE)
+            except ValidationError as e:
+                print_error(message=f"Wrong response schema detected: {str(e)}",
                             app=Configuration.LANGCHAIN_QUEUE)
 
             print_warning_message(message=f"Attempt {attempt + 1}",
