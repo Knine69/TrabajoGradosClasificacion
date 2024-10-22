@@ -50,6 +50,8 @@ def langchain_agent_invocation_task(categories, documents, user_query):
         result = LangchainChain().execute_chain_query(categories,
                                                   documents,
                                                   user_query)
+        print_successful_message(app=Configuration.LANGCHAIN_QUEUE,
+                                 message=f"Task result: {result}")
         _store_task_results(task_id, result)
     except Exception as exc:
         error_handler(task_id, str(exc))

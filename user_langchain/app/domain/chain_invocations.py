@@ -72,12 +72,6 @@ class LangchainChain:
         result = self._invoke_query(executor=self.llm_chain, query=query_prompt)
 
         if result['STATE']:
-            
-            print_successful_message(
-                message=f"Query result is: {result['RESPONSE']}",
-                app=Configuration.LANGCHAIN_QUEUE)
-            
-            result['RESPONSE'] = result['RESPONSE']
             return result
         else:
             print_error(message=f"Query failed: {result['description']}", app=Configuration.LANGCHAIN_QUEUE)
