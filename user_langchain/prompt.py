@@ -42,7 +42,7 @@ prompt = ChatPromptTemplate.from_messages(
             - 'question' must reflect the original input question.
             - 'thought', 'observation' and 'final_answer' should represent your reasoning process.
             - 'final_answer' must address the question directly.
-            - 'references' must be based on the provided {references} to support the 'final_answer'. Present them in APA format after you answer the query.
+            - 'references' must take into account the provided {references} to support the 'final_answer'. \nShow as APA Format References format after you answer the query for your citations.
             
             If you cannot comply or provide the expected information, return an error message in JSON format.
         """),
