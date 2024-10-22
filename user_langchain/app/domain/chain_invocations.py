@@ -46,7 +46,7 @@ class LangchainChain:
                 llm_result_str = LangchainChain.preprocess_json_string(str(llm_result))
                 return {
                     "STATE": True,
-                    "QUERY_MADE": query,
+                    "QUERY_MADE": query['question'],
                     "RESPONSE": llm_result_str
                 }
             except Exception as e:
