@@ -203,6 +203,7 @@ class ChromaCollections:
                                          Configuration.LANGCHAIN_QUEUE)
 
             return {
+                "STATE": "SUCCESS",
                 "RESPONSE_DATA": response_data
             }
         except requests.exceptions.ConnectionError as e:

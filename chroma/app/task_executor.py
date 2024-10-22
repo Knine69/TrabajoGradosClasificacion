@@ -17,12 +17,13 @@ def sse_stream(task_id):
             result = redis_client.get(task_id)
 
             if result:
-                state = result.get('state')
+                decoded_result = json.loads(result.decode('utf-8'))
+                state = decoded_result.get('state')
 
                 if state == 'ERROR':
-                    yield f"data: {json.dumps({'state': 'ERROR', 'message': result.get('result')})}\n\n"
+                    yield f"data: {json.dumps({'state': 'ERROR', 'message': result.get('DESCRIPTION')})}\n\n"
                 else:
-                    yield f"data: {json.dumps({'state': 'SUCCESS', 'result': result.get('result')})}\n\n"
+                    yield f"data: {json.dumps({'state': 'SUCCESS', 'result': result.get('RESPONSE_DATA')})}\n\n"
                 break
 
             time.sleep(2)
