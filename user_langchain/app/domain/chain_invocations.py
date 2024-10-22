@@ -44,11 +44,10 @@ class LangchainChain:
                 print_header_message(message=f"Response: {llm_result}",
                                      app=Configuration.LANGCHAIN_QUEUE)
                 llm_result_str = LangchainChain.preprocess_json_string(str(llm_result))
-                result: ResponseSchema = parser.parse(llm_result_str)
                 return {
                     "STATE": True,
                     "QUERY_MADE": query,
-                    "RESPONSE": dict(result)
+                    "RESPONSE": llm_result_str
                 }
             except Exception as e:
                 print_error(message=f"Something failed: {str(e)}",
