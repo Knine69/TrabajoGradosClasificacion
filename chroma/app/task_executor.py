@@ -15,7 +15,8 @@ def sse_stream(task_id):
         while True:
             # Poll Redis for task result
             result = redis_client.get(task_id)
-
+            print_header_message(app=Configuration.CHROMA_QUEUE,
+                                 message=f"Coded Redis result: {result}")
             if result:
                 decoded_result = json.loads(result.decode('utf-8'))
                 print_header_message(app=Configuration.CHROMA_QUEUE,
