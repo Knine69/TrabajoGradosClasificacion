@@ -52,9 +52,11 @@ class LangchainChain:
             except Exception as e:
                 print_error(message=f"Something failed: {str(e)}",
                             app=Configuration.LANGCHAIN_QUEUE)
+                final_result['DESCRIPTION'] = str(e)
             except ValidationError as e:
                 print_error(message=f"Wrong response schema detected: {str(e)}",
                             app=Configuration.LANGCHAIN_QUEUE)
+                final_result['DESCRIPTION'] = str(e)
 
             print_warning_message(message=f"Attempt {attempt + 1}",
                                   app=Configuration.LANGCHAIN_QUEUE)
