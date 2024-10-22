@@ -3,7 +3,7 @@ import json
 from chroma.celery_conf import celery
 from chroma.app import redis_client
 from chroma.app.domain.chroma_collections import ChromaCollections
-from utils.outputs import print_successful_message, print_error
+from utils.outputs import print_successful_message, print_error, print_header_message
 from chroma_ms_config import Configuration
 
 from celery.exceptions import SoftTimeLimitExceeded
@@ -18,6 +18,8 @@ def sse_stream(task_id):
 
             if result:
                 decoded_result = json.loads(result.decode('utf-8'))
+                print_header_message(app=Configuration.CHROMA_QUEUE,
+                                     message=f"Decoded result: {decoded_result}")
                 state = decoded_result.get('state')
 
                 if state == 'ERROR':
@@ -47,12 +49,20 @@ def error_handler(task_id, exc):
 def chroma_search_query_task(collection_name, category, user_query):
 
     task_id = chroma_search_query_task.request.id
-    result = ChromaCollections().execute_search_query(collection_name,
-                                                      category,
-                                                      user_query,
-                                                      task_id)
+    
+    try:
+        result = ChromaCollections().execute_search_query(collection_name,
+                                                        category,
+                                                        user_query,
+                                                        task_id)
 
-    _store_task_results(task_id, result)
+        _store_task_results(task_id, result)
+        print_successful_message(app=Configuration.CHROMA_QUEUE,
+                                 message=f"Task result: {result}")
+        _store_task_results(task_id, result)
+    except Exception as exc:
+        error_handler(task_id, str(exc))
+        return None
 
     return result
 
