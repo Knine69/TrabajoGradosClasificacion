@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.output_parsers import PydanticOutputParser
+from langchain.output_parsers.structured import StructuredOutputParser
 
 
 # Define the output schema using Pydantic
@@ -8,12 +9,11 @@ class ResponseSchema(BaseModel):
     question: str = Field(description="The question asked by the user.")
     thought: str = Field(description="Initial thought process.")
     observation: str = Field(description="Observation after the action.")
-    final_thought: str = Field(description="Final thought after observations.")
     final_answer: str = Field(description="The final answer to the user's question.")
     references: list[list[str]] = Field(description="A reference to resources that further explain the final answer")
 
 
-parser = PydanticOutputParser(pydantic_object=ResponseSchema)
+parser = StructuredOutputParser(response_schemas=ResponseSchema)
 
 prompt = ChatPromptTemplate.from_messages(
     [
@@ -36,7 +36,7 @@ prompt = ChatPromptTemplate.from_messages(
 
             **Ensure** that your response explicitly contains:
             - 'question' must reflect the original input question.
-            - 'thought', 'observation', 'final_thought', and 'final_answer' should represent your reasoning process.
+            - 'thought', 'observation' and 'final_answer' should represent your reasoning process.
             - 'final_answer' must address the question directly.
             - 'references' must be based on the provided references to support the 'final_answer'. Present them in APA format.
             
