@@ -29,9 +29,9 @@ prompt = ChatPromptTemplate.from_messages(
             - 'References' (Supporting references related to the question)
 
             Your response **must** focus primarily and foremost on the 'Question'. 
-            It **must** also include relevant information from 'References' in your final answer.
+            It should also include relevant information from 'References' in your final answer.
 
-            Your response **necessarily** needs to be returned as a JSON and **must** adhere to the schema below.
+            Your response **necessarily** be returned as a **JSON** and adhere strictly to the schema below.
             **Do not** include any additional text, explanations, or conversational phrases.
 
             ```json
@@ -42,7 +42,7 @@ prompt = ChatPromptTemplate.from_messages(
             - 'question' must reflect the original input question.
             - 'thought', 'observation' and 'final_answer' should represent your reasoning process.
             - 'final_answer' must address the question directly.
-            - 'references' must take into account the provided {references} to support the 'final_answer'. \nShow as APA Format References format after you answer the query for your citations.
+            - 'references' must be based on the provided references ({references}) to support the 'final_answer'. Present them in APA citation format format.
             
             If you cannot comply or provide the expected information, return an error message in JSON format.
         """),
