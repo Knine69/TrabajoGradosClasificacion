@@ -2,7 +2,7 @@ import time
 import json
 from user_langchain.celery_conf import celery
 from user_langchain.app import redis_client
-from user_langchain.app.domain.agent_invocations import LangchainAgent
+from user_langchain.app.domain.agent_invocations import LangchainChain
 from utils.outputs import print_successful_message, print_error
 from langchain_ms_config import Configuration
 
@@ -46,7 +46,7 @@ def langchain_agent_invocation_task(categories, documents, user_query):
     task_id = langchain_agent_invocation_task.request.id
     
     try:
-        result = LangchainAgent().execute_chain_query(categories,
+        result = LangchainChain().execute_chain_query(categories,
                                                   documents,
                                                   user_query)
         _store_task_results(task_id, result)

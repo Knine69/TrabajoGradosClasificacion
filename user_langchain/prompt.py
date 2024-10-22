@@ -1,19 +1,23 @@
 from pydantic import BaseModel, Field
+from typing import List
 from langchain_core.prompts import ChatPromptTemplate
-from langchain.output_parsers import PydanticOutputParser
+from langchain.output_parsers.structured import ResponseSchema 
 from langchain.output_parsers.structured import StructuredOutputParser
 
 
 # Define the output schema using Pydantic
-class ResponseSchema(BaseModel):
-    question: str = Field(description="The question asked by the user.")
-    thought: str = Field(description="Initial thought process.")
-    observation: str = Field(description="Observation after the action.")
-    final_answer: str = Field(description="The final answer to the user's question.")
-    references: list[list[str]] = Field(description="A reference to resources that further explain the final answer")
 
+# Define each field of the response schema
+response_schemas = [
+    ResponseSchema(name="question", description="The question asked by the user."),
+    ResponseSchema(name="thought", description="Initial thought process."),
+    ResponseSchema(name="observation", description="Observation after the action."),
+    ResponseSchema(name="final_answer", description="The final answer to the user's question."),
+    ResponseSchema(name="references", description="A reference to resources that further explain the final answer")
+]
 
-parser = StructuredOutputParser(response_schemas=ResponseSchema)
+# Use StructuredOutputParser to parse the response
+parser = StructuredOutputParser(response_schemas=response_schemas)
 
 prompt = ChatPromptTemplate.from_messages(
     [
