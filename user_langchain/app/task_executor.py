@@ -2,7 +2,7 @@ import time
 import json
 from user_langchain.celery_conf import celery
 from user_langchain.app import redis_client
-from user_langchain.app.domain.agent_invocations import LangchainChain
+from user_langchain.app.domain.chain_invocations import LangchainChain
 from utils.outputs import print_successful_message, print_error
 from langchain_ms_config import Configuration
 
