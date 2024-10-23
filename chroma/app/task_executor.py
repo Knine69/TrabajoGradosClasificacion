@@ -5,8 +5,7 @@ from chroma.app import redis_client
 from chroma.app.domain.chroma_collections import ChromaCollections
 from utils.outputs import print_successful_message, print_error, print_header_message
 from chroma_ms_config import Configuration
-
-from celery.exceptions import SoftTimeLimitExceeded, TimeLimitExceeded
+from billiard.exceptions import TimeLimitExceeded
 
 
 def sse_stream(task_id):
@@ -61,7 +60,7 @@ def chroma_search_query_task(collection_name, category, user_query):
         error_handler(task_id, str(exc))
         return None
     
-    except (SoftTimeLimitExceeded, TimeLimitExceeded):
+    except TimeLimitExceeded:
         error_handler(task_id, "Task exceeded the time alloted to be used.")
         return None
 
@@ -80,7 +79,7 @@ def chroma_embed_task(collection_name, file_path, categories):
             categories=categories)
         
         _store_task_results(task_id, result)
-    except (SoftTimeLimitExceeded, TimeLimitExceeded):
+    except TimeLimitExceeded:
         error_handler(task_id, "Task exceeded the time alloted to be used.")
         return None
     except Exception as exc:
