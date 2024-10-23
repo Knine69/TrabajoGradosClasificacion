@@ -22,9 +22,9 @@ def sse_stream(task_id):
                 state = decoded_result.get('state')
                 inner_result = json.loads(decoded_result['result'])
                 if state == 'ERROR':
-                    yield f"data: {json.dumps({'state': 'ERROR', 'message': inner_result.get('result')})}\n\n"
+                    yield f"data: {json.dumps({'state': 'ERROR', 'message': inner_result})}\n\n"
                 else:
-                    yield f"data: {json.dumps({'state': 'SUCCESS', 'result': inner_result.get('result')})}\n\n"
+                    yield f"data: {json.dumps({'state': 'SUCCESS', 'result': inner_result})}\n\n"
                 break
 
             time.sleep(2)
