@@ -9,6 +9,8 @@ from utils.outputs import print_successful_message, print_error, print_header_me
 from chroma_ms_config import Configuration
 from billiard.exceptions import TimeLimitExceeded
 
+# TODO: INITIAL MODEL LOADING REQUEST - TIMEOUT HANDLING
+# TODO: TAKE METRICS ABOUT MULTIPLE FILE EMBEDDINGS
 
 def sse_stream(task_id):
     """Stream events to the client."""

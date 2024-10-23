@@ -65,5 +65,3 @@ def process_pdf_file():
             args=[collection_name, file_path, categories],
             queue=Configuration.CHROMA_QUEUE)
         return Response(sse_stream(task.id), content_type='text/event-stream')
-
-# TODO: Load pdf files from database into local file system

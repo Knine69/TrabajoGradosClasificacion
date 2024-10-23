@@ -9,7 +9,6 @@ from langchain_ms_config import Configuration
 from pydantic_core import ValidationError
 import gc
 
-# TODO: validate task execution error responses to client in event architecture
 
 class LangchainChain:
     def __init__(self):
