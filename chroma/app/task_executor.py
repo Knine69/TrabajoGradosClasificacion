@@ -17,8 +17,6 @@ def sse_stream(task_id):
             result = redis_client.get(task_id)
             if result:
                 decoded_result = json.loads(result.decode('utf-8'))
-                print_header_message(app=Configuration.CHROMA_QUEUE,
-                                     message=f"Decoded result: {decoded_result}")
                 state = decoded_result.get('state')
                 inner_result = json.loads(decoded_result['result'])
                 if state == 'ERROR':
