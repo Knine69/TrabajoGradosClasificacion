@@ -50,7 +50,7 @@ class ChromaCollections:
 
         def __call__(self, doc_input: Documents) -> Embeddings:
             embedding_results = []
-            batch_size = 64
+            batch_size = 128
             for i in range(0, len(doc_input), batch_size):
                 batch_docs = doc_input[i:i + batch_size]
                 print_header_message(
