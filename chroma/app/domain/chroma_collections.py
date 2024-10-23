@@ -3,6 +3,7 @@ import time
 import torch
 import requests
 import json
+import gc
 
 from gensim.parsing import remove_stopwords
 from transformers import AutoTokenizer, AutoModel
@@ -154,6 +155,8 @@ class ChromaCollections:
                 for doc_id in sorted_docs[:max_results]],
             'ids': [id_scores[doc_id] for doc_id in sorted_docs[:max_results]],
         }
+        
+        gc.collect()
 
         return top_results if top_results['documents'] else False
 
@@ -170,7 +173,7 @@ class ChromaCollections:
                     ChromaCollections.EmbedderFunction()(document_chunks)),
                 ids=ids
             )
-
+            gc.collect()
             return True
         except Exception as e:
             print_error(message=str(e), app=Configuration.CHROMA_QUEUE)
@@ -201,7 +204,7 @@ class ChromaCollections:
             else:
                 print_successful_message(response_data["DESCRIPTION"],
                                          Configuration.LANGCHAIN_QUEUE)
-
+                gc.collect()
             return {
                 "STATE": "SUCCESS",
                 "RESPONSE_DATA": response_data

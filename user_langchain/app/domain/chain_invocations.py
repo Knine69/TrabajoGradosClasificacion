@@ -7,7 +7,7 @@ from utils.outputs import (print_error,
                            print_warning_message)
 from langchain_ms_config import Configuration
 from pydantic_core import ValidationError
-import re
+import gc
 
 # TODO: validate task execution error responses to client in event architecture
 
@@ -45,6 +45,7 @@ class LangchainChain:
                 print_header_message(message=f"Response: {llm_result}",
                                      app=Configuration.LANGCHAIN_QUEUE)
                 llm_result_str = LangchainChain.preprocess_json_string(str(llm_result))
+                gc.collect()
                 return {
                     "STATE": True,
                     "QUERY_MADE": query['question'],

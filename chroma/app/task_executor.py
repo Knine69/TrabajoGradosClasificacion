@@ -1,5 +1,7 @@
 import time
 import json
+import gc
+
 from chroma.celery_conf import celery
 from chroma.app import redis_client
 from chroma.app.domain.chroma_collections import ChromaCollections
@@ -22,6 +24,8 @@ def sse_stream(task_id):
                     yield f"data: {json.dumps({'state': 'ERROR', 'message': inner_result})}\n\n"
                 else:
                     yield f"data: {json.dumps({'state': 'SUCCESS', 'result': inner_result})}\n\n"
+                    
+                gc.collect()
                 break
 
             time.sleep(2)
