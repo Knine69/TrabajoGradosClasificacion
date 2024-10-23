@@ -38,7 +38,7 @@ prompt = ChatPromptTemplate.from_messages(
             - 'answer' must address the question directly.
             - 'references' must be based on the provided references ({references}) to support the 'final_answer'. Present them in APA citation format.
             
-            Remember, for every answer, you MUST justify yourself using one or more references.
+            Remember, for every answer, you MUST justify yourself using one or more references ant they should have their own paragraph.
         """),
         ("human", "{references}"),
         ("human", "{question}"),
