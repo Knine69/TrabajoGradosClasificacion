@@ -15,8 +15,6 @@ def sse_stream(task_id):
         while True:
             # Poll Redis for task result
             result = redis_client.get(task_id)
-            print_header_message(app=Configuration.CHROMA_QUEUE,
-                                 message=f"Coded Redis result: {result}")
             if result:
                 decoded_result = json.loads(result.decode('utf-8'))
                 print_header_message(app=Configuration.CHROMA_QUEUE,
@@ -24,9 +22,9 @@ def sse_stream(task_id):
                 state = decoded_result.get('state')
 
                 if state == 'ERROR':
-                    yield f"data: {json.dumps({'state': 'ERROR', 'message': result.get('DESCRIPTION')})}\n\n"
+                    yield f"data: {json.dumps({'state': 'ERROR', 'message': result.get('result')})}\n\n"
                 else:
-                    yield f"data: {json.dumps({'state': 'SUCCESS', 'result': result.get('RESPONSE_DATA')})}\n\n"
+                    yield f"data: {json.dumps({'state': 'SUCCESS', 'result': result.get('result')})}\n\n"
                 break
 
             time.sleep(2)
