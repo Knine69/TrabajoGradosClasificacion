@@ -60,6 +60,10 @@ def chroma_search_query_task(collection_name, category, user_query):
     except Exception as exc:
         error_handler(task_id, str(exc))
         return None
+    
+    except (SoftTimeLimitExceeded, TimeLimitExceeded):
+        error_handler(task_id, "Task exceeded the time alloted to be used.")
+        return None
 
     return result
 
