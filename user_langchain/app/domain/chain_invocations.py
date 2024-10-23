@@ -40,6 +40,7 @@ class LangchainChain:
             try:
                 llm_result = executor.invoke({"question": query['question'],
                                           "references": query['references'],
+                                          "format_instructions": parser,
                                           "max_tokens": 1000})
                 print_header_message(message=f"Response: {llm_result}",
                                      app=Configuration.LANGCHAIN_QUEUE)

@@ -10,10 +10,8 @@ from langchain.output_parsers.structured import StructuredOutputParser
 # Define each field of the response schema
 response_schemas = [
     ResponseSchema(name="question", description="The question asked by the user."),
-    ResponseSchema(name="thought", description="Initial thought process."),
-    ResponseSchema(name="observation", description="Observation after the action."),
-    ResponseSchema(name="final_answer", description="The final answer to the user's question."),
-    ResponseSchema(name="references", description="A reference to resources that further explain the final answer")
+    ResponseSchema(name="answer", description="The final answer to the user's question."),
+    ResponseSchema(name="references", description="A reference list to resources that further justify the final answer")
 ]
 
 # Use StructuredOutputParser to parse the response
@@ -32,25 +30,21 @@ prompt = ChatPromptTemplate.from_messages(
             It **must** also include relevant information from 'References' in your final answer.
 
             Your response **necessarily must** adhere strictly to the schema below.
-            **Do not** include any additional text, explanations, or conversational phrases.
 
-            ```json
             {format_instructions}
-            ```
 
             **Ensure** that your response explicitly contains:
             - 'question' must reflect the original input question.
-            - 'thought', 'observation' and 'final_answer' should represent your reasoning process.
-            - 'final_answer' must address the question directly.
+            - 'answer' must address the question directly.
             - 'references' must be based on the provided references ({references}) to support the 'final_answer'. Present them in APA citation format.
             
-            If you cannot comply or provide the expected information, return an error message in JSON format.
+            Remember, for every answer, you MUST justify yourself using one or more references.
         """),
         ("human", "{references}"),
         ("human", "{question}"),
         ("placeholder", "{agent_scratchpad}")
     ]
-).partial(format_instructions=parser.get_format_instructions(), agent_scratchpad=[])
+).partial(agent_scratchpad=[])
 
 # Future work: Create a chat functionality instead of chain
 
