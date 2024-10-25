@@ -122,19 +122,80 @@ https://ollama.com/library
 
 ### Server Running Configurations
 
-#### Install redis as a message broker
+#### Install docker
+
+
+It is necessary to install docker in order to host the containers that will expose the services and microservices required for the correct execution of the application. That being the case, to be able to use docker, follow the next steps to install the needed tools:
+
+```commandline
+
+    # Ubuntu
+    sudo apt-get update
+    # <arch> is to be replaced with your choosen architecture. Ignore resulting error message.
+    sudo apt-get install ./docker-desktop-<arch>.deb
+
+    # Start the docker service
+    systemctl --user start docker-desktop
+
+    # Start the docker service
+    systemctl --user stop docker-desktop
+
+    # Check docker version
+    docker --version
+
+```
+
+The set of commands shown before should have installed docker compose by default for you. In case there is any issue, docker compose may be able to be installed by following:
+
+```commandline
+
+    # Create environment variable
+    DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+
+    # Create holding directory
+    mkdir -p $DOCKER_CONFIG/cli-plugins
+
+    # <version> and <arch> may be replaced with any of your choosing.
+    curl -SL https://github.com/docker/compose/releases/download/<version>/docker-compose-linux-<arch> -o $DOCKER_CONFIG/cli-plugins/docker-compose
+
+    # Give permissions to execute the plugin
+    chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose
+
+    # Check version
+    docker compose version
+```
+
+In case of any doubt, the presented resources may serve as a guide:
+
+Docker installation: https://docs.docker.com/desktop/install/linux/ubuntu/
+
+Docker compose plugin installation: https://docs.docker.com/compose/install/linux/#install-the-plugin-manually
+
+#### Install basic services
 
 In order to process tasks asynchronously, a message queue needs to be instanced.
-The dependencies were already during previous steps but, it's still necessary to
+The dependencies were already during previous steps but it's still necessary to
 run a redis server to set up the broker.
 
-To easily install a redis server, we will make use of docker. So simply run
+To easily install the basic services needed to run the application, we will make use of docker. To install them simply run:
+
+
+```commandline
+
+    # Start services
+    docker compose -f docker-compose.yml up
+
+```
+
+Or, alternatively, create the containers manually:
 
 ```commandline
     docker run -d --name redis-backend -p 6379:6379 redis
     docker run -d --hostname rabbit-broker --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
     docker run --name chromadb --rm -p 8000:8000 chromadb/chroma
+    docker run --name langchain-executor -p 5001:5001  jhuguet/langchain-executor
 ```
+
 
 #### Run gunicorn as a server
 
