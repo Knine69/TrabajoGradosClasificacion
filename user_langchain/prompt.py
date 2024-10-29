@@ -36,7 +36,7 @@ prompt = ChatPromptTemplate.from_messages(
             **Ensure** that your response explicitly contains:
             - 'question' must reflect the original input question.
             - 'answer' must address the question directly.
-            - 'references' must be based on the provided references ({references}) to support the 'final_answer'. Present them in APA citation format.
+            - 'references' must be based on the provided references ({references}) to support the 'final_answer'. Present them in IEEE citation format.
             
             Remember that for every answer, you **MUST** justify yourself using one or more references and they need to have their own paragraph.
         """),
@@ -46,4 +46,5 @@ prompt = ChatPromptTemplate.from_messages(
     ]
 ).partial(agent_scratchpad=[])
 
-# Future work: Create a chat functionality instead of chain
+# TODO: Create a chat functionality instead of chain - Store session messages (Future Recommendations) 
+# TODO: Check which metrics (presición, efectividad) can be measured

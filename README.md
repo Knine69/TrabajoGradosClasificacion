@@ -15,6 +15,8 @@ In order to solve possible issues that may arise, run the following dependencies
     pip install --upgrade pymupdf
 ```
 
+TODO: Pip install the requirements for the chroma microservices (Langchain is not required, as is container)
+
 For a whole dependency installation run:
 
 ```commandline
