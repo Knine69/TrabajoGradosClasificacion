@@ -1,4 +1,4 @@
-from user_langchain.prompt import ResponseSchema, prompt, parser
+from user_langchain.prompt import prompt, parser
 from langchain_community.llms import Ollama
 from langchain.chains.base import Chain
 from utils.outputs import (print_error,
@@ -15,7 +15,7 @@ class LangchainChain:
         self.llm_model = Ollama(model="llama3:70b", base_url="http://localhost:11434")
         # self.llm_model = Ollama(model="llama3.2:latest", base_url="http://localhost:11434")
         # Set up the agent executor
-        self.llm_chain = prompt | self.llm_model
+        self.llm_chain: Chain = prompt | self.llm_model
 
     
     def preprocess_json_string(json_string: str):
@@ -27,8 +27,6 @@ class LangchainChain:
         """
         # Replace None with null
         json_string = json_string.replace("None", "null")
-
-
         return json_string
     
     @staticmethod
@@ -79,8 +77,3 @@ class LangchainChain:
         else:
             print_error(message=f"Query failed: {result['description']}", app=Configuration.LANGCHAIN_QUEUE)
             return {"STATE": "ERROR", "DESCRIPTION": result['description']}
-
-
-if __name__ == "__main__":
-    agent = LangchainChain()
-    result = agent.execute_chain_query([], ["Some data for RAG", "Some other data for RAG"], "What is an action?")
