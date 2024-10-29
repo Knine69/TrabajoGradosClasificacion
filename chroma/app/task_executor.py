@@ -5,7 +5,7 @@ import gc
 from chroma.celery_conf import celery
 from chroma.app import redis_client
 from chroma.app.domain.chroma_collections import ChromaCollections
-from utils.outputs import print_successful_message, print_error, print_header_message
+from utils.outputs import print_successful_message, print_error
 from chroma_ms_config import Configuration
 from billiard.exceptions import TimeLimitExceeded
 
