@@ -1,4 +1,3 @@
-from chroma.app.domain.chroma_collections import ChromaCollections
 from chroma.app.task_executor import (chroma_search_query_task,
                                       chroma_embed_task,
                                       sse_stream)
@@ -8,7 +7,6 @@ from chroma_ms_config import Configuration
 import json
 
 chroma_router = Blueprint('chroma', __name__, url_prefix='/chroma')
-chroma_collections = ChromaCollections()
 
 
 @chroma_router.route('/task-status', methods=['POST'])
