@@ -42,11 +42,11 @@ class ChromaCollections:
                                                   port=8000)
 
     class EmbedderFunction(EmbeddingFunction):
-
-        tokenizer = (
-            AutoTokenizer.from_pretrained("bert-base-multilingual-cased"))
-        embedding_model = (
-            AutoModel.from_pretrained("bert-base-multilingual-cased"))
+        def __init__(self):
+            self.tokenizer = (
+                AutoTokenizer.from_pretrained("bert-base-multilingual-cased"))
+            self.embedding_model = (
+                AutoModel.from_pretrained("bert-base-multilingual-cased"))
 
         def __call__(self, doc_input: Documents) -> Embeddings:
             embedding_results = []
@@ -337,7 +337,6 @@ class ChromaCollections:
         (found_data,
          loaded_db_data,
          response_message) = self._validate_loaded_response(loaded_db_data)
-
         if not found_data:
             print_error(response_message, Configuration.CHROMA_QUEUE)
             return {
@@ -368,7 +367,6 @@ class ChromaCollections:
             print_warning_message("Retrying query...",
                                   Configuration.CHROMA_QUEUE)
             counter += 1
-
         print_successful_message(
             f"Successfully retrieved db data: {query_result}",
             Configuration.CHROMA_QUEUE)
