@@ -2,7 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 from chroma_ms_config import Configuration
 from chroma.app.controller.chroma_client import chroma_router
-from chroma.celery_conf import celery_instantiation, celery
+from chroma.celery_conf import celery_instantiation
 
 
 
