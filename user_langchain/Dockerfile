@@ -16,7 +16,6 @@ RUN apt-get update && apt-get install -y bash gcc g++ make musl-dev libffi-dev &
 COPY user_langchain /langchain_app/user_langchain
 COPY utils /langchain_app/utils
 COPY documents /langchain_app/documents
-COPY tools /langchain_app/tools
 COPY langchain_ms_config.py /langchain_app/
 COPY .env /langchain_app/
 

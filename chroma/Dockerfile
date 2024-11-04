@@ -1,5 +1,5 @@
 # Stage 1: Build Stage
-FROM --platform=linux/amd64 python:3.9-slim AS build-stage
+FROM --platform=linux/amd64 python:3.10-slim AS build-stage
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
@@ -25,7 +25,7 @@ RUN touch .env && ls -la && \
     pip install sentence-transformers==2.2.2 --no-deps
 
 # Stage 2: Final Stage (Runtime Image)
-FROM python:3.9-slim AS runtime-stage
+FROM python:3.10-slim AS runtime-stage
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
