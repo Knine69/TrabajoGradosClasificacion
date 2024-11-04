@@ -11,4 +11,4 @@ echo "Llama is available"
 
 wait
 
-docker compose -f docker-compose.yml up rabbitmq redis chroma
+docker compose -f docker-compose.yml up
