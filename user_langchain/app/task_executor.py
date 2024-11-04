@@ -42,7 +42,6 @@ def error_handler(task_id, exc):
                      json.dumps({'state': 'ERROR', 'result': exc}))
 
 
-@celery.task(time_limit=220)
 def langchain_agent_invocation_task(categories, documents, user_query):
     task_id = langchain_agent_invocation_task.request.id
     
