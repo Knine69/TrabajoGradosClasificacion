@@ -1,5 +1,3 @@
-from pydantic import BaseModel, Field
-from typing import List
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.output_parsers.structured import ResponseSchema 
 from langchain.output_parsers.structured import StructuredOutputParser
