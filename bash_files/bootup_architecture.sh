@@ -19,7 +19,6 @@ for port in "${ports[@]}"; do
   check_port $port &
 done
 
-wait
 
 echo "Starting Chroma Microservice"
 bash chroma/initialize_chroma_services.sh
