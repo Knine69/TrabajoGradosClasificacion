@@ -3,7 +3,7 @@
 echo "Starting basic Docker services..." 
 bash bash_files/initialize_basic_services.sh &
 
-ports=(5432 6379)
+ports=(5672 6379)
 
 # Function to check a single port
 check_port() {
