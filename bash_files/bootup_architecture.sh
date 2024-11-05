@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "Starting basic Docker services..." 
 sh bash_files/initialize_basic_services.sh &
