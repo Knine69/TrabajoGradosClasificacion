@@ -72,7 +72,7 @@ def chroma_search_query_task(collection_name, category, user_query):
     return result
 
 
-@celery.task(soft_time_limit=240)
+# @celery.task(soft_time_limit=240)
 def chroma_embed_task(collection_name, file_path, categories):
 
     task_id = chroma_embed_task.request.id
