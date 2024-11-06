@@ -1,100 +1,89 @@
-import math
-from sklearn.metrics import average_precision_score
-from bert_score import score  # Requires 'pip install bert-score'
-from langchain.chains.base import Chain
-from utils.outputs import print_error
-from langchain_ms_config import Configuration
-from langchain_community.llms import Ollama  # Import the Ollama model wrapper
-from user_langchain.llm_tests.test_prompt import prompt
 from typing import List
+from bert_score import score
+from transformers import AutoTokenizer, AutoModelForCausalLM
+from sentence_transformers import SentenceTransformer, util
+from langchain_community.llms.ollama import Ollama
+from langchain.chains.base import Chain
+from user_langchain.llm_tests.test_prompt import prompt
+import torch
+import spacy
 
 
 class LlmResponseValidator:
-    def __init__(self, llm_model=None):
-        # Initialize the Ollama model and Chain
-        self.llm_model = llm_model or Ollama(model="llama3:70b", base_url="http://localhost:11434")
+    def __init__(self):
+        self.llm_model = Ollama(model="llama3:70b",
+                                base_url="http://localhost:11434",
+                                temperature=0.2,
+                                top_p=40,
+                                ).set_verbose(verbose=True)
         self.llm_chain: Chain = prompt | self.llm_model
+        self.spacy_nlp = spacy.load("en_core_web_sm")
+        self.model = SentenceTransformer('all-MiniLM-L6-v2')
 
-    def calculate_accuracy(self, results: List[str], expected_outputs: List[str]) -> float:
-        """Calculate accuracy by checking if the generated answer matches expected answer."""
-        correct_count = sum(1 for result, expected in zip(results, expected_outputs) if result == expected)
-        return correct_count / len(expected_outputs) if expected_outputs else 0
-    
-    def calculate_mean_average_precision(self, y_true: List[int], y_pred: List[int]) -> float:
-        """Calculate mean average precision between true and predicted relevance scores."""
-        return average_precision_score(y_true, y_pred)
-
-    def calculate_bertscore(self, predictions: List[str], references: List[str], lang="en"):
-        """Calculate BERTScore between predictions and references."""
+    def calculate_bertscore(self, predictions: List[str], references: List[str], lang="en") -> dict:
+        """Calculate BERTScore for the given predictions and references."""
         P, R, F1 = score(predictions, references, lang=lang)
-        return {"precision": P.mean().item(), "recall": R.mean().item(), "f1": F1.mean().item()}
+        return {
+            "precision": P.mean().item(),
+            "recall": R.mean().item(),
+            "f1": F1.mean().item()
+        }
 
-    def calculate_approximate_perplexity(self, texts: List[str]) -> float:
-        """
-        Calculate an approximate perplexity based on response length and rough confidence.
-        This is an approximation and does not represent true perplexity.
-        """
-        total_score = 0
-        for text in texts:
-            # Perform the model response using Ollama
-            try:
-                response = self.llm_chain({"question": text})
-                confidence_score = response.get("confidence", 1.0)  # Use confidence if available
-                total_score += -math.log(confidence_score)  # Log probability approximation
-            except Exception as e:
-                print_error(f"Error calculating approximate perplexity: {str(e)}",
-                            app=Configuration.LANGCHAIN_QUEUE)
-                return float("inf")
+    def calculate_entity_coverage(self, prediction: str, reference: str) -> float:
+        """Calculate the proportion of entities from the reference text that are covered in the prediction."""
+        ref_doc = self.spacy_nlp(reference)
+        pred_doc = self.spacy_nlp(prediction)
         
-        return math.exp(total_score / len(texts)) if texts else float("inf")
+        ref_entities = {ent.text.lower() for ent in ref_doc.ents}
+        pred_entities = {ent.text.lower() for ent in pred_doc.ents}
+        
+        if not ref_entities:
+            return 1.0  # If there are no entities in the reference, consider coverage as 100%
+        
+        covered_entities = len(ref_entities & pred_entities)
+        return covered_entities / len(ref_entities)
 
-    def execute_chain_query_with_metrics(self,
-                                         categories: List[str],
-                                         documents: List[str],
-                                         user_query: str,
-                                         expected_answer: str) -> dict:
-        # Invoke model and get response
-        result = self.execute_chain_query(categories, documents, user_query)
-        generated_answer = result.get("RESPONSE") if result["STATE"] else ""
+    def calculate_relevance(self, generated_answer: str, user_query: str) -> float:
+        # Compute embeddings for both the generated answer and the user query
+        embeddings1 = self.model.encode(generated_answer, convert_to_tensor=True)
+        embeddings2 = self.model.encode(user_query, convert_to_tensor=True)
         
-        # Define expected output for accuracy
-        accuracy = self.calculate_accuracy([generated_answer], [expected_answer])
+        # Compute the cosine similarity between the embeddings
+        relevance_score = util.cos_sim(embeddings1, embeddings2).item()
         
-        # Mean Average Precision
-        map_score = self.calculate_mean_average_precision([1], [1])  # Replace with actual relevance data if available
+        return relevance_score
+    
+    
+    def calculate_completeness(self, generated_answer: str, expected_answer: str) -> float:
+        # Split the expected answer into key concepts or keywords
+        expected_keywords = set(expected_answer.lower().split())
+        generated_keywords = set(generated_answer.lower().split())
+        
+        # Calculate the proportion of expected keywords found in the generated answer
+        covered_keywords = len(expected_keywords & generated_keywords)
+        
+        return covered_keywords / len(expected_keywords) if expected_keywords else 0
+
+
+    def execute_chain_query_with_metrics(self, documents, user_query, expected_answer):
+        result = self.llm_chain.invoke({"question": user_query, "references": documents})
         
         # BERTScore
-        bert_score_val = self.calculate_bertscore([generated_answer], [expected_answer])
+        bert_score = self.calculate_bertscore([result], [expected_answer])
         
-        # Approximate Perplexity
-        perplexity = self.calculate_approximate_perplexity([generated_answer])
+        # Entity-Based Coverage
+        entity_coverage = self.calculate_entity_coverage(result, expected_answer)
+        
+        # Relevance
+        relevance = self.calculate_relevance(result, user_query)
+        
+        # Coverage
+        coverage = self.calculate_completeness([result], documents)
         
         return {
             "response": result,
-            "accuracy": accuracy,
-            "map": map_score,
-            "bertscore": bert_score_val,
-            "perplexity": perplexity
+            "bertscore": bert_score,
+            "entity_coverage": entity_coverage,
+            "completeness": coverage,
+            "relevance": relevance
         }
-
-    def execute_chain_query(self,
-                            categories: List[str],
-                            documents: List[str],
-                            user_query: str) -> dict:
-        """Generate response using the Ollama model through LangChain."""
-        query_prompt = {
-            "question": user_query,
-            "references": documents
-        }
-        
-        try:
-            # Using the Chain to invoke the Ollama model with the prompt
-            result = self.llm_chain.invoke(query_prompt)
-            return {
-                "STATE": True,
-                "RESPONSE": result
-            }
-        except Exception as e:
-            print_error(message=f"Error in model execution: {str(e)}",
-                        app=Configuration.LANGCHAIN_QUEUE)
-            return {"STATE": False, "RESPONSE": None}

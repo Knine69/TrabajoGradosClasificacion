@@ -10,10 +10,14 @@ prompt = ChatPromptTemplate.from_messages(
             
             You will receive:
             - 'Question' (The question to answer)
+            - 'References' (Information to complement your responses)
 
             Your response **must** focus primarily and foremost on the 'Question'.
+            
+            You may use references comming from 'References
         """),
         ("human", "{question}"),
+        ("human", "{references}"),
         ("placeholder", "{agent_scratchpad}")
     ]
 ).partial(agent_scratchpad=[])
