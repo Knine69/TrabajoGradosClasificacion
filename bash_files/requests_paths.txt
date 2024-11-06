@@ -3,7 +3,7 @@
 /home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Jutta Heckhausen/Motivation and Action (8620)/Motivation and Action - Jutta Heckhausen.pdf
 /home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Julio Cortazar/Rayuela (5895)/Rayuela - Julio Cortazar.pdf
 /home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Henry Charriere/Papillon (6034)/Papillon - Henry Charriere.pdf
-/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Shunbo Lei/Power Grid Resilience Against Natural Disasters_ Preparedness, Response, and Recovery (6560)/'Power Grid Resilience Against Natural Disa - Shunbo Lei.pdf'
+/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Shunbo Lei/Power Grid Resilience Against Natural Disasters_ Preparedness, Response, and Recovery (6560)/Power Grid Resilience Against Natural Disa - Shunbo Lei.pdf
 /home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Fred Brauer/Mathematical Models in Population Biology and Epidemiology (3631)/Mathematical Models in Population Biology - Fred Brauer.pdf
 /home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Steve Otto/An Introduction to Programming and Numerical Methods in MATLAB (3408)/An Introduction to Programming and Numeric - Steve Otto.pdf
 /home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Qiang Lu/Smart Power Systems and Smart Grids_ Toward Multi-Objective Optimization in Dispatching (5259)/Smart Power Systems and Smart Grids_ Towar - Qiang Lu.pdf
