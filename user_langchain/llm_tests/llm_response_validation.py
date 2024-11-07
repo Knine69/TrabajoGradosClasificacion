@@ -4,7 +4,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 from sentence_transformers import SentenceTransformer, util
 from langchain_community.llms.ollama import Ollama
 from langchain.chains.base import Chain
-from user_langchain.llm_tests.test_prompt import prompt
+from user_langchain.prompt import prompt
 import json
 import spacy
 
@@ -67,21 +67,17 @@ class LlmResponseValidator:
 
     def execute_chain_query_with_metrics(self, documents, user_query, expected_answer):
         result = self.llm_chain.invoke({"question": user_query, "references": documents})
-        print(f"Model result: {result}")
-        
+       
         # BERTScore
-        print("Before bert")
         bert_score = self.calculate_bertscore([result], [expected_answer])
         
         # Entity-Based Coverage
-        print("Before coverage")
         entity_coverage = self.calculate_entity_coverage(result, expected_answer)
         
         # Relevance
         relevance = self.calculate_relevance(result, user_query)
         
         # Coverage
-        print("Before copleteness")
         coverage = self.calculate_completeness(result, expected_answer)
         
         return {
