@@ -93,7 +93,7 @@ class LlmResponseValidator:
         }
         
 
-if __name__ =="main":
+if __name__ =="__main__":
     print("Initiating response validation")
     response_validator = LlmResponseValidator()
     response = response_validator.execute_chain_query_with_metrics(
