@@ -172,10 +172,16 @@ def accumulate_metrics(current, response) -> None:
     current["relevance"] += response["relevance"]
 
 
-if __name__ =="__main__":
-    print("Initiating response validation")
-    response_validator = LlmResponseValidator()
-    
+def accumulate_aggregates(current, response):
+    current["bertscore_precision"] += response["avg_bert_precision"]
+    current["bertscore_recall"] += response["avg_bert_recall"]
+    current["bertscore_f1"] += response["avg_bert_f1"]
+    current["entity_coverage"] += response["avg_entity_coverage"]
+    current["completeness"] += response["avg_completeness"]
+    current["relevance"] += response["avg_relevance"]
+
+
+def calculate_average_per_question():
     attempts_average_response = [
     ]
     
@@ -195,7 +201,7 @@ if __name__ =="__main__":
             "relevance": 0.0,
         }
         
-        for index_try in range(5):
+        for _ in range(5):
             
             response = response_validator.execute_chain_query_with_metrics(
                 documents=references,
@@ -217,5 +223,46 @@ if __name__ =="__main__":
             }
         )
         
+    return attempts_average_response
+
+
+def calculate_aggregate_results(attempts_average_response: list):
+    array_size = len(attempts_average_response)
+    aggregate_results = {
+        "bertscore_precision": 0.0,
+        "bertscore_recall": 0.0,
+        "bertscore_f1": 0.0,
+        "entity_coverage": 0.0,
+        "completeness": 0.0,
+        "relevance": 0.0,
+    }
     
-    print(f"Llm Response Validation: \n{json.dumps(attempts_average_response, indent=2)}")
+    final_aggregated_results = {
+        'entries_registered': attempts_average_response
+    }
+    
+    for obj in attempts_average_response:
+        calculate_aggregate_results(aggregate_results, obj)
+    
+    final_aggregated_results["aggregate_results"] = {
+        "bertscore_precision": aggregate_results["bertscore_precision"] / array_size,
+        "bertscore_recall": aggregate_results["bertscore_recall"] / array_size,
+        "bertscore_f1": aggregate_results["bertscore_f1"] / array_size,
+        "entity_coverage": aggregate_results["entity_coverage"] / array_size,
+        "completeness": aggregate_results["completeness"] / array_size,
+        "relevance": aggregate_results["relevance"] / array_size
+    }
+    
+    return final_aggregated_results
+
+
+if __name__ =="__main__":
+    print("Initiating response validation")
+    response_validator = LlmResponseValidator()
+    
+    attempts_average_response = calculate_average_per_question()
+    
+    final_aggregated_results = calculate_aggregate_results(
+        attempts_average_response=attempts_average_response)
+    
+    print(f"Llm Response Validation: \n{json.dumps(final_aggregated_results, indent=2)}")
