@@ -101,4 +101,4 @@ if __name__ =="__main__":
         user_query="What is an action",
         expected_answer="An action is the fact or process of doing something, typically to achieve an aim."
         )
-    print(f"Llm Response Validation: \n{json.dump(response, indent=2)}")
+    print(f"Llm Response Validation: \n{json.dumps(response, indent=2)}")
