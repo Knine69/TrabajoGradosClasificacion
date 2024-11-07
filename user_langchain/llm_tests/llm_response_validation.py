@@ -242,7 +242,7 @@ def calculate_aggregate_results(attempts_average_response: list):
     }
     
     for obj in attempts_average_response:
-        calculate_aggregate_results(aggregate_results, obj)
+        accumulate_aggregates(aggregate_results, obj)
     
     final_aggregated_results["aggregate_results"] = {
         "bertscore_precision": aggregate_results["bertscore_precision"] / array_size,
