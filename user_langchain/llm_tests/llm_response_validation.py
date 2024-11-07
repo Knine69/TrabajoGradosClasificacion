@@ -2,7 +2,7 @@ from typing import List
 from bert_score import score
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from sentence_transformers import SentenceTransformer, util
-from langchain_community.llms import Ollama
+from langchain_community.llms.ollama import Ollama
 from langchain.chains.base import Chain
 from user_langchain.llm_tests.test_prompt import prompt
 import torch
@@ -15,7 +15,7 @@ class LlmResponseValidator:
                                 base_url="http://localhost:11434",
                                 temperature=0.2,
                                 top_p=40,
-                                ).set_verbose(verbose=True)
+                                )
         self.llm_chain: Chain = prompt | self.llm_model
         self.spacy_nlp = spacy.load("en_core_web_sm")
         self.model = SentenceTransformer('all-MiniLM-L6-v2')
