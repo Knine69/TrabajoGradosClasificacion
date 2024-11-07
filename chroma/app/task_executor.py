@@ -75,7 +75,7 @@ def chroma_search_query_task(collection_name, category, user_query):
 
 
 @celery.task(soft_time_limit=500)
-def chroma_embed_task(collection_name, file_path, categories):
+def chroma_embed_task(collection_name, file_path, categories, isForm=False):
 
     task_id = chroma_embed_task.request.id
     
@@ -93,8 +93,9 @@ def chroma_embed_task(collection_name, file_path, categories):
         error_handler(task_id, str(exc))
         return None
     finally:
-        if os.path.exists(file_path):
-            os.remove(file_path)
+        if isForm:
+            if os.path.exists(file_path):
+                os.remove(file_path)
 
     return result
 

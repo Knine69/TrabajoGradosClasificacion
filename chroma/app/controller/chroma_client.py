@@ -75,6 +75,6 @@ def form_process_pdf_file():
     
     if validate_params(uploaded_file, categories, collection_name):
         task = chroma_embed_task.apply_async(
-            args=[collection_name, file_path, categories],
+            args=[collection_name, file_path, categories, True],
             queue=Configuration.CHROMA_QUEUE)
         return Response(sse_stream(task.id), content_type='text/event-stream')
