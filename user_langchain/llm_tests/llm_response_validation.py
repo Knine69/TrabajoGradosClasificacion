@@ -5,7 +5,7 @@ from sentence_transformers import SentenceTransformer, util
 from langchain_community.llms.ollama import Ollama
 from langchain.chains.base import Chain
 from user_langchain.llm_tests.test_prompt import prompt
-import torch
+import json
 import spacy
 
 
@@ -101,4 +101,4 @@ if __name__ =="__main__":
         user_query="What is an action",
         expected_answer="An action is the fact or process of doing something, typically to achieve an aim."
         )
-    print(f"Llm Response Validation: \n{response}")
+    print(f"Llm Response Validation: \n{json.dump(response, indent=2)}")
