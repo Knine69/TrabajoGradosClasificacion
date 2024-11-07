@@ -1,6 +1,7 @@
 import time
 import json
 import gc
+import os
 
 from chroma.celery_conf import celery
 from chroma.app import redis_client
@@ -91,6 +92,9 @@ def chroma_embed_task(collection_name, file_path, categories):
     except Exception as exc:
         error_handler(task_id, str(exc))
         return None
+    finally:
+        if os.path.exists(file_path):
+            os.remove(file_path)
 
     return result
 
