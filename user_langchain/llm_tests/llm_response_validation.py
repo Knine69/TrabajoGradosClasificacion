@@ -92,7 +92,7 @@ class LlmResponseValidator:
 if __name__ =="main":
     response_validator = LlmResponseValidator()
     print(f"""Llm Response Validation: \n{response_validator.execute_chain_query_with_metrics(
-        documents=["a thing done; an act.", "something to be done"],  # RAG documents
-        user_query="What is an action",  # Generate more
+        documents=["a thing done; an act.", "something to be done"],
+        user_query="What is an action",
         expected_answer="An action is the fact or process of doing something, typically to achieve an aim."
         )}""")
