@@ -65,7 +65,7 @@ def process_pdf_file():
         return Response(sse_stream(task.id), content_type='text/event-stream')
 
 @chroma_router.post("/form_embed_documen")
-def process_pdf_file():
+def form_process_pdf_file():
     uploaded_file = request.files.get('file')
     categories = request.form.get('categories')
     collection_name = request.form.get('collection_name')
