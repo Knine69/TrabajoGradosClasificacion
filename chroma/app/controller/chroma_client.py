@@ -63,3 +63,18 @@ def process_pdf_file():
             args=[collection_name, file_path, categories],
             queue=Configuration.CHROMA_QUEUE)
         return Response(sse_stream(task.id), content_type='text/event-stream')
+
+@chroma_router.post("/form_embed_documen")
+def process_pdf_file():
+    uploaded_file = request.files.get('file')
+    categories = request.form.get('categories')
+    collection_name = request.form.get('collection_name')
+    
+    file_path = f"/tmp/{uploaded_file.filename}"
+    uploaded_file.save(file_path)
+    
+    if validate_params(uploaded_file, categories, collection_name):
+        task = chroma_embed_task.apply_async(
+            args=[collection_name, file_path, categories],
+            queue=Configuration.CHROMA_QUEUE)
+        return Response(sse_stream(task.id), content_type='text/event-stream')
