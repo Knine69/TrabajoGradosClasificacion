@@ -4,7 +4,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 from sentence_transformers import SentenceTransformer, util
 from langchain_community.llms.ollama import Ollama
 from langchain.chains.base import Chain
-from user_langchain.prompt import prompt
+from user_langchain.prompt import prompt, parser
 import json
 import spacy
 
@@ -66,7 +66,8 @@ class LlmResponseValidator:
 
 
     def execute_chain_query_with_metrics(self, documents, user_query, expected_answer):
-        result = self.llm_chain.invoke({"question": user_query, "references": documents})
+        result = self.llm_chain.invoke({"question": user_query, "references": documents, 
+                                          "format_instructions": parser})
        
         # BERTScore
         bert_score = self.calculate_bertscore([result], [expected_answer])
