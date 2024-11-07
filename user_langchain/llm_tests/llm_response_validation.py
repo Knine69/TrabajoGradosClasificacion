@@ -82,7 +82,7 @@ class LlmResponseValidator:
         
         # Coverage
         print("Before copleteness")
-        coverage = self.calculate_completeness([result], documents)
+        coverage = self.calculate_completeness(result, expected_answer)
         
         return {
             "response": result,
