@@ -67,17 +67,21 @@ class LlmResponseValidator:
 
     def execute_chain_query_with_metrics(self, documents, user_query, expected_answer):
         result = self.llm_chain.invoke({"question": user_query, "references": documents})
+        print(f"Model result: {result}")
         
         # BERTScore
+        print("Before bert")
         bert_score = self.calculate_bertscore([result], [expected_answer])
         
         # Entity-Based Coverage
+        print("Before coverage")
         entity_coverage = self.calculate_entity_coverage(result, expected_answer)
         
         # Relevance
         relevance = self.calculate_relevance(result, user_query)
         
         # Coverage
+        print("Before copleteness")
         coverage = self.calculate_completeness([result], documents)
         
         return {
@@ -90,9 +94,11 @@ class LlmResponseValidator:
         
 
 if __name__ =="main":
+    print("Initiating response validation")
     response_validator = LlmResponseValidator()
-    print(f"""Llm Response Validation: \n{response_validator.execute_chain_query_with_metrics(
+    response = response_validator.execute_chain_query_with_metrics(
         documents=["a thing done; an act.", "something to be done"],
         user_query="What is an action",
         expected_answer="An action is the fact or process of doing something, typically to achieve an aim."
-        )}""")
+        )
+    print(f"Llm Response Validation: \n{response}")
