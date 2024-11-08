@@ -20,7 +20,7 @@ test_data = {
         ["a literary genre that focuses on imaginative and futuristic concepts, like space exploration and time travel.", "a category of fiction often dealing with advanced science and technology."],
         ["a large muscle located at the back of your lower leg, helping with movements like walking or running.", "the muscle in the calf that connects the heel to the back of the knee."],
         ["a form of precipitation consisting of ice crystals that fall from the sky in cold weather.", "frozen water vapor that forms delicate, white flakes and falls to the ground."],
-        ["a neural network architecture commonly used in natural language processing tasks.", "a type of deep learning model designed to understand and generate text."], # LLM IA
+        ["a neural network architecture commonly used in natural language processing tasks.", "a type of deep learning model designed to understand and generate text."],
         ["a technique that retrieves relevant information from external sources to provide more informed answers.", "a method used to enhance the accuracy of language models by incorporating real-time information."],
         ["the process of fine-tuning a pre-trained model using additional labeled data to improve performance on a specific task.", "an approach to customize a model's behavior to better align with the desired outputs."],
         ["a metric used to evaluate the performance of language models, measuring how well the model predictions match human judgment.", "a quantitative measure of a model's effectiveness in generating coherent and accurate text."],
@@ -30,7 +30,7 @@ test_data = {
         ["a concept in which an AI model leverages external data or knowledge bases to answer questions more accurately.", "a strategy that combines real-time data retrieval with language model processing to provide updated and contextualized responses."],
         ["a framework that connects language models with various tools or data sources to perform complex tasks, like code generation or mathematical calculations.", "a system that integrates AI capabilities with external resources to solve specialized problems."],
         ["a type of embedding that represents words or phrases in a high-dimensional space, where semantically similar words are closer together.", "a way of converting words into numerical vectors that capture their meanings and relationships."],
-        ["a mathematical model used to describe the relationship between the input and output of a control system.", "an equation that captures the dynamics of a system, often represented in terms of differential equations."], # AUTOMATED CONTROL
+        ["a mathematical model used to describe the relationship between the input and output of a control system.", "an equation that captures the dynamics of a system, often represented in terms of differential equations."],
         ["a closed-loop system that automatically adjusts its input based on feedback to maintain the desired output.", "a system where the output is continuously monitored and used to adjust the control inputs."],
         ["a measure of how well a control system can handle disturbances or changes in system parameters without losing stability.", "a system's ability to maintain performance despite changes in its operating environment or uncertainties."],
         ["a control strategy that ensures the system remains stable and performs optimally by predicting future behaviors.", "a type of control that optimizes the system's output over a given time horizon using a model of the process."],
@@ -62,7 +62,7 @@ test_data = {
         "What is science fiction?",
         "What is the calf muscle?",
         "What is snow?",
-        "What is a transformer model?", #LLM IA
+        "What is a transformer model?",
         "What is Retrieval-Augmented Generation (RAG)?",
         "What is model fine-tuning?",
         "What is a language model evaluation metric?",
@@ -72,7 +72,7 @@ test_data = {
         "What is the concept of augmenting AI with external data?",
         "What is a LangChain framework?",
         "What is a word embedding?"
-        "What is a system transfer function?", # AUTOMATED CONTROL
+        "What is a system transfer function?",
         "What is a feedback control system?",
         "What is robustness in control theory?",
         "What is Model Predictive Control (MPC)?",
@@ -104,7 +104,7 @@ test_data = {
         "Science fiction is a genre of literature that explores imaginative concepts like advanced technology.",
         "The calf muscle is a large muscle in the lower leg that helps with movements like walking or running.",
         "Snow is frozen water vapor that forms ice crystals and falls from the sky in cold weather.",
-        "A transformer model is a type of neural network architecture used in NLP tasks to understand and generate text.", #LLM IA
+        "A transformer model is a type of neural network architecture used in NLP tasks to understand and generate text.",
         "Retrieval-Augmented Generation (RAG) is a technique that enhances language models by retrieving relevant information from external sources.",
         "Model fine-tuning is the process of refining a pre-trained model using labeled data to improve performance on specific tasks.",
         "A language model evaluation metric measures how well a model's predictions align with human judgment.",
@@ -114,7 +114,7 @@ test_data = {
         "Augmenting AI with external data involves using additional information to improve the accuracy and relevance of responses.",
         "The LangChain framework connects language models with tools and data sources to perform complex, specialized tasks.",
         "A word embedding is a numerical representation of words in a vector space, where similar words are closer together."
-        "A system transfer function is a mathematical model that describes the input-output relationship of a control system.", # AUTOMATED CONTROL
+        "A system transfer function is a mathematical model that describes the input-output relationship of a control system.",
         "A feedback control system is a closed-loop system that adjusts its input based on feedback to maintain the desired output.",
         "Robustness in control theory is the ability of a system to maintain stability and performance despite disturbances or uncertainties.",
         "Model Predictive Control (MPC) is a control strategy that uses a model to predict and optimize system performance over time.",
