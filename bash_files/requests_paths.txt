@@ -1,20 +1,20 @@
-/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/J. van Mill/Open Problems in Topology (4217)/Open Problems in Topology - J. van Mill.pdf
-/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Jurgen Ackermann/Sampled-Data Control Systems_ Analysis and Synthesis, Robust System Design (3669)/Sampled-Data Control Systems_ Analysis and - Jurgen Ackermann.pdf
-/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Jutta Heckhausen/Motivation and Action (8620)/Motivation and Action - Jutta Heckhausen.pdf
-/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Julio Cortazar/Rayuela (5895)/Rayuela - Julio Cortazar.pdf
-/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Henry Charriere/Papillon (6034)/Papillon - Henry Charriere.pdf
-/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Shunbo Lei/Power Grid Resilience Against Natural Disasters_ Preparedness, Response, and Recovery (6560)/Power Grid Resilience Against Natural Disa - Shunbo Lei.pdf
-/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Fred Brauer/Mathematical Models in Population Biology and Epidemiology (3631)/Mathematical Models in Population Biology - Fred Brauer.pdf
-/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Steve Otto/An Introduction to Programming and Numerical Methods in MATLAB (3408)/An Introduction to Programming and Numeric - Steve Otto.pdf
-/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Qiang Lu/Smart Power Systems and Smart Grids_ Toward Multi-Objective Optimization in Dispatching (5259)/Smart Power Systems and Smart Grids_ Towar - Qiang Lu.pdf
-/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Xiulan Lai/Modeling HIV-1 Virus Dynamics with Both Virus-to-Cell Infection and Cell-to-Cell Transmission _ (8420)/Modeling HIV-1 Virus Dynamics with Both Vi - Xiulan Lai.pdf
-/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Tristan Needham/Visual Complex Analysis_ 25th Anniversary Edition (7625)/Visual Complex Analysis_ 25th Anniversary - Tristan Needham.pdf
-/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Vidar Alstad/Studies on selection of controlled variables (5496)/Studies on selection of controlled variabl - Vidar Alstad.pdf
-/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Rudra Pratap/Getting Started With Matlab 7 (3373)/Getting Started With Matlab 7 - Rudra Pratap.pdf
-/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Thomas Meurer/Control and Observer Design for Nonlinear Finite and Infinite Dimensional Systems (6782)/Control and Observer Design for Nonlinear - Thomas Meurer.pdf
-/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Wolf Schwarz/40 Puzzles and Problems in Probability and Mathematical Statistics (7893)/40 Puzzles and Problems in Probability and - Wolf Schwarz.pdf
-/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Gordon Blower/Linear Systems (7595)/Linear Systems - Gordon Blower.pdf
-/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Jan Lunze/Control Theory of Digitally Networked Dynamic Systems (4045)/Control Theory of Digitally Networked Dyna - Jan Lunze.pdf
-/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Pietro Boria/Taxation in European Union (8435)/Taxation in European Union - Pietro Boria.pdf
-/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Hedy Attouch/Variational Analysis in Sobolev and BV Spaces_ Applications to PDEs and Optimization, Second Ed (6541)/Variational Analysis in Sobolev and BV Spa - Hedy Attouch.pdf
-/home/jupyter-juan_huguet82191/pdfSources/media/jairo/AlejandriaVault/Alejandria/Joseph Bak/Complex Analysis (6641)/Complex Analysis - Joseph Bak.pdf
+/home/jupyter-juan_huguet82191/pdfSources/Alejandria/J. van Mill/Open Problems in Topology (4217)/Open Problems in Topology - J. van Mill.pdf
+/home/jupyter-juan_huguet82191/pdfSources/Alejandria/Jurgen Ackermann/Sampled-Data Control Systems_ Analysis and Synthesis, Robust System Design (3669)/Sampled-Data Control Systems_ Analysis and - Jurgen Ackermann.pdf
+/home/jupyter-juan_huguet82191/pdfSources/Alejandria/Jutta Heckhausen/Motivation and Action (8620)/Motivation and Action - Jutta Heckhausen.pdf
+/home/jupyter-juan_huguet82191/pdfSources/Alejandria/Julio Cortazar/Rayuela (5895)/Rayuela - Julio Cortazar.pdf
+/home/jupyter-juan_huguet82191/pdfSources/Alejandria/Henry Charriere/Papillon (6034)/Papillon - Henry Charriere.pdf
+/home/jupyter-juan_huguet82191/pdfSources/Alejandria/Shunbo Lei/Power Grid Resilience Against Natural Disasters_ Preparedness, Response, and Recovery (6560)/Power Grid Resilience Against Natural Disa - Shunbo Lei.pdf
+/home/jupyter-juan_huguet82191/pdfSources/Alejandria/Fred Brauer/Mathematical Models in Population Biology and Epidemiology (3631)/Mathematical Models in Population Biology - Fred Brauer.pdf
+/home/jupyter-juan_huguet82191/pdfSources/Alejandria/Steve Otto/An Introduction to Programming and Numerical Methods in MATLAB (3408)/An Introduction to Programming and Numeric - Steve Otto.pdf
+/home/jupyter-juan_huguet82191/pdfSources/Alejandria/Qiang Lu/Smart Power Systems and Smart Grids_ Toward Multi-Objective Optimization in Dispatching (5259)/Smart Power Systems and Smart Grids_ Towar - Qiang Lu.pdf
+/home/jupyter-juan_huguet82191/pdfSources/Alejandria/Xiulan Lai/Modeling HIV-1 Virus Dynamics with Both Virus-to-Cell Infection and Cell-to-Cell Transmission _ (8420)/Modeling HIV-1 Virus Dynamics with Both Vi - Xiulan Lai.pdf
+/home/jupyter-juan_huguet82191/pdfSources/Alejandria/Tristan Needham/Visual Complex Analysis_ 25th Anniversary Edition (7625)/Visual Complex Analysis_ 25th Anniversary - Tristan Needham.pdf
+/home/jupyter-juan_huguet82191/pdfSources/Alejandria/Vidar Alstad/Studies on selection of controlled variables (5496)/Studies on selection of controlled variabl - Vidar Alstad.pdf
+/home/jupyter-juan_huguet82191/pdfSources/Alejandria/Rudra Pratap/Getting Started With Matlab 7 (3373)/Getting Started With Matlab 7 - Rudra Pratap.pdf
+/home/jupyter-juan_huguet82191/pdfSources/Alejandria/Thomas Meurer/Control and Observer Design for Nonlinear Finite and Infinite Dimensional Systems (6782)/Control and Observer Design for Nonlinear - Thomas Meurer.pdf
+/home/jupyter-juan_huguet82191/pdfSources/Alejandria/Wolf Schwarz/40 Puzzles and Problems in Probability and Mathematical Statistics (7893)/40 Puzzles and Problems in Probability and - Wolf Schwarz.pdf
+/home/jupyter-juan_huguet82191/pdfSources/Alejandria/Gordon Blower/Linear Systems (7595)/Linear Systems - Gordon Blower.pdf
+/home/jupyter-juan_huguet82191/pdfSources/Alejandria/Jan Lunze/Control Theory of Digitally Networked Dynamic Systems (4045)/Control Theory of Digitally Networked Dyna - Jan Lunze.pdf
+/home/jupyter-juan_huguet82191/pdfSources/Alejandria/Pietro Boria/Taxation in European Union (8435)/Taxation in European Union - Pietro Boria.pdf
+/home/jupyter-juan_huguet82191/pdfSources/Alejandria/Hedy Attouch/Variational Analysis in Sobolev and BV Spaces_ Applications to PDEs and Optimization, Second Ed (6541)/Variational Analysis in Sobolev and BV Spa - Hedy Attouch.pdf
+/home/jupyter-juan_huguet82191/pdfSources/Alejandria/Joseph Bak/Complex Analysis (6641)/Complex Analysis - Joseph Bak.pdf
