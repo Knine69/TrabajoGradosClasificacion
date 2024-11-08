@@ -1,85 +1,12 @@
 from typing import List
 from bert_score import score
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from test_data import test_data
 from sentence_transformers import SentenceTransformer, util
 from langchain_community.llms.ollama import Ollama
 from langchain.chains.base import Chain
 from user_langchain.prompt import prompt, parser
 import json
 import spacy
-
-
-test_data = {
-    "documents": [
-        ["a person who designs buildings and oversees their construction.", "a professional who plans and supervises large structural projects"],
-        ["an electronic device that processes data, performing calculations and tasks.", "a programmable machine that can execute a set of instructions."],
-        ["an animal known for its loyalty and often referred to as 'man's best friend.'", "a domesticated mammal, often used as a pet or for security."],
-        ["a large celestial body that orbits a star, usually spherical in shape.", "an object in space that revolves around a star, like the planets in our solar system."],
-        ["a substance consumed to provide nutritional support for the body.", "material taken in by organisms to sustain life and provide energy."],
-        ["a system that transports blood throughout the body, consisting of the heart and blood vessels.", "the heart pumps blood through a network of arteries, veins, and capillaries."],
-        ["a written or spoken story, often involving fictional characters and events.", "a tale or account that entertains, informs, or conveys a moral lesson."],
-        ["a legal binding agreement between two or more parties.", "a formal arrangement that outlines the terms and conditions agreed upon by the parties involved."],
-        ["a practice that involves physical postures, breathing techniques, and meditation.", "an ancient discipline aimed at promoting physical, mental, and spiritual well-being."],
-        ["a tool used to amplify or record sound, typically used in performances or recordings.", "an electronic device that converts sound into an electrical signal."],
-        ["a vehicle designed for transporting goods or people over land.", "a motorized machine used for transportation, such as a car, truck, or bus."],
-        ["an area where animals and plants live together in their natural environment.", "a specific place where a particular organism or community of organisms lives."],
-        ["a period of 24 hours starting at midnight, used as a unit of time.", "the time it takes for Earth to complete one full rotation on its axis."],
-        ["a piece of software used to browse and interact with content on the internet.", "a program that allows users to access and view websites."],
-        ["a method of encoding data into a format that is unreadable without a decryption key.", "a technique used to secure data by converting it into a secret code."],
-        ["a financial gain, usually the difference between the amount earned and the amount spent.", "the positive return on an investment or business activity after expenses."],
-        ["an object in space made of ice, dust, and gas, with a bright tail when near the sun.", "a celestial body that appears as a bright ball with a trailing stream of particles."],
-        ["a literary genre that focuses on imaginative and futuristic concepts, like space exploration and time travel.", "a category of fiction often dealing with advanced science and technology."],
-        ["a large muscle located at the back of your lower leg, helping with movements like walking or running.", "the muscle in the calf that connects the heel to the back of the knee."],
-        ["a form of precipitation consisting of ice crystals that fall from the sky in cold weather.", "frozen water vapor that forms delicate, white flakes and falls to the ground."]
-  
-    ],
-    "user_queries": [
-        "What is an architect?",
-        "What is a computer?",
-        "What is a dog?",
-        "What is a planet?",
-        "What is food?",
-        "What is the circulatory system?",
-        "What is a narrative?",
-        "What is a contract?",
-        "What is yoga?",
-        "What is a microphone?",
-        "What is a vehicle?",
-        "What is a habitat?",
-        "What is a day?",
-        "What is a web browser?",
-        "What is encryption?",
-        "What is profit?",
-        "What is a comet?",
-        "What is science fiction?",
-        "What is the calf muscle?",
-        "What is snow?"
-    ],
-    "expected_answers": [
-        "An architect is a person who designs buildings and supervises their construction.",
-        "A computer is an electronic device that processes data and performs calculations.",
-        "A dog is a domesticated animal known for its loyalty and companionship.",
-        "A planet is a large celestial body that orbits a star.",
-        "Food is a substance consumed to provide energy and nutrients to the body.",
-        "The circulatory system is the system that transports blood throughout the body.",
-        "A narrative is a story or account of events and experiences.",
-        "A contract is a legally binding agreement between two or more parties.",
-        "Yoga is a practice that combines physical postures, breathing, and meditation for well-being.",
-        "A microphone is a device used to amplify or record sound.",
-        "A vehicle is a machine used for transporting people or goods over land.",
-        "A habitat is an area where animals and plants live in their natural environment.",
-        "A day is a period of 24 hours, the time it takes for Earth to rotate once on its axis.",
-        "A web browser is a software program used to access and view websites on the internet.",
-        "Encryption is a method of converting data into a secure code to prevent unauthorized access.",
-        "Profit is the financial gain obtained when revenue exceeds expenses.",
-        "A comet is an object in space made of ice and dust that develops a bright tail when near the sun.",
-        "Science fiction is a genre of literature that explores imaginative concepts like advanced technology.",
-        "The calf muscle is a large muscle in the lower leg that helps with movements like walking or running.",
-        "Snow is frozen water vapor that forms ice crystals and falls from the sky in cold weather."
-    
-        
-    ]
-}
 
 
 class LlmResponseValidator:
