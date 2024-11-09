@@ -130,7 +130,7 @@ class ChromaCollections:
                 results: dict = dict(collection.query(
                     n_results=max_results,
                     query_embeddings=query_embedding,
-                    # where={category: True}  # Adjust this if necessary
+                    where={category: True}  # Adjust this if necessary
                 ).items())
             except Exception as e:
                 print_error(f"Error querying ChromaDB: {str(e)}", app=Configuration.CHROMA_QUEUE)
