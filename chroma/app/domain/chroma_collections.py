@@ -125,12 +125,12 @@ class ChromaCollections:
 
         for query_embedding in query_embeddings:
             
-            print_header_message(message=f"Data is: {max_results} - {query_embedding} - {category} ", app=Configuration.CHROMA_QUEUE)
+            print_header_message(message=f"Data is: {max_results} - {query_embedding} - {type(category)} ", app=Configuration.CHROMA_QUEUE)
             try:
                 results: dict = dict(collection.query(
                     n_results=max_results,
-                    query_embeddings=query_embedding,
-                    where={category: True}  # Adjust this if necessary
+                    query_embeddings=[query_embedding],
+                    where={f"{category}": True}
                 ).items())
             except Exception as e:
                 print_error(f"Error querying ChromaDB: {str(e)}", app=Configuration.CHROMA_QUEUE)
