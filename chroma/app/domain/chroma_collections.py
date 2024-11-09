@@ -125,12 +125,13 @@ class ChromaCollections:
 
         for query_embedding in query_embeddings:
             
-            print_header_message(message=f"Category is: {category} ", app=Configuration.CHROMA_QUEUE)
             results: dict = dict(collection.query(
                 n_results=max_results,
                 query_embeddings=query_embedding,
                 where={category: True}
             ).items())
+            
+            print_header_message(message=f"Results is: {results} ", app=Configuration.CHROMA_QUEUE)
 
             for i, doc in enumerate(results['documents']):
                 doc_id = results['ids'][0][i]
