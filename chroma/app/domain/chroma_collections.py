@@ -133,7 +133,7 @@ class ChromaCollections:
                     where={f"{category}": True}
                 ).items())
             except Exception as e:
-                print_error(f"Error querying ChromaDB: {str(e.with_traceback())}", app=Configuration.CHROMA_QUEUE)
+                print_error(f"Error querying ChromaDB: {str(e.with_traceback(e.__traceback__))}", app=Configuration.CHROMA_QUEUE)
                 results = {"documents": [], "metadatas": [], "ids": []} 
             
 
