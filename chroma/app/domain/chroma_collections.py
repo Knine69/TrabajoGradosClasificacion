@@ -330,12 +330,13 @@ class ChromaCollections:
 
         collection = self._validate_existing_collection(collection_name)
 
-        print_bold_message(message=f"Category is: {category} ", app=Configuration.CHROMA_QUEUE)
         
         loaded_db_data: dict = self.load_category_data(
             category=category,
             collection=collection)
 
+        print_header_message(message=f"Category is: {category} ", app=Configuration.CHROMA_QUEUE)
+        
         (found_data,
          loaded_db_data,
          response_message) = self._validate_loaded_response(loaded_db_data)
