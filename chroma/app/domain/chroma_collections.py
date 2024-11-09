@@ -133,7 +133,7 @@ class ChromaCollections:
                     where={category: True}  # Adjust this if necessary
                 ).items())
             except Exception as e:
-                print_error(f"Error querying ChromaDB: {str(e)}")
+                print_error(f"Error querying ChromaDB: {str(e)}", app=Configuration.CHROMA_QUEUE)
                 results = {"documents": [], "metadatas": [], "ids": []} 
             
 
