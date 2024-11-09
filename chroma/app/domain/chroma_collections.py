@@ -96,7 +96,7 @@ class ChromaCollections:
             print_warning_message("Updating loaded data...",
                                   Configuration.CHROMA_QUEUE)
 
-        aux = collection.get(where={category: True}).items()
+        aux = collection.get(where={f"{category}": True}).items()
         response_dict = {
             'data': dict(aux),
             'expiration_time': time.time() + (60 * 10)
@@ -123,29 +123,31 @@ class ChromaCollections:
         metadata_scores = {}
         id_scores = {}
 
-        # for query_embedding in query_embeddings:
-        try:
-            results: dict = dict(collection.query(
-                n_results=max_results,
-                query_texts=[query_terms],
-                where={f"{category}": True}
-            ).items())
-        except Exception as e:
-            print_error(f"Error querying ChromaDB: {str(e.with_traceback(e.__traceback__))}", app=Configuration.CHROMA_QUEUE)
-            results = {"documents": [], "metadatas": [], "ids": []} 
-        
+        for query_embedding in query_embeddings:
+            
+            print_header_message(message=f"Data is: {max_results} - {query_embedding} - {type(category)} ", app=Configuration.CHROMA_QUEUE)
+            try:
+                results: dict = dict(collection.query(
+                    n_results=max_results,
+                    query_embeddings=[query_embedding],
+                    where={f"{category}": True}
+                ).items())
+            except Exception as e:
+                print_error(f"Error querying ChromaDB: {str(e.with_traceback(e.__traceback__))}", app=Configuration.CHROMA_QUEUE)
+                results = {"documents": [], "metadatas": [], "ids": []} 
+            
 
-        for i, doc in enumerate(results['documents']):
-            doc_id = results['ids'][0][i]
-            metadata = results['metadatas'][0][i]
+            for i, doc in enumerate(results['documents']):
+                doc_id = results['ids'][0][i]
+                metadata = results['metadatas'][0][i]
 
-            if doc_id in document_scores:
-                document_scores[doc_id].append(doc)
-                metadata_scores[doc_id].append(metadata)
-            else:
-                document_scores[doc_id] = [doc]
-                metadata_scores[doc_id] = [metadata]
-                id_scores[doc_id] = doc_id
+                if doc_id in document_scores:
+                    document_scores[doc_id].append(doc)
+                    metadata_scores[doc_id].append(metadata)
+                else:
+                    document_scores[doc_id] = [doc]
+                    metadata_scores[doc_id] = [metadata]
+                    id_scores[doc_id] = doc_id
 
         sorted_docs = sorted(
             document_scores.keys(),
