@@ -330,6 +330,8 @@ class ChromaCollections:
 
         collection = self._validate_existing_collection(collection_name)
 
+        print_bold_message(message=f"Category is: {category} - register: {request_register["category"]}")
+        
         loaded_db_data: dict = self.load_category_data(
             category=category,
             collection=collection)
