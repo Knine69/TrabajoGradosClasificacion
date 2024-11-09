@@ -96,7 +96,7 @@ class ChromaCollections:
             print_warning_message("Updating loaded data...",
                                   Configuration.CHROMA_QUEUE)
 
-        aux = collection.get(where={category: True}).items()
+        aux = collection.get(where={f'{category}': True}).items()
         response_dict = {
             'data': dict(aux),
             'expiration_time': time.time() + (60 * 10)
@@ -130,7 +130,7 @@ class ChromaCollections:
                 results: dict = dict(collection.query(
                     n_results=max_results,
                     query_embeddings=query_embedding,
-                    where={category: True}  # Adjust this if necessary
+                    where={f'{category}': True}  # Adjust this if necessary
                 ).items())
             except Exception as e:
                 print_error(f"Error querying ChromaDB: {str(e)}", app=Configuration.CHROMA_QUEUE)
