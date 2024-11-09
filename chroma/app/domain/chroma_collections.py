@@ -124,6 +124,8 @@ class ChromaCollections:
         id_scores = {}
 
         for query_embedding in query_embeddings:
+            
+            print_header_message(message=f"Category is: {category} ", app=Configuration.CHROMA_QUEUE)
             results: dict = dict(collection.query(
                 n_results=max_results,
                 query_embeddings=query_embedding,
@@ -334,8 +336,6 @@ class ChromaCollections:
         loaded_db_data: dict = self.load_category_data(
             category=category,
             collection=collection)
-
-        print_header_message(message=f"Category is: {category} ", app=Configuration.CHROMA_QUEUE)
         
         (found_data,
          loaded_db_data,
