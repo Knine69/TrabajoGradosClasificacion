@@ -129,7 +129,7 @@ class ChromaCollections:
             try:
                 results: dict = dict(collection.query(
                     n_results=max_results,
-                    #query_embeddings=[query_embedding],
+                    query_embeddings=[query_embedding],
                     where={f"{category}": True}
                 ).items())
             except Exception as e:
