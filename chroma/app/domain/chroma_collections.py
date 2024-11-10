@@ -125,10 +125,10 @@ class ChromaCollections:
         id_scores = {}
 
         try:
-
             results = collection.query(
                 query_texts=[" ".join(query_terms)],
                 n_results=max_results,
+                where={category: {"$eq": 1}},
                 include=["embeddings", "metadatas", "documents", "distances"]
             )
         except Exception as e:
