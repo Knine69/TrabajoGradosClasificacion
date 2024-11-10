@@ -19,6 +19,9 @@ from utils.outputs import (print_warning_message,
                            print_header_message,
                            print_bold_message,
                            print_error)
+import torch
+import torch.nn.functional as F
+import numpy as np
 
 
 def chunk_text(text: str, max_chunk_length=1024) -> tuple:
@@ -41,25 +44,22 @@ class ChromaCollections:
         self._chroma_client = chromadb.HttpClient(host=Configuration.CHROMA_URL,
                                                   port=8000)
 
+
     class EmbedderFunction(EmbeddingFunction):
         def __init__(self):
-            self.tokenizer = (
-                AutoTokenizer.from_pretrained("bert-base-multilingual-cased"))
-            self.embedding_model = (
-                AutoModel.from_pretrained("bert-base-multilingual-cased"))
+            self.tokenizer = AutoTokenizer.from_pretrained("bert-base-multilingual-cased")
+            self.embedding_model = AutoModel.from_pretrained("bert-base-multilingual-cased")
 
         def __call__(self, doc_input: Documents) -> Embeddings:
             embedding_results = []
             batch_size = 128
+
             for i in range(0, len(doc_input), batch_size):
                 batch_docs = doc_input[i:i + batch_size]
                 print_header_message(
                     message=f"Iteration: {i} - Batch DOCS: {batch_docs}", app=Configuration.CHROMA_QUEUE)
-                inputs = self.tokenizer(batch_docs,
-                                return_tensors="pt",
-                                padding=True,
-                                truncation=True,
-                                max_length=512)
+
+                inputs = self.tokenizer(batch_docs, return_tensors="pt", padding=True, truncation=True, max_length=512)
 
                 with torch.no_grad():
                     outputs = self.embedding_model(**inputs)
@@ -68,12 +68,17 @@ class ChromaCollections:
                 embeddings = torch.mean(last_hidden_state, dim=1).squeeze()
 
                 if len(embeddings.shape) == 1:
-                    embeddings = [embeddings]
+                    embeddings = embeddings.unsqueeze(0)  # Add batch dimension if necessary
+
+                # Apply L2 normalization to embeddings
+                embeddings = F.normalize(embeddings, p=2, dim=1)
 
                 for embedding in embeddings:
-                    embedding_results.append(embedding.numpy().tolist())
+                    # Convert to float32 and append to results
+                    embedding_results.append(embedding.numpy().astype(np.float32).tolist())
 
             return embedding_results
+
 
     @staticmethod
     def create_metadata_object(categories_list: list[str]) -> dict:
