@@ -81,7 +81,7 @@ class ChromaCollections:
         for category in categories_list:
             aux = category.lower()
             if FileCategories(aux):
-                result[aux] = True
+                result[aux] = 1
 
         return result
 
@@ -96,7 +96,7 @@ class ChromaCollections:
             print_warning_message("Updating loaded data...",
                                   Configuration.CHROMA_QUEUE)
     
-        aux = collection.get(where={category: True}).items()
+        aux = collection.get(where={category: 1}).items()
         response_dict = {
             'data': dict(aux),
             'expiration_time': time.time() + (60 * 10)
@@ -127,7 +127,7 @@ class ChromaCollections:
             
             print_header_message(message=f"Data is: {max_results} - {query_embedding} - {type(category)} ", app=Configuration.CHROMA_QUEUE)
             try:
-                where_clause = {f"{category}": True} if category else None
+                where_clause = {f"{category}": 1} if category else None
 
                 results = collection.query(
                     query_embeddings=[query_embedding],
