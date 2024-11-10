@@ -130,8 +130,7 @@ class ChromaCollections:
             ).items()
             
         except Exception as e:
-            print_error(f"Error querying ChromaDB: {str(e.with_traceback(e.__traceback__))}", app=Configuration.CHROMA_QUEUE)
-            results = {"documents": [], "metadatas": [], "ids": []}
+            raise e
 
         for i, doc in enumerate(results['documents']):
             doc_id = results['ids'][0][i]
