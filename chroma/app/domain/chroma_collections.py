@@ -98,7 +98,7 @@ class ChromaCollections:
     
         aux = dict(collection.get(where={category: 1}, include=["metadatas", "documents"]).items())
         
-        print_successful_message(f"Loaded data: {aux}")
+        print_successful_message(f"Loaded data: {aux}", Configuration.CHROMA_QUEUE)
         
         response_dict = {
             'data': aux,
