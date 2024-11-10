@@ -53,26 +53,23 @@ class ChromaCollections:
             batch_size = 128
             for i in range(0, len(doc_input), batch_size):
                 batch_docs = doc_input[i:i + batch_size]
-                print_header_message(
-                    message=f"Iteration: {i} - Batch DOCS: {batch_docs}", app=Configuration.CHROMA_QUEUE)
-                inputs = self.tokenizer(batch_docs,
-                                return_tensors="pt",
-                                padding=True,
-                                truncation=True,
-                                max_length=512)
-
+                inputs = self.tokenizer(batch_docs, return_tensors="pt", padding=True, truncation=True, max_length=512)
+                
                 with torch.no_grad():
                     outputs = self.embedding_model(**inputs)
-
+                
                 last_hidden_state = outputs.last_hidden_state
                 embeddings = torch.mean(last_hidden_state, dim=1).squeeze()
-
+                
                 if len(embeddings.shape) == 1:
                     embeddings = [embeddings]
-
+                
                 for embedding in embeddings:
                     embedding_results.append(embedding.numpy().tolist())
 
+            # Check if embeddings are valid
+            if not embedding_results or any(not isinstance(e, list) for e in embedding_results):
+                print_error("Embeddings are invalid or empty.", app=Configuration.CHROMA_QUEUE)
             return embedding_results
 
     @staticmethod
@@ -182,8 +179,7 @@ class ChromaCollections:
             collection.add(
                 documents=document_chunks,
                 metadatas=[metadata_filter] * len(document_chunks),
-                embeddings=(
-                    ChromaCollections.EmbedderFunction()(document_chunks)),
+                embeddings=ChromaCollections.EmbedderFunction()(document_chunks),
                 ids=ids
             )
             gc.collect()
