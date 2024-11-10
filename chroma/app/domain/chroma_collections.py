@@ -127,7 +127,6 @@ class ChromaCollections:
 
         for query_embedding in query_embeddings:
             
-            print_header_message(message=f"Data is: {max_results} - {query_embedding} - {type(category)} ", app=Configuration.CHROMA_QUEUE)
             try:
                 where_clause = {f"{category}": 1} if category else None
 
