@@ -40,7 +40,7 @@ class ChromaCollections:
     def __init__(self):
         self._chroma_client = chromadb.HttpClient(host=Configuration.CHROMA_URL,
                                                   port=8000)
-
+        
     class EmbedderFunction(EmbeddingFunction):
         def __init__(self):
             self.tokenizer = (
@@ -68,8 +68,9 @@ class ChromaCollections:
                 if len(embeddings.shape) == 1:
                     embeddings = [embeddings]
 
+                # Convert embeddings to lists of floats
                 for embedding in embeddings:
-                    embedding_results.append(embedding.numpy().tolist())
+                    embedding_results.append(embedding.cpu().numpy().tolist())
 
             print_bold_message(f"Embeddings are: {embedding_results}", Configuration.CHROMA_QUEUE)
             
@@ -77,6 +78,7 @@ class ChromaCollections:
             if not embedding_results or any(not isinstance(e, list) for e in embedding_results):
                 print_error("Embeddings are invalid or empty.", app=Configuration.CHROMA_QUEUE)
             return embedding_results
+
 
     @staticmethod
     def create_metadata_object(categories_list: list[str]) -> dict:
