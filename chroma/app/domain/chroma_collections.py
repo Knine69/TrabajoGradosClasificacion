@@ -67,6 +67,8 @@ class ChromaCollections:
                 for embedding in embeddings:
                     embedding_results.append(embedding.numpy().tolist())
 
+            print_bold_message(f"Embeddings are: {embedding_results}", Configuration.CHROMA_QUEUE)
+            
             # Check if embeddings are valid
             if not embedding_results or any(not isinstance(e, list) for e in embedding_results):
                 print_error("Embeddings are invalid or empty.", app=Configuration.CHROMA_QUEUE)
@@ -310,7 +312,6 @@ class ChromaCollections:
             self.create_metadata_object(categories))
 
         end_time = time.time()
-        print_header_message(message="After embedding", app=Configuration.CHROMA_QUEUE)
 
         if result:
             print_successful_message(
