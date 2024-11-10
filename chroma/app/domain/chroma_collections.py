@@ -178,12 +178,14 @@ class ChromaCollections:
                             metadata_filter: dict[str, str]):
         try:
             document_chunks, ids = chunk_text(document)
+            embeddings = ChromaCollections.EmbedderFunction()(document_chunks)
             collection.add(
                 documents=document_chunks,
                 metadatas=[metadata_filter] * len(document_chunks),
-                embeddings=ChromaCollections.EmbedderFunction()(document_chunks),
+                embeddings=embeddings,
                 ids=ids
             )
+            print_bold_message(f"Stored embeddings are: {embeddings}", Configuration.CHROMA_QUEUE)
             gc.collect()
             return True
         except Exception as e:
