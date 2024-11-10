@@ -112,9 +112,9 @@ class ChromaCollections:
 
     @staticmethod
     def basic_chroma_query(collection: Collection,
-                           category: str,
-                           user_query: str,
-                           max_results: int = 5) -> dict:
+                       category: str,
+                       user_query: str,
+                       max_results: int = 5) -> dict:
 
         query_no_stopwords = remove_stopwords(user_query)
         query_terms = query_no_stopwords.split()
@@ -131,17 +131,20 @@ class ChromaCollections:
         for query_embedding in query_embeddings:
             
             print_header_message(message=f"Data is: {max_results} - {query_embedding} - {type(category)} ", app=Configuration.CHROMA_QUEUE)
+            
+            # Construct the where clause appropriately
+            where_clause = {f"{category}": {"$eq": True}}  # Update as needed based on your metadata structure
+
             try:
                 results: dict = dict(collection.query(
                     n_results=max_results,
                     query_embeddings=[query_embedding],
-                    where={f"{category}": True}
+                    where=where_clause
                 ).items())
             except Exception as e:
                 print_error(f"Error querying ChromaDB: {str(e.with_traceback(e.__traceback__))}", app=Configuration.CHROMA_QUEUE)
                 results = {"documents": [], "metadatas": [], "ids": []} 
             
-
             for i, doc in enumerate(results['documents']):
                 doc_id = results['ids'][0][i]
                 metadata = results['metadatas'][0][i]
@@ -171,6 +174,7 @@ class ChromaCollections:
         gc.collect()
 
         return top_results if top_results['documents'] else False
+
 
     @staticmethod
     def add_document_embeds(collection: Collection,
