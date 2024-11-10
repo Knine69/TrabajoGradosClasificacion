@@ -129,7 +129,6 @@ class ChromaCollections:
             results = collection.query(
                 query_texts=[" ".join(query_terms)],
                 n_results=max_results,
-                where={category: 1},
                 include=["embeddings", "metadatas", "documents", "distances"]
             )
         except Exception as e:
