@@ -119,39 +119,34 @@ class ChromaCollections:
         query_no_stopwords = remove_stopwords(user_query)
         query_terms = query_no_stopwords.split()
 
-        query_embeddings = [
-            ChromaCollections.EmbedderFunction()([term])[0]
-            for term in query_terms
-        ]
 
         document_scores = {}
         metadata_scores = {}
         id_scores = {}
 
-        for query_embedding in query_embeddings:
-            try:
+        try:
 
-                results = collection.query(
-                    query_embeddings=query_embedding,
-                    n_results=max_results,
-                    where={category: 1},
-                    include=["embeddings", "metadatas", "documents", "distances"]
-                )
-            except Exception as e:
-                print_error(f"Error querying ChromaDB: {str(e.with_traceback(e.__traceback__))}", app=Configuration.CHROMA_QUEUE)
-                results = {"documents": [], "metadatas": [], "ids": []}
+            results = collection.query(
+                query_texts=[query_terms],
+                n_results=max_results,
+                where={category: 1},
+                include=["embeddings", "metadatas", "documents", "distances"]
+            )
+        except Exception as e:
+            print_error(f"Error querying ChromaDB: {str(e.with_traceback(e.__traceback__))}", app=Configuration.CHROMA_QUEUE)
+            results = {"documents": [], "metadatas": [], "ids": []}
 
-            for i, doc in enumerate(results['documents']):
-                doc_id = results['ids'][0][i]
-                metadata = results['metadatas'][0][i]
+        for i, doc in enumerate(results['documents']):
+            doc_id = results['ids'][0][i]
+            metadata = results['metadatas'][0][i]
 
-                if doc_id in document_scores:
-                    document_scores[doc_id].append(doc)
-                    metadata_scores[doc_id].append(metadata)
-                else:
-                    document_scores[doc_id] = [doc]
-                    metadata_scores[doc_id] = [metadata]
-                    id_scores[doc_id] = doc_id
+            if doc_id in document_scores:
+                document_scores[doc_id].append(doc)
+                metadata_scores[doc_id].append(metadata)
+            else:
+                document_scores[doc_id] = [doc]
+                metadata_scores[doc_id] = [metadata]
+                id_scores[doc_id] = doc_id
 
         sorted_docs = sorted(
             document_scores.keys(),
