@@ -42,15 +42,15 @@ class ChromaCollections:
                                                   port=8000)
         
     class EmbedderFunction(EmbeddingFunction):
-
-        tokenizer = (
-            AutoTokenizer.from_pretrained("bert-base-multilingual-cased"))
-        embedding_model = (
-            AutoModel.from_pretrained("bert-base-multilingual-cased"))
+        def __init__(self):
+            self.tokenizer = (
+                AutoTokenizer.from_pretrained("bert-base-multilingual-cased"))
+            self.embedding_model = (
+                AutoModel.from_pretrained("bert-base-multilingual-cased"))
 
         def __call__(self, doc_input: Documents) -> Embeddings:
             embedding_results = []
-            batch_size = 16
+            batch_size = 128
             for i in range(0, len(doc_input), batch_size):
                 batch_docs = doc_input[i:i + batch_size]
                 inputs = self.tokenizer(batch_docs,
@@ -68,9 +68,13 @@ class ChromaCollections:
                 if len(embeddings.shape) == 1:
                     embeddings = [embeddings]
 
+                # Convert embeddings to lists of floats
                 for embedding in embeddings:
-                    embedding_results.append(embedding.numpy().tolist())
-
+                    embedding_results.append(embedding.cpu().numpy().tolist())
+            
+            # Check if embeddings are valid
+            if not embedding_results or any(not isinstance(e, list) for e in embedding_results):
+                print_error("Embeddings are invalid or empty.", app=Configuration.CHROMA_QUEUE)
             return embedding_results
 
 
@@ -115,34 +119,39 @@ class ChromaCollections:
         query_no_stopwords = remove_stopwords(user_query)
         query_terms = query_no_stopwords.split()
 
+        query_embeddings = [
+            ChromaCollections.EmbedderFunction()([term])[0]
+            for term in query_terms
+        ]
 
         document_scores = {}
         metadata_scores = {}
         id_scores = {}
 
-        try:
+        for query_embedding in query_embeddings:
+            try:
 
-            query_embedding = ChromaCollections.EmbedderFunction()([user_query])[0]
-            results = collection.query(
-                n_results=max_results,
-                query_embeddings=query_embedding,
-                where_document={"$contains": user_query}
-            ).items()
-            
-        except Exception as e:
-            raise e
+                results = collection.query(
+                    query_embeddings=query_embedding,
+                    n_results=max_results,
+                    where={category: 1},
+                    include=["embeddings", "metadatas", "documents", "distances"]
+                )
+            except Exception as e:
+                print_error(f"Error querying ChromaDB: {str(e.with_traceback(e.__traceback__))}", app=Configuration.CHROMA_QUEUE)
+                results = {"documents": [], "metadatas": [], "ids": []}
 
-        for i, doc in enumerate(results['documents']):
-            doc_id = results['ids'][0][i]
-            metadata = results['metadatas'][0][i]
+            for i, doc in enumerate(results['documents']):
+                doc_id = results['ids'][0][i]
+                metadata = results['metadatas'][0][i]
 
-            if doc_id in document_scores:
-                document_scores[doc_id].append(doc)
-                metadata_scores[doc_id].append(metadata)
-            else:
-                document_scores[doc_id] = [doc]
-                metadata_scores[doc_id] = [metadata]
-                id_scores[doc_id] = doc_id
+                if doc_id in document_scores:
+                    document_scores[doc_id].append(doc)
+                    metadata_scores[doc_id].append(metadata)
+                else:
+                    document_scores[doc_id] = [doc]
+                    metadata_scores[doc_id] = [metadata]
+                    id_scores[doc_id] = doc_id
 
         sorted_docs = sorted(
             document_scores.keys(),
