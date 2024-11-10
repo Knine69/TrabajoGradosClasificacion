@@ -130,12 +130,11 @@ class ChromaCollections:
 
         for query_embedding in query_embeddings:
             try:
-                where_clause = {f"{category}": 1} if category else None
 
                 results = collection.query(
-                    query_embeddings=[query_embedding],
+                    query_embeddings=query_embedding,
                     n_results=max_results,
-                    where=where_clause,
+                    where={category: 1},
                     include=["embeddings", "metadatas", "documents", "distances"]
                 )
             except Exception as e:
