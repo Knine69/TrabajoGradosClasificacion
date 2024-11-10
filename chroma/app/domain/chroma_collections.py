@@ -96,9 +96,12 @@ class ChromaCollections:
             print_warning_message("Updating loaded data...",
                                   Configuration.CHROMA_QUEUE)
     
-        aux = collection.get(where={category: 1}).items()
+        aux = dict(collection.get(where={category: 1}, include=["metadatas", "documents"]).items())
+        
+        print_successful_message(f"Loaded data: {aux}")
+        
         response_dict = {
-            'data': dict(aux),
+            'data': aux,
             'expiration_time': time.time() + (60 * 10)
         }
 
