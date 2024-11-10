@@ -53,17 +53,21 @@ class ChromaCollections:
             batch_size = 128
             for i in range(0, len(doc_input), batch_size):
                 batch_docs = doc_input[i:i + batch_size]
-                inputs = self.tokenizer(batch_docs, return_tensors="pt", padding=True, truncation=True, max_length=512)
-                
+                inputs = self.tokenizer(batch_docs,
+                                        return_tensors="pt",
+                                        padding=True,
+                                        truncation=True,
+                                        max_length=512)
+
                 with torch.no_grad():
                     outputs = self.embedding_model(**inputs)
-                
+
                 last_hidden_state = outputs.last_hidden_state
                 embeddings = torch.mean(last_hidden_state, dim=1).squeeze()
-                
+
                 if len(embeddings.shape) == 1:
                     embeddings = [embeddings]
-                
+
                 for embedding in embeddings:
                     embedding_results.append(embedding.numpy().tolist())
 
@@ -86,16 +90,15 @@ class ChromaCollections:
 
     @staticmethod
     def update_loaded_data(collection: Collection,
-                           category: str,
-                           re_query: bool = False) -> dict:
+                        category: str,
+                        re_query: bool = False) -> dict:
         if re_query:
-            print_warning_message("Nothing found, updating loaded data...",
-                                  Configuration.CHROMA_QUEUE)
+            print_warning_message("Nothing found, updating loaded data...", Configuration.CHROMA_QUEUE)
         else:
-            print_warning_message("Updating loaded data...",
-                                  Configuration.CHROMA_QUEUE)
-    
-        aux = dict(collection.get(where={category: 1}, include=["metadatas", "documents"]).items())
+            print_warning_message("Updating loaded data...", Configuration.CHROMA_QUEUE)
+
+        # Include embeddings in the get method
+        aux = dict(collection.get(where={category: 1}, include=["embeddings", "metadatas", "documents"]).items())
         
         print_successful_message(f"Loaded data: {aux}", Configuration.CHROMA_QUEUE)
         
@@ -109,9 +112,9 @@ class ChromaCollections:
 
     @staticmethod
     def basic_chroma_query(collection: Collection,
-                           category: str,
-                           user_query: str,
-                           max_results: int = 5) -> dict:
+                        category: str,
+                        user_query: str,
+                        max_results: int = 5) -> dict:
 
         query_no_stopwords = remove_stopwords(user_query)
         query_terms = query_no_stopwords.split()
@@ -126,20 +129,18 @@ class ChromaCollections:
         id_scores = {}
 
         for query_embedding in query_embeddings:
-            
             try:
                 where_clause = {f"{category}": 1} if category else None
 
                 results = collection.query(
                     query_embeddings=[query_embedding],
                     n_results=max_results,
-                    where=where_clause,  # Ensure this is valid
-                    include=["metadatas", "documents", "distances"]
+                    where=where_clause,
+                    include=["embeddings", "metadatas", "documents", "distances"]
                 )
             except Exception as e:
                 print_error(f"Error querying ChromaDB: {str(e.with_traceback(e.__traceback__))}", app=Configuration.CHROMA_QUEUE)
-                results = {"documents": [], "metadatas": [], "ids": []} 
-            
+                results = {"documents": [], "metadatas": [], "ids": []}
 
             for i, doc in enumerate(results['documents']):
                 doc_id = results['ids'][0][i]
@@ -170,6 +171,7 @@ class ChromaCollections:
         gc.collect()
 
         return top_results if top_results['documents'] else False
+
 
     @staticmethod
     def add_document_embeds(collection: Collection,
