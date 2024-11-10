@@ -71,8 +71,6 @@ class ChromaCollections:
                 # Convert embeddings to lists of floats
                 for embedding in embeddings:
                     embedding_results.append(embedding.cpu().numpy().tolist())
-
-            print_bold_message(f"Embeddings are: {embedding_results}", Configuration.CHROMA_QUEUE)
             
             # Check if embeddings are valid
             if not embedding_results or any(not isinstance(e, list) for e in embedding_results):
@@ -188,7 +186,6 @@ class ChromaCollections:
                 embeddings=embeddings,
                 ids=ids
             )
-            print_bold_message(f"Stored embeddings are: {embeddings}", Configuration.CHROMA_QUEUE)
             gc.collect()
             return True
         except Exception as e:
