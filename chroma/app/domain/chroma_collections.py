@@ -42,15 +42,15 @@ class ChromaCollections:
                                                   port=8000)
         
     class EmbedderFunction(EmbeddingFunction):
-        def __init__(self):
-            self.tokenizer = (
-                AutoTokenizer.from_pretrained("bert-base-multilingual-cased"))
-            self.embedding_model = (
-                AutoModel.from_pretrained("bert-base-multilingual-cased"))
+
+        tokenizer = (
+            AutoTokenizer.from_pretrained("bert-base-multilingual-cased"))
+        embedding_model = (
+            AutoModel.from_pretrained("bert-base-multilingual-cased"))
 
         def __call__(self, doc_input: Documents) -> Embeddings:
             embedding_results = []
-            batch_size = 128
+            batch_size = 16
             for i in range(0, len(doc_input), batch_size):
                 batch_docs = doc_input[i:i + batch_size]
                 inputs = self.tokenizer(batch_docs,
@@ -68,13 +68,9 @@ class ChromaCollections:
                 if len(embeddings.shape) == 1:
                     embeddings = [embeddings]
 
-                # Convert embeddings to lists of floats
                 for embedding in embeddings:
-                    embedding_results.append(embedding.cpu().numpy().tolist())
-            
-            # Check if embeddings are valid
-            if not embedding_results or any(not isinstance(e, list) for e in embedding_results):
-                print_error("Embeddings are invalid or empty.", app=Configuration.CHROMA_QUEUE)
+                    embedding_results.append(embedding.numpy().tolist())
+
             return embedding_results
 
 
@@ -126,11 +122,13 @@ class ChromaCollections:
 
         try:
 
+            query_embedding = ChromaCollections.EmbedderFunction()([user_query])[0]
             results = collection.query(
-                query_texts=[" ".join(query_terms)],
-                where={category: 1},
-                include=["embeddings", "metadatas", "documents", "distances"]
-            )
+                n_results=max_results,
+                query_embeddings=query_embedding,
+                where_document={"$contains": user_query}
+            ).items()
+            
         except Exception as e:
             print_error(f"Error querying ChromaDB: {str(e.with_traceback(e.__traceback__))}", app=Configuration.CHROMA_QUEUE)
             results = {"documents": [], "metadatas": [], "ids": []}
