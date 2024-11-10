@@ -19,9 +19,6 @@ from utils.outputs import (print_warning_message,
                            print_header_message,
                            print_bold_message,
                            print_error)
-import torch
-import torch.nn.functional as F
-import numpy as np
 
 
 def chunk_text(text: str, max_chunk_length=1024) -> tuple:
@@ -44,22 +41,25 @@ class ChromaCollections:
         self._chroma_client = chromadb.HttpClient(host=Configuration.CHROMA_URL,
                                                   port=8000)
 
-
     class EmbedderFunction(EmbeddingFunction):
         def __init__(self):
-            self.tokenizer = AutoTokenizer.from_pretrained("bert-base-multilingual-cased")
-            self.embedding_model = AutoModel.from_pretrained("bert-base-multilingual-cased")
+            self.tokenizer = (
+                AutoTokenizer.from_pretrained("bert-base-multilingual-cased"))
+            self.embedding_model = (
+                AutoModel.from_pretrained("bert-base-multilingual-cased"))
 
         def __call__(self, doc_input: Documents) -> Embeddings:
             embedding_results = []
             batch_size = 128
-
             for i in range(0, len(doc_input), batch_size):
                 batch_docs = doc_input[i:i + batch_size]
                 print_header_message(
                     message=f"Iteration: {i} - Batch DOCS: {batch_docs}", app=Configuration.CHROMA_QUEUE)
-
-                inputs = self.tokenizer(batch_docs, return_tensors="pt", padding=True, truncation=True, max_length=512)
+                inputs = self.tokenizer(batch_docs,
+                                return_tensors="pt",
+                                padding=True,
+                                truncation=True,
+                                max_length=512)
 
                 with torch.no_grad():
                     outputs = self.embedding_model(**inputs)
@@ -68,17 +68,12 @@ class ChromaCollections:
                 embeddings = torch.mean(last_hidden_state, dim=1).squeeze()
 
                 if len(embeddings.shape) == 1:
-                    embeddings = embeddings.unsqueeze(0)  # Add batch dimension if necessary
-
-                # Apply L2 normalization to embeddings
-                embeddings = F.normalize(embeddings, p=2, dim=1)
+                    embeddings = [embeddings]
 
                 for embedding in embeddings:
-                    # Convert to float32 and append to results
-                    embedding_results.append(embedding.numpy().astype(np.float32).tolist())
+                    embedding_results.append(embedding.numpy().tolist())
 
             return embedding_results
-
 
     @staticmethod
     def create_metadata_object(categories_list: list[str]) -> dict:
@@ -100,8 +95,8 @@ class ChromaCollections:
         else:
             print_warning_message("Updating loaded data...",
                                   Configuration.CHROMA_QUEUE)
-
-        aux = collection.get(where={f"{category}": True}).items()
+    
+        aux = collection.get(where={category: True}).items()
         response_dict = {
             'data': dict(aux),
             'expiration_time': time.time() + (60 * 10)
@@ -112,9 +107,9 @@ class ChromaCollections:
 
     @staticmethod
     def basic_chroma_query(collection: Collection,
-                       category: str,
-                       user_query: str,
-                       max_results: int = 5) -> dict:
+                           category: str,
+                           user_query: str,
+                           max_results: int = 5) -> dict:
 
         query_no_stopwords = remove_stopwords(user_query)
         query_terms = query_no_stopwords.split()
@@ -131,20 +126,20 @@ class ChromaCollections:
         for query_embedding in query_embeddings:
             
             print_header_message(message=f"Data is: {max_results} - {query_embedding} - {type(category)} ", app=Configuration.CHROMA_QUEUE)
-            
-            # Construct the where clause appropriately
-            where_clause = {f"{category}": {"$eq": True}}  # Update as needed based on your metadata structure
-
             try:
-                results: dict = dict(collection.query(
-                    n_results=max_results,
+                where_clause = {f"{category}": True} if category else None
+
+                results = collection.query(
                     query_embeddings=[query_embedding],
-                    where=where_clause
-                ).items())
+                    n_results=max_results,
+                    where=where_clause,  # Ensure this is valid
+                    include=["metadatas", "documents", "distances"]
+                )
             except Exception as e:
                 print_error(f"Error querying ChromaDB: {str(e.with_traceback(e.__traceback__))}", app=Configuration.CHROMA_QUEUE)
                 results = {"documents": [], "metadatas": [], "ids": []} 
             
+
             for i, doc in enumerate(results['documents']):
                 doc_id = results['ids'][0][i]
                 metadata = results['metadatas'][0][i]
@@ -174,7 +169,6 @@ class ChromaCollections:
         gc.collect()
 
         return top_results if top_results['documents'] else False
-
 
     @staticmethod
     def add_document_embeds(collection: Collection,
