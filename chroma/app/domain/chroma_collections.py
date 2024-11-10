@@ -132,7 +132,7 @@ class ChromaCollections:
             try:
 
                 results = collection.query(
-                    query_embeddings=query_embedding[0],
+                    query_embeddings=query_embedding,
                     n_results=max_results,
                     include=["embeddings", "metadatas", "documents", "distances"]
                 )
