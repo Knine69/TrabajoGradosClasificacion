@@ -125,10 +125,11 @@ class ChromaCollections:
         id_scores = {}
 
         try:
+
             results = collection.query(
-                query_texts=["simple test query"],  # Use a basic query
-                n_results=1,  # Request a single result
-                include=["documents"]
+                query_texts=[" ".join(query_terms)],
+                where={category: 1},
+                include=["embeddings", "metadatas", "documents", "distances"]
             )
         except Exception as e:
             print_error(f"Error querying ChromaDB: {str(e.with_traceback(e.__traceback__))}", app=Configuration.CHROMA_QUEUE)
