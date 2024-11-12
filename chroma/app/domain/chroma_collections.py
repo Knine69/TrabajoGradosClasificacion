@@ -132,7 +132,7 @@ class ChromaCollections:
         for query_embedding in query_embeddings:
             try:
                 print(f"Constructed where clause: {category}: {{'$eq': 1}}")
-                where_clause = {category: {"$eq": value}}
+                where_clause = {category: {"$eq": 1}}
 
                 results = collection.query(
                     query_embeddings=query_embedding,
