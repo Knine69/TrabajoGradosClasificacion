@@ -132,9 +132,11 @@ class ChromaCollections:
         for query_embedding in query_embeddings:
             try:
                 print(f"Constructed where clause: {category}: {{'$eq': 1}}")
+                where_clause = {category: {"$eq": value}}
+
                 results = collection.query(
                     query_embeddings=query_embedding,
-                    where={category: {"$eq": 1}},
+                    where=where_clause,  # Use the dynamically constructed where clause
                     n_results=max_results,
                     include=["embeddings", "metadatas", "documents", "distances"]
                 )
