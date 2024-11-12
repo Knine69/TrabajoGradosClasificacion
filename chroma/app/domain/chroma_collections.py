@@ -4,6 +4,7 @@ import torch
 import requests
 import json
 import gc
+import traceback
 
 from gensim.parsing import remove_stopwords
 from transformers import AutoTokenizer, AutoModel
@@ -138,7 +139,8 @@ class ChromaCollections:
                     include=["embeddings", "metadatas", "documents", "distances"]
                 )
             except Exception as e:
-                print_error(f"Error querying ChromaDB: {str(e.with_traceback(e.__traceback__))}", app=Configuration.CHROMA_QUEUE)
+                print_error(f"Error querying ChromaDB: {traceback.print_exc()}",
+                            app=Configuration.CHROMA_QUEUE)
                 results = {"documents": [], "metadatas": [], "ids": []}
 
             for i, doc in enumerate(results['documents']):
