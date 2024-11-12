@@ -131,7 +131,7 @@ class ChromaCollections:
 
         for query_embedding in query_embeddings:
             try:
-
+                print(f"Constructed where clause: {category}: {{'$eq': 1}}")
                 results = collection.query(
                     query_embeddings=query_embedding,
                     where={category: {"$eq": 1}},
@@ -139,7 +139,7 @@ class ChromaCollections:
                     include=["embeddings", "metadatas", "documents", "distances"]
                 )
             except Exception as e:
-                print_error(f"Error querying ChromaDB: {traceback.print_exc()}",
+                print_error(f"Error querying ChromaDB: {traceback.format_exc()}",
                             app=Configuration.CHROMA_QUEUE)
                 results = {"documents": [], "metadatas": [], "ids": []}
 
