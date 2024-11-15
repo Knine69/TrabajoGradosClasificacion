@@ -10,6 +10,7 @@ utils==1.0.2
 gunicorn==23.0.0
 pytest==8.3.3
 pytest-cov==5.0.0
+# LLM Test LOCAL dependencies
 bert-score==0.3.13
 scikit-learn==1.5.2
 sentence-transformers==3.2.1
