@@ -51,6 +51,14 @@ services:
       - "8000:8000"
     volumes:
       - /home/jupyter-juan_huguet82191/classifierProject/TrabajoGradosClasificacion:/chroma/chroma
+  
+  library:
+    image: jhuguet/gaunal-library-ui:1.0.0
+    container_name: gaunal-library
+    networks:
+      - shared_network
+    ports:
+      - "3000:3000"
 
 networks:
   shared_network:
