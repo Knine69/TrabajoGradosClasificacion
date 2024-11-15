@@ -64,7 +64,7 @@ def process_pdf_file():
             queue=Configuration.CHROMA_QUEUE)
         return Response(sse_stream(task.id), content_type='text/event-stream')
 
-@chroma_router.post("/form_embed_documen")
+@chroma_router.post("/form_embed_document")
 def form_process_pdf_file():
     uploaded_file = request.files.get('file')
     categories = request.form.get('categories')
