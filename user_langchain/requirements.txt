@@ -11,9 +11,9 @@ gunicorn==23.0.0
 pytest==8.3.3
 pytest-cov==5.0.0
 # LLM Test LOCAL dependencies
-bert-score==0.3.13
-scikit-learn==1.5.2
-sentence-transformers==3.2.1
-spacy==3.8.2
-spacy-legacy==3.0.12
-spacy-loggers==1.0.5
+# bert-score==0.3.13
+# scikit-learn==1.5.2
+# sentence-transformers==3.2.1
+# spacy==3.8.2
+# spacy-legacy==3.0.12
+# spacy-loggers==1.0.5
