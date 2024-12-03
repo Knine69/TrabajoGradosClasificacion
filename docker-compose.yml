@@ -53,7 +53,7 @@ services:
       - /home/jupyter-juan_huguet82191/classifierProject/TrabajoGradosClasificacion:/chroma/chroma
   
   library:
-    image: jhuguet/gaunal-library-ui:3.0.0
+    image: jhuguet/gaunal-library-ui:4.0.0
     container_name: gaunal-library
     networks:
       - shared_network
