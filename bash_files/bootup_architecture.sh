@@ -8,7 +8,7 @@ ports=(5672 6379)
 # Function to check a single port
 check_port() {
   local port=$1
-  while ! nc -z localhost $port; do
+  while ! nc -z 192.168.0.71 $port; do
     echo "Waiting for port $port to be ready..."
     sleep 3
   done

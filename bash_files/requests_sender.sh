@@ -15,7 +15,7 @@ if [ ! -f "$input_file" ]; then
 fi
 
 while IFS= read -r path; do
-  curl -X POST 'http://localhost:5000/chroma/embed_document' \
+  curl -X POST 'http://192.168.0.71:5000/chroma/embed_document' \
     -H 'Content-Type: application/json' \
     -d "{\"collection_name\": \"$collection\", \"categories\": [\"${values[$RANDOM % ${#values[@]}]}\"], \"file_path\": \"$path\"}"
 

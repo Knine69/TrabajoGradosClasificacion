@@ -4,8 +4,8 @@ services:
     image: jhuguet/langchain-executor
     container_name: langchain-executor
     environment:
-      - CELERY_BROKER_URL=pyamqp://guest@localhost:5672//
-      - CELERY_RESULT_BACKEND=redis://localhost:6379/0
+      - CELERY_BROKER_URL=pyamqp://guest@192.168.0.71:5672//
+      - CELERY_RESULT_BACKEND=redis://192.168.0.71:6379/0
       - LANGCHAIN_QUEUE=langchain_queue
       - CELERYD_NODES=langchain@%h
     network_mode: "host"
