@@ -7,7 +7,7 @@ loaded_collections = {}
 
 def test_redis_connection():
     try:
-        client = redis.StrictRedis(host='192.168.0.71', port=6379, db=0)
+        client = redis.StrictRedis(host='localhost', port=6379, db=0)
         response = client.ping()
         if response:
             print("Successfully connected to Redis!")

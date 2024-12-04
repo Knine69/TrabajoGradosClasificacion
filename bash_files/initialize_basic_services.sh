@@ -2,7 +2,7 @@
 
 OLLAMA_SCHED_SPREAD=true OLLAMA_NUM_PARALLEL=2 OLLAMA_GPU_OVERHEAD=1024M ollama serve & 
 
-while ! nc -z 192.168.0.71 11434; do
+while ! nc -z localhost 11434; do
     echo "Waiting for llama service"
     sleep 2
 done

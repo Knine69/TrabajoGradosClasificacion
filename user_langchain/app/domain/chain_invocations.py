@@ -12,8 +12,8 @@ import gc
 
 class LangchainChain:
     def __init__(self):
-        self.llm_model = Ollama(model="llama3:70b", base_url="http://192.168.0.71:11434")
-        # self.llm_model = Ollama(model="llama3.2:latest", base_url="http://192.168.0.71:11434")
+        self.llm_model = Ollama(model="llama3:70b", base_url="http://localhost:11434")
+        # self.llm_model = Ollama(model="llama3.2:latest", base_url="http://localhost:11434")
         # Set up the agent executor
         self.llm_chain: Chain = prompt | self.llm_model
 

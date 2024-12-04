@@ -199,7 +199,7 @@ class ChromaCollections:
     def _invoke_llm(query_result, user_query, task_id):
         try:
             response = requests.post(
-                url="http://192.168.0.71:5001/langchain/search",
+                url="http://localhost:5001/langchain/search",
                 json={
                     "categories": query_result.get("metadatas", []),
                     "documents": query_result.get("documents", []),

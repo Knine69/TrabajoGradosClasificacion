@@ -12,7 +12,7 @@ import spacy
 class LlmResponseValidator:
     def __init__(self):
         self.llm_model = Ollama(model="llama3:70b",
-                                base_url="http://192.168.0.71:11434",
+                                base_url="http://localhost:11434",
                                 temperature=0.2,
                                 top_p=40,
                                 )
