@@ -1,7 +1,7 @@
 services:
   langchain-executor:
     platform: linux/amd64
-    image: jhuguet/langchain-executor
+    image: jhuguet/langchain-executor:1.0.0
     container_name: langchain-executor
     environment:
       - CELERY_BROKER_URL=pyamqp://guest@192.168.0.71:5672//
