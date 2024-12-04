@@ -11,5 +11,5 @@ def create_app():
     app.config.from_object(Configuration())
     celery_instantiation(app)
     app.register_blueprint(chroma_router)
-    CORS(app, resources={r"/*": {"origins":["http://localhost:80", "http://192.168.0.71:80"]}})
+    CORS(app, resources={r"/*": {"origins": "*"}})
     return app
