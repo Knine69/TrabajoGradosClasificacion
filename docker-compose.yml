@@ -3,7 +3,7 @@ version: '3.8' # Add version for Docker Compose
 services:
   library:
     platform: linux/amd64
-    image: jhuguet/gaunal-library-ui:4.0.0
+    image: jhuguet/gaunal-library-ui:4.0.1
     container_name: gaunal-library
     network_mode: "host"
     ports:
