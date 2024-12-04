@@ -9,4 +9,4 @@ done
 
 echo "Llama is available"
 
-docker compose -f docker-compose.yml up
+docker compose -f docker-compose.yml up -d
