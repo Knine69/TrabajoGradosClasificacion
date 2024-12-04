@@ -8,8 +8,8 @@ services:
       - CELERY_RESULT_BACKEND=redis://localhost:6379/0
       - LANGCHAIN_QUEUE=langchain_queue
       - CELERYD_NODES=langchain@%h
-    network_mode: "host"
-    ports:
+   network_mode: "host"
+   ports:
       - "5001:5001"
     depends_on:
       - redis
@@ -57,6 +57,7 @@ services:
     container_name: gaunal-library
     networks:
       - shared_network
+    network_mode: "host" 
     ports:
       - "80:80"
 
