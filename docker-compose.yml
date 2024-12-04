@@ -1,10 +1,11 @@
-services:
+version: '3.8' # Add version for Docker Compose
 
+services:
   library:
     platform: linux/amd64
     image: jhuguet/gaunal-library-ui:4.0.0
     container_name: gaunal-library
-    network_mode: "host" 
+    network_mode: "host"
     ports:
       - "80:80"
 
@@ -17,8 +18,8 @@ services:
       - CELERY_RESULT_BACKEND=redis://localhost:6379/0
       - LANGCHAIN_QUEUE=langchain_queue
       - CELERYD_NODES=langchain@%h
-   network_mode: "host"
-   ports:
+    network_mode: "host"
+    ports:
       - "5001:5001"
     depends_on:
       - redis
@@ -41,7 +42,7 @@ services:
     image: rabbitmq:3-management
     container_name: rabbitmq
     healthcheck:
-      test: [ "CMD", "rabbitmqctl", "status" ]
+      test: ["CMD", "rabbitmqctl", "status"]
       interval: 30s
       timeout: 10s
       retries: 5
