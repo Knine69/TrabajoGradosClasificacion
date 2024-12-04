@@ -55,8 +55,6 @@ services:
   library:
     image: jhuguet/gaunal-library-ui:4.0.0
     container_name: gaunal-library
-    networks:
-      - shared_network
     network_mode: "host" 
     ports:
       - "80:80"
