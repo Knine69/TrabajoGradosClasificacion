@@ -241,7 +241,7 @@ class ChromaCollections:
             }
 
     @staticmethod
-    def _validate_loaded_response(loaded_db_data: dict) -> tuple:
+    def _validate_loaded_response(loaded_db_data: dict, category) -> tuple:
         if loaded_db_data.get('data', None):
             if loaded_db_data['data'].get('ids', None):
                 return True, loaded_db_data['data'], ""
@@ -251,7 +251,7 @@ class ChromaCollections:
 
         return (False,
                 loaded_db_data,
-                "No information found at present for this category.")
+                f"No information found at present for this category: {category}")
 
     @staticmethod
     def _parse_request(option: str, *data):
@@ -352,7 +352,7 @@ class ChromaCollections:
         
         (found_data,
          loaded_db_data,
-         response_message) = self._validate_loaded_response(loaded_db_data)
+         response_message) = self._validate_loaded_response(loaded_db_data, category)
         if not found_data:
             print_error(response_message, Configuration.CHROMA_QUEUE)
             return {
