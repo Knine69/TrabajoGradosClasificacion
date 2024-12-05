@@ -59,7 +59,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - /home/jupyter-juan_huguet82191/classifierProject/TrabajoGradosClasificacion:/chroma/chroma
+      - /home/jjhuguet/tdg_jjho/TrabajoGradosClasificacion:/chroma/chroma
 
 networks:
   shared_network:
