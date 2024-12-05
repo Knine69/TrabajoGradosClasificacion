@@ -73,6 +73,8 @@ def form_process_pdf_file():
     file_path = f"/tmp/{uploaded_file.filename}"
     uploaded_file.save(file_path)
     
+    print(f"INFORMATION RECEIVED IS: cat - {categories}")
+
     if validate_params(uploaded_file, categories, collection_name):
         task = chroma_embed_task.apply_async(
             args=[collection_name, file_path, categories, True],
