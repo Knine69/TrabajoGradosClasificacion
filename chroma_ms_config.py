@@ -15,3 +15,4 @@ class Configuration:
     LANGCHAIN_QUEUE = os.getenv('LANGCHAIN_QUEUE', 'langchain_queue')
     CHROMA_QUEUE = os.getenv('CHROMA_QUEUE', 'chroma_queue')
     CHROMA_URL = os.getenv('CHROMA_URL', 'chroma')
+    MAX_CONTENT_LENGTH = 50 * 1024 * 1024
