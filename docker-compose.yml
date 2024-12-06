@@ -1,7 +1,7 @@
 services:
   library:
     platform: linux/amd64
-    image: jhuguet/gaunal-library-ui:4.0.14
+    image: jhuguet/gaunal-library-ui:4.0.15
     container_name: gaunal-library
     ports:
       - "80:80"
