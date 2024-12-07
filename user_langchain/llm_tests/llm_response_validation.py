@@ -181,15 +181,3 @@ def calculate_aggregate_results(attempts_average_response: list):
     }
     
     return final_aggregated_results
-
-
-if __name__ =="__main__":
-    print("Initiating response validation")
-    response_validator = LlmResponseValidator()
-    
-    attempts_average_response = calculate_average_per_question()
-    
-    final_aggregated_results = calculate_aggregate_results(
-        attempts_average_response=attempts_average_response)
-    
-    print(f"Llm Response Validation: \n{json.dumps(final_aggregated_results, indent=2)}")
