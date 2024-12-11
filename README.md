@@ -6,21 +6,14 @@
 This project as of today, requires the use of python 3.9.13 =<
 
 
-#### Dependencies installation:
+#### Depencency installation:
 
-In order to solve possible issues that may arise, run the following dependencies' installation:
-
-```
-    pip torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-    pip install --upgrade pymupdf
-```
-
-TODO: Pip install the requirements for the chroma microservices (Langchain is not required, as is container)
-
-For a whole dependency installation run:
+Para ejecutar una instalación de dependencia completa:
 
 ```commandline
-    pip install -r requirements.txt
+    python -m venv .venv
+    source .venv/bin/activate
+    pip install -r chroma/requirements.txt
 ```
 
 #### Create .env configuration file
@@ -297,3 +290,15 @@ curl -X POST 'http://localhost:5000/chroma/documents' -H 'Content-Type: applicat
 
 curl -X POST 'http://localhost:5000/chroma/documents' -H 'Content-Type: application/json' -d '{"collection_name": "some_collection", "category": "quimica", "user_query": "What is an action?"}'
 ```
+
+const answer = await fetch('http://192.168.0.71:5000/chroma/documents', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json', // Specify the content type as JSON
+    },
+    body: JSON.stringify({  // Convert the JavaScript object to a JSON string
+        "collection_name": "some_collection",
+        "category": "quimica",
+        "user_query": "hydrogenation"
+    }),
+});

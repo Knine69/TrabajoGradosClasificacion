@@ -43,6 +43,3 @@ prompt = ChatPromptTemplate.from_messages(
         ("placeholder", "{agent_scratchpad}")
     ]
 ).partial(agent_scratchpad=[])
-
-# TODO: Create a chat functionality instead of chain - Store session messages (Future Recommendations) 
-# TODO: Check which metrics (presición, efectividad) can be measured
